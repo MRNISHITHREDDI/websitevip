@@ -1,7 +1,39 @@
 import { motion } from "framer-motion";
 import { ChevronDown, Check, UserPlus, Play, Info } from "lucide-react";
+import { useEffect } from "react";
 
 const HeroSection = () => {
+  // Add scroll event listener to hide/show the scroll indicator
+  useEffect(() => {
+    const scrollIndicator = document.getElementById("scroll-indicator");
+    
+    const handleScroll = () => {
+      // Get the scroll position
+      const scrollPosition = window.scrollY;
+      
+      // Get the height of the hero section (approximately)
+      const heroSectionHeight = window.innerHeight - 100;
+      
+      // Hide the scroll indicator when scrolled past the hero section
+      if (scrollIndicator) {
+        if (scrollPosition > heroSectionHeight) {
+          scrollIndicator.style.opacity = "0";
+          scrollIndicator.style.pointerEvents = "none";
+        } else {
+          scrollIndicator.style.opacity = "1";
+          scrollIndicator.style.pointerEvents = "auto";
+        }
+      }
+    };
+    
+    // Add the scroll event listener
+    window.addEventListener("scroll", handleScroll);
+    
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden bg-[#05012B]">
       {/* Solid background color */}
@@ -87,12 +119,15 @@ const HeroSection = () => {
         </div>
 
         <motion.div
-          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center"
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center bg-[#05012B]/50 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg z-20 transition-opacity duration-300"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          id="scroll-indicator"
         >
-          <ChevronDown size={24} />
-          <p className="text-xs">Scroll to explore</p>
+          <div className="flex items-center gap-2">
+            <ChevronDown size={20} />
+            <p className="text-sm font-medium">Scroll to explore</p>
+          </div>
         </motion.div>
       </div>
     </section>
