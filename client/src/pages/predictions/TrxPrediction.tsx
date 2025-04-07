@@ -11,8 +11,8 @@ const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdL
 
 // Get the correct typeId based on time option for TRX game
 const getTrxTypeId = (timeOption: string): number => {
-  // For TRX Hash, we're now using typeId: 13 for all options per the updated requirements
-  return 13;
+  // Try with a different typeId since 13 is giving errors
+  return 1; // Trying with typeId 1 for TRX Hash
 };
 
 // Generate a random string for the API request
@@ -20,9 +20,9 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Get signature and random values based on endpoint - using exact parameters provided by user
+// Get signature and random values based on endpoint - trying with the original parameters
 const getApiRequestParams = (endpoint: 'period' | 'results') => {
-  // For TRX Hash - using the latest parameters provided
+  // For TRX Hash - try with original parameters
   if (endpoint === 'period') {
     return {
       signature: "65ADE1365F185A7D7DABD4090A5B19D9",
