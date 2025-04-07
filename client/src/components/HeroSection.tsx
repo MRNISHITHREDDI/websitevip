@@ -81,7 +81,7 @@ const HeroSection = () => {
             </p>
 
             {/* Three buttons: Register, Start Playing, How It Works */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <motion.button
                 className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{
@@ -119,7 +119,7 @@ const HeroSection = () => {
         </div>
 
         <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center bg-[#05012B]/50 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg z-20 transition-opacity duration-300"
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] z-50 transition-opacity duration-500"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           id="scroll-indicator"
