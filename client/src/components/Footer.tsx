@@ -105,7 +105,7 @@ const Footer = () => {
                 <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Privacy Policy</button>
               </li>
               <li>
-                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Contact Us</button>
+                <a href="https://t.me/Blackdoom1" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Contact Us</a>
               </li>
             </ul>
           </div>
