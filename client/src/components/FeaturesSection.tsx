@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import wingoImage from "../assets/wingo-image.png";
+import trxWinImage from "../assets/trx-win-image.png";
 
 const cardVariants = {
   initial: { y: 50, opacity: 0 },
@@ -52,14 +54,15 @@ const FeaturesSection = () => {
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
                 <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
-                  {/* Game interface visualization */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] aspect-w-4 aspect-h-3 flex items-center justify-center p-4">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-10 h-10 rounded-full bg-[#00ECBE]/20 flex items-center justify-center mb-2">
-                        <span className="text-[#00ECBE] text-xl font-bold">W</span>
-                      </div>
-                      <p className="text-[#00ECBE] text-sm">Win Instantly</p>
-                    </div>
+                  {/* WinGo Image */}
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
+                    <motion.img 
+                      src={wingoImage} 
+                      alt="Win Go Game" 
+                      className="w-full object-cover"
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </div>
                 </div>
               </div>
@@ -106,12 +109,15 @@ const FeaturesSection = () => {
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
                 <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
-                  {/* Blockchain visualization */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] aspect-w-4 aspect-h-3 flex items-center justify-center p-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 text-[#00ECBE]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                    </svg>
+                  {/* TRX Win Image */}
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
+                    <motion.img 
+                      src={trxWinImage} 
+                      alt="TRX Win Game" 
+                      className="w-full object-cover"
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </div>
                 </div>
               </div>
