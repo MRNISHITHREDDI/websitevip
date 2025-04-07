@@ -29,9 +29,9 @@ export class MemStorage implements IStorage {
   
   // Some demo license keys for testing
   private demoLicenseKeys: Record<string, { gameType: 'wingo' | 'trx', timeOptions: string[] }> = {
-    'DEMO123': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-    'TRXDEMO456': { gameType: 'trx', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-    'WINGOVIP789': { gameType: 'wingo', timeOptions: ['1 MIN', '3 MIN', '5 MIN'] }
+    'VIP2025': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
+    'VIP25': { gameType: 'trx', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
+    'VIPPRO': { gameType: 'wingo', timeOptions: ['1 MIN', '3 MIN', '5 MIN'] }
   };
 
   constructor() {

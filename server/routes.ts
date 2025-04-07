@@ -77,9 +77,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       success: true,
       message: 'These are demo license keys for testing',
       data: [
-        { licenseKey: 'DEMO123', gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-        { licenseKey: 'TRXDEMO456', gameType: 'trx', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-        { licenseKey: 'WINGOVIP789', gameType: 'wingo', timeOptions: ['1 MIN', '3 MIN', '5 MIN'] }
+        { licenseKey: 'VIP2025', gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
+        { licenseKey: 'VIP25', gameType: 'trx', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
+        { licenseKey: 'VIPPRO', gameType: 'wingo', timeOptions: ['1 MIN', '3 MIN', '5 MIN'] }
       ]
     });
   });

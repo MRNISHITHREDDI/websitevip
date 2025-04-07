@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Info, Copy, CheckCircle } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
+import React, { useState } from 'react';
 import LicenseModal from './LicenseModal';
 
 interface PredictionModalProps {
@@ -8,12 +8,6 @@ interface PredictionModalProps {
   onClose: () => void;
   title: string;
   gameType: 'wingo' | 'trx';
-}
-
-interface DemoLicense {
-  licenseKey: string;
-  gameType: string;
-  timeOptions: string[];
 }
 
 // Optimized animations for better performance
@@ -47,34 +41,6 @@ const modalAnimation = {
 const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, title, gameType }) => {
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-  const [demoLicenses, setDemoLicenses] = useState<DemoLicense[]>([]);
-  const [showDemoInfo, setShowDemoInfo] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
-  
-  // Fetch demo licenses when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      fetchDemoLicenses();
-    }
-  }, [isOpen]);
-  
-  const fetchDemoLicenses = async () => {
-    try {
-      setIsLoadingLicenses(true);
-      const response = await fetch('/api/demo-licenses');
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success && result.data) {
-          setDemoLicenses(result.data);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching demo licenses:', error);
-    } finally {
-      setIsLoadingLicenses(false);
-    }
-  };
   
   // Prevent clicks inside the modal from closing it
   const handleModalClick = (e: React.MouseEvent) => {
@@ -121,21 +87,6 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
   const handleLicenseModalClose = () => {
     setShowLicenseModal(false);
   };
-  
-  const toggleDemoInfo = () => {
-    setShowDemoInfo(!showDemoInfo);
-  };
-  
-  const copyLicenseKey = (key: string) => {
-    navigator.clipboard.writeText(key);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  };
-  
-  // Filter demo licenses for the current game type
-  const filteredDemoLicenses = demoLicenses.filter(
-    license => license.gameType === gameType
-  );
 
   return (
     <>
@@ -206,74 +157,6 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
                 >
                   Get VIP Prediction
                 </motion.button>
-                
-                {/* Demo License Info Toggle */}
-                <motion.div 
-                  className="mt-4 flex justify-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <button 
-                    onClick={toggleDemoInfo}
-                    className="flex items-center gap-2 text-[#00ECBE]/70 hover:text-[#00ECBE] text-sm transition-colors"
-                  >
-                    <Info size={14} />
-                    <span>{showDemoInfo ? "Hide demo licenses" : "Show demo licenses"}</span>
-                  </button>
-                </motion.div>
-                
-                {/* Demo License Info Panel */}
-                <AnimatePresence>
-                  {showDemoInfo && (
-                    <motion.div
-                      className="mt-4 bg-[#05012B]/70 border border-[#00ECBE]/30 rounded-xl p-4"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <h4 className="text-white text-sm font-medium mb-2">Demo License Keys ({gameType.toUpperCase()})</h4>
-                      
-                      {isLoadingLicenses ? (
-                        <div className="py-3 flex justify-center">
-                          <div className="animate-pulse text-[#00ECBE]/70 text-sm">Loading licenses...</div>
-                        </div>
-                      ) : filteredDemoLicenses.length > 0 ? (
-                        <div className="space-y-2">
-                          {filteredDemoLicenses.map((license, index) => (
-                            <div key={index} className="bg-[#001026] border border-[#00ECBE]/20 rounded-lg p-3">
-                              <div className="flex justify-between items-center mb-1">
-                                <div className="font-mono text-[#00ECBE] font-medium text-sm">{license.licenseKey}</div>
-                                <button
-                                  onClick={() => copyLicenseKey(license.licenseKey)}
-                                  className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-[#00ECBE]/10 transition-colors"
-                                >
-                                  {copiedKey === license.licenseKey ? (
-                                    <CheckCircle size={14} className="text-green-400" />
-                                  ) : (
-                                    <Copy size={14} />
-                                  )}
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-400">
-                                Support: {license.timeOptions.join(', ')}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="py-2 text-gray-400 text-sm text-center">
-                          No demo licenses available for {gameType.toUpperCase()}
-                        </div>
-                      )}
-                      
-                      <div className="mt-3 text-xs text-gray-400">
-                        Copy one of these demo license keys to test the license verification.
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </motion.div>
           </motion.div>
