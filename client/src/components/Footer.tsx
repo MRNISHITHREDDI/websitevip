@@ -1,6 +1,7 @@
 import { Twitter, MessageCircle, Share2, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
+import jalwaLogo from '../assets/jalwa-logo.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,10 +12,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#00ECBE]/20 flex items-center justify-center mr-2">
-                <span className="text-[#00ECBE] text-xl font-bold">W</span>
-              </div>
-              <span className="text-[#00ECBE] font-poppins font-bold text-xl">WinGo</span>
+              <motion.img 
+                src={jalwaLogo} 
+                alt="Jalwa Games" 
+                className="h-10"
+                whileHover={{ scale: 1.05 }} 
+                transition={{ duration: 0.2 }}
+              />
             </div>
             <p className="text-gray-400 mb-6">The most advanced color prediction platform powered by blockchain technology.</p>
             <div className="flex gap-4">
@@ -133,7 +137,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm mb-4 md:mb-0">© {currentYear} WinGo. All rights reserved.</p>
+            <p className="text-gray-500 text-sm mb-4 md:mb-0">© {currentYear} Jalwa Games. All rights reserved.</p>
             <div className="flex gap-4">
               <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Terms</button>
               <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Privacy</button>
