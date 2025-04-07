@@ -119,9 +119,9 @@ const HeroSection = () => {
 
             {/* Removed money animation elements as requested */}
             
-            {/* Scroll indicator directly below buttons with 5px gap */}
+            {/* Scroll indicator directly below buttons with 10px gap */}
             <motion.div
-              className="mt-5 inline-block text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-2 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] transition-opacity duration-500"
+              className="mt-10 inline-block text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-2 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] transition-opacity duration-500"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               id="scroll-indicator"
