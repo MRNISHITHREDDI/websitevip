@@ -55,14 +55,19 @@ const FeaturesSection = () => {
               <div className="w-full md:w-1/2">
                 <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
                   {/* WinGo Image */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
-                    <motion.img 
-                      src={wingoImage} 
-                      alt="Win Go Game" 
-                      className="w-full object-cover"
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center p-2">
+                    <motion.div
+                      className="w-full h-full flex items-center justify-center"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.3 }}
-                    />
+                    >
+                      <img 
+                        src={wingoImage} 
+                        alt="Win Go Game" 
+                        className="w-full h-auto rounded-lg"
+                        style={{ maxHeight: "180px", objectFit: "contain" }}
+                      />
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -110,14 +115,19 @@ const FeaturesSection = () => {
               <div className="w-full md:w-1/2">
                 <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
                   {/* TRX Win Image */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
-                    <motion.img 
-                      src={trxWinImage} 
-                      alt="TRX Win Game" 
-                      className="w-full object-cover"
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center p-2">
+                    <motion.div
+                      className="w-full h-full flex items-center justify-center"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.3 }}
-                    />
+                    >
+                      <img 
+                        src={trxWinImage} 
+                        alt="TRX Win Game" 
+                        className="w-full h-auto rounded-lg"
+                        style={{ maxHeight: "180px", objectFit: "contain" }}
+                      />
+                    </motion.div>
                   </div>
                 </div>
               </div>
