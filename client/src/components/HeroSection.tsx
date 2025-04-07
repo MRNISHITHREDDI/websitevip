@@ -3,7 +3,7 @@ import { ChevronDown, Check, UserPlus, Play, Info } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section className="relative py-24 lg:py-36 overflow-hidden bg-[#05012B]">
+    <section className="relative py-16 lg:py-24 overflow-hidden bg-[#05012B]">
       {/* Solid background color */}
       
       {/* Subtle pulsing glow effects */}
@@ -43,7 +43,7 @@ const HeroSection = () => {
             </p>
 
             {/* Three buttons: Register, Start Playing, How It Works */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <motion.button 
                 className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{ 
@@ -81,7 +81,7 @@ const HeroSection = () => {
         </div>
         
         <motion.div 
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center"
+          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
