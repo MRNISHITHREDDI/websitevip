@@ -42,7 +42,7 @@ const itemVariants = {
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-[#001c54] to-[#000c33]">
+    <section id="how-it-works" className="py-16 lg:py-24 bg-gradient-to-b from-[#001c54] to-[#000c33]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           className="text-center mb-16"

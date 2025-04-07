@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { ChevronDown, Check, UserPlus, Play, Info } from "lucide-react";
 import { useEffect } from "react";
+import { useLocation } from "wouter";
 
 const HeroSection = () => {
+  const [, setLocation] = useLocation();
+  
   // Add scroll event listener to hide/show the scroll indicator
   useEffect(() => {
     const scrollIndicator = document.getElementById("scroll-indicator");
@@ -98,7 +101,10 @@ const HeroSection = () => {
 
             {/* Three buttons: Register, Start Playing, How It Works */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5">
-              <motion.button
+              <motion.a
+                href="https://www.jalwa.live/#/register?invitationCode=78648100073"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{
                   boxShadow: "0 0 20px 0 rgba(123, 66, 246, 0.6)",
@@ -107,8 +113,15 @@ const HeroSection = () => {
               >
                 <UserPlus size={18} />
                 <span>Register</span>
-              </motion.button>
+              </motion.a>
               <motion.button
+                onClick={() => {
+                  // Scroll to the prediction section (Section 2)
+                  document.getElementById('prediction')?.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
                 className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -119,6 +132,27 @@ const HeroSection = () => {
                 <span>Start Playing</span>
               </motion.button>
               <motion.button
+                onClick={() => {
+                  // Find the HowItWorksSection and scroll to it (Section 4)
+                  // Look for the section that has "How It Works" title
+                  const sections = document.querySelectorAll('section');
+                  let howItWorksSection = null;
+                  
+                  // Just use the ID we added to the how-it-works section
+                  howItWorksSection = document.getElementById('how-it-works');
+                  
+                  // If not found, try to find the fourth section (index 3)
+                  if (!howItWorksSection && sections.length >= 4) {
+                    howItWorksSection = sections[3]; // Fourth section (0-indexed)
+                  }
+                  
+                  if (howItWorksSection) {
+                    howItWorksSection.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  }
+                }}
                 className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",

@@ -78,7 +78,9 @@ const FeaturesSection = () => {
                 </p>
                 <div className="flex gap-4">
                   <motion.a 
-                    href="#" 
+                    href="https://www.jalwa.live/#/games/list"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -133,7 +135,9 @@ const FeaturesSection = () => {
                 </p>
                 <div className="flex gap-4">
                   <motion.a 
-                    href="#" 
+                    href="https://www.jalwa.live/#/games/list"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
