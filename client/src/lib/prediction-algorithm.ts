@@ -84,15 +84,19 @@ export const getPrediction = (
   // ===== Weighted Decision Algorithm =====
   
   // Apply weights to each analysis method (totaling 100%)
+  // Updated weights to prioritize the most effective techniques
   const weights = {
-    frequency: 0.25,       // 25% weight to frequency analysis
-    pattern: 0.30,         // 30% weight to pattern detection
-    gaps: 0.15,            // 15% weight to gap analysis
-    missing: 0.10,         // 10% weight to missing numbers
-    color: 0.10,           // 10% weight to color streaks
+    frequency: 0.10,       // 10% weight to frequency analysis
+    pattern: 0.40,         // 40% weight to pattern detection (increased)
+    gaps: 0.05,            // 5% weight to gap analysis (decreased)
+    missing: 0.05,         // 5% weight to missing numbers (decreased)
+    color: 0.30,           // 30% weight to color streaks (increased significantly)
     martingale: 0.10       // 10% weight to trends
   };
 
+  // Get color recommendation from the color analysis
+  const colorAnalysis = analyzeColorStreak(sortedData);
+  
   // Calculate final prediction based on weighted scoring
   const finalPrediction = calculateWeightedPrediction(
     extendedResults,
@@ -107,10 +111,30 @@ export const getPrediction = (
     gameType
   );
 
-  // Determine color, big/small, odd/even based on the predicted number
-  const colorPrediction = getColorForNumber(finalPrediction.number, gameType);
-  const bigSmallPrediction = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
-  const oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
+  // Determine number-based predictions
+  let bigSmallPrediction = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
+  let oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
+  
+  // IMPORTANT ENHANCEMENT: Use the color analysis directly
+  // This prioritizes the pattern/streak analysis over the number prediction
+  // which is more accurate for color games
+  const colorPrediction = colorAnalysis.recommendedColor;
+  
+  // If needed, force the number to match the color prediction
+  // This ensures our number and color predictions are consistent
+  if (getColorForNumber(finalPrediction.number, gameType) !== colorPrediction) {
+    // Find a number that gives us the color we want
+    for (let i = 0; i <= 9; i++) {
+      if (getColorForNumber(i, gameType) === colorPrediction) {
+        // Update the final prediction number
+        finalPrediction.number = i;
+        // Update big/small and odd/even to match
+        bigSmallPrediction = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
+        oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
+        break;
+      }
+    }
+  }
 
   return {
     prediction: finalPrediction.number,
@@ -194,39 +218,74 @@ function performFrequencyAnalysis(frequency: Record<number, number>): { number: 
   }
 }
 
-// Detect recurring patterns in sequence
+// Detect recurring patterns in sequence - ENHANCED ALGORITHM
 function detectPatterns(results: number[]): { 
   found: boolean, 
   pattern: number[], 
   prediction: number 
 } {
-  // Look for patterns of size 2-4 in the recent results
-  const patternSizes = [2, 3, 4];
+  // Look for patterns of size 2-5 in the recent results (increased max pattern size)
+  const patternSizes = [2, 3, 4, 5];
+  
+  // Track all pattern matches and their predictions
+  let patternMatches: {size: number, pattern: number[], prediction: number, occurrences: number}[] = [];
   
   for (const size of patternSizes) {
+    if (results.length < size * 2) continue; // Skip if not enough data
+    
     const latestSequence = results.slice(0, size);
     
-    // Look for this sequence elsewhere in the data
-    let found = false;
-    let prediction = -1;
+    // Look for all occurrences of this pattern in historical data
+    let occurrenceCount = 0;
+    let predictions: number[] = [];
     
     // Check if this pattern occurred before and what came after it
+    // Start from the earliest data and move towards recent
     for (let i = size; i < results.length - size; i++) {
       const testSequence = results.slice(i, i + size);
       if (sequenceMatches(testSequence, latestSequence)) {
-        found = true;
-        prediction = results[i - 1]; // What came after this pattern before
-        break;
+        occurrenceCount++;
+        // What came after this pattern before
+        predictions.push(results[i - 1]);
       }
     }
     
-    if (found) {
-      return {
-        found: true,
+    if (occurrenceCount > 0) {
+      // Find the most common prediction after this pattern
+      const predictionCounts: Record<number, number> = {};
+      predictions.forEach(p => {
+        predictionCounts[p] = (predictionCounts[p] || 0) + 1;
+      });
+      
+      let bestPrediction = predictions[0];
+      let highestCount = 0;
+      
+      Object.entries(predictionCounts).forEach(([pred, count]) => {
+        if (count > highestCount) {
+          highestCount = count;
+          bestPrediction = parseInt(pred);
+        }
+      });
+      
+      patternMatches.push({
+        size,
         pattern: latestSequence,
-        prediction: prediction
-      };
+        prediction: bestPrediction,
+        occurrences: occurrenceCount
+      });
     }
+  }
+  
+  // If we found patterns, use the one with the most occurrences
+  if (patternMatches.length > 0) {
+    // Sort by occurrences (highest first)
+    patternMatches.sort((a, b) => b.occurrences - a.occurrences);
+    
+    return {
+      found: true,
+      pattern: patternMatches[0].pattern,
+      prediction: patternMatches[0].prediction
+    };
   }
   
   // No pattern found
@@ -322,26 +381,77 @@ function findMissingNumbers(results: number[], gameType: 'wingo' | 'trx'): numbe
   return possibleNumbers.filter(num => !recentResults.includes(num));
 }
 
-// Analyze color streaks and alternations
+// Analyze color streaks and alternations - ENHANCED VERSION
 function analyzeColorStreak(results: PeriodResult[]): { 
   insight: string, 
   recommendedColor: string 
 } {
   // Replace any violet with green before analysis
-  const recentColors = results.slice(0, 8).map(r => {
-    return r.color.toLowerCase() === 'violet' ? 'green' : r.color;
+  const recentColors = results.slice(0, 12).map(r => { // Increased sample size from 8 to 12
+    return r.color.toLowerCase() === 'violet' ? 'green' : r.color.toLowerCase();
   });
   
   // Count consecutive occurrences of the same color
   let currentStreak = 1;
   let currentColor = recentColors[0];
+  let maxStreak = 1;
+  let maxStreakColor = currentColor;
   
   for (let i = 1; i < recentColors.length; i++) {
     if (recentColors[i] === currentColor) {
       currentStreak++;
+      if (currentStreak > maxStreak) {
+        maxStreak = currentStreak;
+        maxStreakColor = currentColor;
+      }
     } else {
+      currentStreak = 1;
+      currentColor = recentColors[i];
+    }
+  }
+  
+  // Look for repeating color patterns (e.g., red-green-red-green or red-red-green-red-red-green)
+  const patternLengths = [2, 3, 4];
+  let foundPattern = false;
+  let patternInsight = '';
+  let patternPrediction = '';
+  
+  for (const length of patternLengths) {
+    if (recentColors.length < length * 3) continue; // Need at least 3 repetitions
+    
+    const pattern = recentColors.slice(0, length);
+    let repetitions = 1;
+    let fullMatch = true;
+    
+    // Check if the pattern repeats
+    for (let i = length; i < recentColors.length; i += length) {
+      fullMatch = true;
+      for (let j = 0; j < length && i + j < recentColors.length; j++) {
+        if (recentColors[i + j] !== pattern[j]) {
+          fullMatch = false;
+          break;
+        }
+      }
+      if (fullMatch) {
+        repetitions++;
+      } else {
+        break;
+      }
+    }
+    
+    if (repetitions >= 2) {
+      foundPattern = true;
+      patternInsight = `Found color pattern repeating ${repetitions} times: ${pattern.join('-')}`;
+      patternPrediction = pattern[recentColors.length % length];
       break;
     }
+  }
+  
+  if (foundPattern) {
+    return {
+      insight: patternInsight,
+      recommendedColor: patternPrediction
+    };
   }
   
   // Count alternating patterns
@@ -355,14 +465,126 @@ function analyzeColorStreak(results: PeriodResult[]): {
   // Calculate the rate of alternation (0-1)
   const alternationRate = alternatingCount / (recentColors.length - 1);
   
-  // Analyze and provide insight
-  if (currentStreak >= 3) {
+  // Analyze specific color sequences for "after 3 reds, a green appears" type rules
+  const colorRules: {sequence: string[], nextColor: string, confidence: number}[] = [];
+  
+  // Look for rules like "after X consecutive reds/greens, what comes next?"
+  for (let streak = 2; streak <= 4; streak++) {
+    // For red streaks
+    let redStreakMatches = 0;
+    let redStreakFollowedByRed = 0;
+    
+    // For green streaks
+    let greenStreakMatches = 0; 
+    let greenStreakFollowedByGreen = 0;
+    
+    // Analyze historical data for these patterns
+    for (let i = 0; i < recentColors.length - streak; i++) {
+      // Check red streak
+      let isRedStreak = true;
+      for (let j = 0; j < streak; j++) {
+        if (recentColors[i + j] !== 'red') {
+          isRedStreak = false;
+          break;
+        }
+      }
+      
+      if (isRedStreak && i + streak < recentColors.length) {
+        redStreakMatches++;
+        if (recentColors[i + streak] === 'red') {
+          redStreakFollowedByRed++;
+        }
+      }
+      
+      // Check green streak
+      let isGreenStreak = true;
+      for (let j = 0; j < streak; j++) {
+        if (recentColors[i + j] !== 'green') {
+          isGreenStreak = false;
+          break;
+        }
+      }
+      
+      if (isGreenStreak && i + streak < recentColors.length) {
+        greenStreakMatches++;
+        if (recentColors[i + streak] === 'green') {
+          greenStreakFollowedByGreen++;
+        }
+      }
+    }
+    
+    // Calculate probabilities and add rules if significant
+    if (redStreakMatches >= 2) {
+      const redContinuationRate = redStreakFollowedByRed / redStreakMatches;
+      const nextColor = redContinuationRate > 0.7 ? 'red' : 'green';
+      const confidence = nextColor === 'red' ? redContinuationRate : 1 - redContinuationRate;
+      
+      if (confidence > 0.65) {
+        colorRules.push({
+          sequence: Array(streak).fill('red'),
+          nextColor,
+          confidence
+        });
+      }
+    }
+    
+    if (greenStreakMatches >= 2) {
+      const greenContinuationRate = greenStreakFollowedByGreen / greenStreakMatches;
+      const nextColor = greenContinuationRate > 0.7 ? 'green' : 'red';
+      const confidence = nextColor === 'green' ? greenContinuationRate : 1 - greenContinuationRate;
+      
+      if (confidence > 0.65) {
+        colorRules.push({
+          sequence: Array(streak).fill('green'),
+          nextColor,
+          confidence
+        });
+      }
+    }
+  }
+  
+  // Check if current color sequence matches any rules
+  for (const rule of colorRules) {
+    if (rule.sequence.length <= recentColors.length) {
+      const currentSequence = recentColors.slice(0, rule.sequence.length);
+      let matches = true;
+      
+      for (let i = 0; i < rule.sequence.length; i++) {
+        if (currentSequence[i] !== rule.sequence[i]) {
+          matches = false;
+          break;
+        }
+      }
+      
+      if (matches) {
+        return {
+          insight: `After ${rule.sequence.length} ${rule.sequence[0]}s, ${rule.nextColor} appears ${Math.round(rule.confidence * 100)}% of the time`,
+          recommendedColor: rule.nextColor
+        };
+      }
+    }
+  }
+  
+  // Analyze and provide insight based on streaks and alternation
+  if (maxStreak >= 4) {
+    // Very long streaks almost always break
+    return {
+      insight: `${maxStreakColor} had a long streak of ${maxStreak}, strong indication streak will break`,
+      recommendedColor: getOppositeColor(maxStreakColor)
+    };
+  } else if (currentStreak >= 3) {
     // Long streaks often break
     return {
-      insight: `${currentColor} has appeared ${currentStreak} times in a row, streak likely to break`,
-      recommendedColor: getOppositeColor(currentColor)
+      insight: `${recentColors[0]} has appeared ${currentStreak} times in a row, streak likely to break`,
+      recommendedColor: getOppositeColor(recentColors[0])
     };
-  } else if (alternationRate > 0.7) {
+  } else if (alternationRate > 0.8) {
+    // Very high alternation rate strongly suggests continuation of pattern
+    return {
+      insight: `Colors are alternating at ${Math.round(alternationRate * 100)}% rate, strong pattern will continue`,
+      recommendedColor: getOppositeColor(recentColors[0])
+    };
+  } else if (alternationRate > 0.6) {
     // High alternation rate suggests continuation of pattern
     return {
       insight: `Colors have been alternating at ${Math.round(alternationRate * 100)}% rate, pattern likely to continue`,
@@ -382,21 +604,38 @@ function analyzeColorStreak(results: PeriodResult[]): {
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     });
     
-    // Find least frequent color
-    let leastFrequentColor = recentColors[0];
-    let lowestCount = Infinity;
+    const redCount = colorCounts['red'] || 0;
+    const greenCount = colorCounts['green'] || 0;
     
-    Object.entries(colorCounts).forEach(([color, count]) => {
-      if (count < lowestCount) {
-        lowestCount = count;
-        leastFrequentColor = color;
+    if (redCount > greenCount * 1.7) {
+      return {
+        insight: `Red heavily dominating (${redCount}:${greenCount}), regression to mean expected`,
+        recommendedColor: 'green'
+      };
+    } else if (greenCount > redCount * 1.7) {
+      return {
+        insight: `Green heavily dominating (${greenCount}:${redCount}), regression to mean expected`,
+        recommendedColor: 'red'
+      };
+    } else {
+      // Check if the last 3 colors form a pattern
+      if (recentColors.length >= 3) {
+        const lastThree = recentColors.slice(0, 3);
+        // If last 3 are the same, predict opposite
+        if (lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2]) {
+          return {
+            insight: `Last 3 results were all ${lastThree[0]}, suggesting pattern break`,
+            recommendedColor: getOppositeColor(lastThree[0])
+          };
+        }
       }
-    });
-    
-    return {
-      insight: `Balanced color distribution, with ${leastFrequentColor} slightly underrepresented`,
-      recommendedColor: leastFrequentColor
-    };
+      
+      // Default to suggesting the less frequent color
+      return {
+        insight: `Balanced color distribution, slight edge to less frequent color`,
+        recommendedColor: redCount <= greenCount ? 'red' : 'green'
+      };
+    }
   }
 }
 
