@@ -54,18 +54,25 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
     // API is giving "No operation permission" errors, so we'll generate a mock period
     // with the correct structure that increments over time to simulate real data
     
-    // Get current date in format YYYYMMDD (e.g., 20250407)
+    // Using the exact format from user: 20250407103010976
     const now = new Date();
+    
+    // Format YYYYMMDD (e.g., 20250407)
     const dateStr = now.getFullYear() +
                    (now.getMonth() + 1).toString().padStart(2, '0') +
                    now.getDate().toString().padStart(2, '0');
     
-    // Get current time to create a sequence number that changes every minute
-    const minutes = now.getHours() * 60 + now.getMinutes();
-    const sequence = (minutes * 100).toString().padStart(11, '0');
+    // Format HHMM (e.g., 1030)
+    const timeStr = now.getHours().toString().padStart(2, '0') + 
+                    now.getMinutes().toString().padStart(2, '0');
     
-    // Create a period number in the format seen in screenshots (e.g., 20250407100051799)
-    const periodNumber = dateStr + sequence;
+    // Generate a sequence that changes every minute but maintains the same format
+    // Extracting the same pattern as "10976" from the example
+    const minutes = now.getHours() * 60 + now.getMinutes();
+    const baseSequence = 10900 + (minutes % 100);
+    
+    // Create a period number exactly matching the format: 20250407103010976
+    const periodNumber = dateStr + timeStr + baseSequence;
     
     // Calculate end time (1 minute from now)
     const endTime = new Date(now);
@@ -125,9 +132,27 @@ const fetchResults = async (typeId: number): Promise<any> => {
                    (now.getMonth() + 1).toString().padStart(2, '0') +
                    now.getDate().toString().padStart(2, '0');
     
-    // Generate past periods
-    const generatePeriodNumber = (minutes: number) => {
-      return dateStr + (minutes * 100).toString().padStart(11, '0');
+    // Generate past periods using the format from real TRX: 20250407103010976
+    const generatePeriodNumber = (minutesOffset: number) => {
+      // For past results, subtract minutes from current time to get past periods
+      const pastTime = new Date(now);
+      pastTime.setMinutes(pastTime.getMinutes() - minutesOffset);
+      
+      // Format YYYYMMDD (e.g., 20250407)
+      const pastDateStr = pastTime.getFullYear() +
+                        (pastTime.getMonth() + 1).toString().padStart(2, '0') +
+                        pastTime.getDate().toString().padStart(2, '0');
+                        
+      // Format HHMM (e.g., 1030)
+      const pastTimeStr = pastTime.getHours().toString().padStart(2, '0') + 
+                         pastTime.getMinutes().toString().padStart(2, '0');
+                         
+      // Generate sequence in format 10976
+      const pastMinutes = pastTime.getHours() * 60 + pastTime.getMinutes();
+      const pastSequence = 10900 + (pastMinutes % 100);
+      
+      // Full period number format: 20250407103010976
+      return pastDateStr + pastTimeStr + pastSequence;
     };
     
     // Format current time as string (e.g., "2025-04-07 21:30:00") 
@@ -278,9 +303,9 @@ const generateMockTrxData = (timeOption: string) => {
   const now = new Date();
   const indiaDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
   
-  // Use the exact period number format from the screenshot
-  // The user provided: 20250407100051799
-  const currentPeriodNumber = "20250407100051799";
+  // Use the exact period number format from the user
+  // The user provided: 20250407103010976
+  const currentPeriodNumber = "20250407103010976";
   
   // Generate random hash result (typically a hex string ending with a number)
   const generateHash = () => {
@@ -313,13 +338,23 @@ const generateMockTrxData = (timeOption: string) => {
     timeRemaining: timeOption === '30 SEC' ? 30 : timeOption === '1 MIN' ? 60 : timeOption === '3 MIN' ? 180 : 300,
   };
   
-  // Generate period numbers with similar pattern but decremented for past results
+  // Generate period numbers with the exact same format as provided by user: 20250407103010976
   const generatePeriodNumber = (index: number) => {
-    // Take the first part of the period (date portion)
-    const basePeriod = currentPeriodNumber.substring(0, 8);
-    // Take the last part and decrement slightly for each past period
-    const sequenceNum = parseInt(currentPeriodNumber.substring(8));
-    return `${basePeriod}${(sequenceNum - index * 2).toString().padStart(11, '0')}`;
+    // For past periods, we'll decrement minutes from the provided period
+    const year = currentPeriodNumber.substring(0, 4);
+    const month = currentPeriodNumber.substring(4, 6);
+    const day = currentPeriodNumber.substring(6, 8);
+    const hour = currentPeriodNumber.substring(8, 10);
+    const minute = parseInt(currentPeriodNumber.substring(10, 12));
+    
+    // Calculate previous minute for past results
+    const pastMinute = (minute - index).toString().padStart(2, '0');
+    
+    // Keep the last 5 digits (10976) consistent
+    const suffix = currentPeriodNumber.substring(12);
+    
+    // Reconstruct the period number: 20250407103010976
+    return `${year}${month}${day}${hour}${pastMinute}${suffix}`;
   };
   
   // Past results
