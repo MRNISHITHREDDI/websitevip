@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 82% 9%;
+    --foreground: 0 0% 100%;
+    
+    --card: 240 80% 12%;
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 240 80% 12%;
+    --popover-foreground: 0 0% 100%;
+    
+    --primary: 165 100% 46%;
+    --primary-foreground: 240 82% 9%;
+    
+    --secondary: 226 100% 16%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 240 30% 20%;
+    --muted-foreground: 240 20% 80%;
+    
+    --accent: 226 100% 25%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 240 40% 20%;
+    --input: 240 40% 20%;
+    --ring: 165 100% 46%;
+    
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Font families */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom gradient background */
+.bg-gradient-blue {
+  background: linear-gradient(180deg, #001c54 0%, #000c33 100%);
+}
+
+/* Glow effects */
+.glow {
+  box-shadow: 0 0 15px 0 rgba(0, 236, 190, 0.3);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 236, 190, 0.5);
+}
+
+.glow-btn:hover {
+  box-shadow: 0 0 20px 0 rgba(0, 236, 190, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Card styles */
+.number-card {
+  background: linear-gradient(135deg, rgba(0, 236, 190, 0.1) 0%, rgba(0, 28, 84, 0.4) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
