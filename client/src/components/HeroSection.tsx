@@ -4,7 +4,7 @@ import backgroundVideo from '../assets/videos/background-video.mp4';
 
 const HeroSection = () => {
   return (
-    <section className="relative py-16 lg:py-24 overflow-hidden">
+    <section className="relative py-16 lg:py-24 overflow-hidden bg-[#05012B]">
       {/* Video Background with 5% opacity */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video 
@@ -16,7 +16,7 @@ const HeroSection = () => {
         >
           <source src={backgroundVideo} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#000C33] opacity-5"></div>
+        <div className="absolute inset-0 bg-[#05012B] opacity-5"></div>
         <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
       </div>
       
