@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Clock, ChevronDown, RefreshCw, BarChart3, Trophy } from 'lucide-react';
-import { Link } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import { PeriodResult, PredictionData } from '@/pages/predictions/types';
 
@@ -107,12 +106,13 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
       {/* Header */}
       <header className="bg-[#001c54]/90 backdrop-blur-md sticky top-0 z-10 shadow-[0_0_20px_rgba(0,28,84,0.7)]">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link href="/">
-            <a className="flex items-center text-[#00ECBE] font-semibold transition-all hover:text-white">
-              <ArrowLeft size={20} className="mr-2" />
-              <span>Back to Home</span>
-            </a>
-          </Link>
+          <div
+            onClick={() => window.location.href = '/'}
+            className="flex items-center text-[#00ECBE] font-semibold transition-all hover:text-white cursor-pointer"
+          >
+            <ArrowLeft size={20} className="mr-2" />
+            <span>Back to Home</span>
+          </div>
           
           <h1 className="text-xl font-bold tracking-wide flex items-center">
             <Trophy size={20} className="text-yellow-400 mr-2" />

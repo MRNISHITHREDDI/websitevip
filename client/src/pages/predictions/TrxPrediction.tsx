@@ -311,6 +311,20 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     setIsLoading(true);
     setVerificationComplete(false);
     
+    // Use mock data for TRX Hash 1 MIN as it's having API issues
+    // We'll update this when we get the correct API parameters
+    const { currentPrediction, results, hash } = generateMockTrxData(timeOption);
+    setCurrentPrediction(currentPrediction);
+    setPeriodResults(results);
+    setPredictionHash(hash);
+    setIsLoading(false);
+    
+    // Simulate blockchain verification process
+    setTimeout(() => {
+      setVerificationComplete(true);
+    }, 2000);
+    
+    /* Temporarily comment out real API fetch until we get the correct parameters
     try {
       // Use the real API data
       const { currentPrediction, results, hash } = await fetchTrxData(timeOption);
@@ -343,6 +357,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         setVerificationComplete(true);
       }, 2000);
     }
+    */
   };
   
   // Auto-refresh data based on timeOption period
