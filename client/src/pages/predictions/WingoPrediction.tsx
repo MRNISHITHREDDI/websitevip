@@ -30,11 +30,15 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Use a consistent signature based on the screenshot provided by the user
-// This matches what we see in the API screenshot for the request
-const generateSignature = (): string => {
-  // Using the signature seen in the API screenshot
-  return "AB0B28BF75685C3374A844B6D54126DE";
+// Use exact signature values based on the request details provided by the user
+const generateSignature = (endpoint: 'period' | 'results'): string => {
+  // Using the exact signature values provided for each endpoint
+  if (endpoint === 'period') {
+    return "ABB82B8F75685C3374A844B6D541260E";
+  } else {
+    // For results endpoint
+    return "AD9A3C8521D62D64DFE9E94097E3A57F";
+  }
 };
 
 // Fetch the current period data
@@ -43,8 +47,8 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
     const timestamp = Math.floor(Date.now() / 1000);
     const requestData = {
       language: 0,
-      random: generateRandom(),
-      signature: generateSignature(),
+      random: "60b845c0299b4fcda63f766ea8ede25f", // Use exact value provided
+      signature: generateSignature('period'),
       timestamp: timestamp,
       typeId: typeId
     };
@@ -87,8 +91,8 @@ const fetchResults = async (typeId: number): Promise<any> => {
       language: 0,
       pageNo: 1,
       pageSize: 10,
-      random: generateRandom(),
-      signature: generateSignature(),
+      random: "17910a15ea54457a97b161cf59d2a7c5", // Use exact value provided
+      signature: generateSignature('results'),
       timestamp: timestamp,
       typeId: typeId
     };
