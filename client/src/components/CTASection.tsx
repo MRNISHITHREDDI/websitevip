@@ -65,6 +65,18 @@ const CTASection = () => {
                 Start Playing Now
               </motion.a>
               <motion.a 
+                href="https://t.me/ManagerChetanaOfficial" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 text-center flex items-center justify-center gap-2"
+                whileHover={{ 
+                  boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                  y: -2 
+                }}
+              >
+                Join Our Community <span className="ml-1">→</span>
+              </motion.a>
+              <motion.a 
                 href="#" 
                 className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center"
                 whileHover={{ 

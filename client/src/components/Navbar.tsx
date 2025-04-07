@@ -67,15 +67,18 @@ const Navbar = () => {
             >
               Prediction
             </a>
-            <motion.button 
-              className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300"
+            <motion.a
+              href="https://t.me/ManagerChetanaOfficial"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#00ECBE] text-[#05012B] font-semibold px-4 py-2 rounded-full transition duration-300 flex items-center"
               whileHover={{ 
                 boxShadow: '0 0 20px 0 rgba(0, 236, 190, 0.6)',
                 y: -2,
               }}
             >
-              Join Pro
-            </motion.button>
+              Join Our Community <span className="ml-1">→</span>
+            </motion.a>
           </div>
         </div>
       </div>
@@ -106,9 +109,14 @@ const Navbar = () => {
             >
               Prediction
             </a>
-            <button className="mt-2 w-full bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300">
-              Join Pro
-            </button>
+            <a 
+              href="https://t.me/ManagerChetanaOfficial"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 block w-full bg-[#00ECBE] text-[#05012B] font-semibold px-4 py-2 rounded-full transition duration-300 text-center"
+            >
+              Join Our Community →
+            </a>
           </motion.div>
         )}
       </AnimatePresence>
