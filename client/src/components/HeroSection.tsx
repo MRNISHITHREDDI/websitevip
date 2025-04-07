@@ -51,7 +51,7 @@ const HeroSection = () => {
           <source src="/assets/88697-606080045_small.mp4" type="video/mp4" />
         </video>
         {/* Color overlay with 92% opacity */}
-        <div className="absolute inset-0 bg-[#05012B]/92"></div>
+        <div className="absolute inset-0 bg-[#05012B] opacity-[0.92]"></div>
       </div>
 
       {/* Subtle pulsing glow effects */}
@@ -134,7 +134,7 @@ const HeroSection = () => {
             
             {/* Scroll indicator directly below buttons with 10px gap */}
             <motion.div
-              className="mt-10 inline-block text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-2 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] transition-opacity duration-500"
+              className="mt-10 inline-block text-[#00ECBE] text-center bg-[#05012B] bg-opacity-80 backdrop-blur-sm px-6 py-2 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] transition-opacity duration-500"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               id="scroll-indicator"
