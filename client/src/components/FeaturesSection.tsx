@@ -32,7 +32,7 @@ const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true, margin: "-100px" }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold font-poppins mb-4 -mt-2">
             <span className="text-[#00ECBE]">Revolutionary</span>
             <span className="text-white"> Prediction Platform</span>
           </h2>
