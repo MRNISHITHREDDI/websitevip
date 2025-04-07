@@ -6,13 +6,13 @@ import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigO
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
 
 // Real API endpoints for TRX predictions - using the exact URLs provided by the user
-const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetTRXGameIssue";
-const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetTRXNoaverageEmerdList";
+const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
+const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdList";
 
 // Get the correct typeId based on time option for TRX game
 const getTrxTypeId = (timeOption: string): number => {
-  // Using the exact typeId value (13) from the user's provided parameters
-  return 13;
+  // Using the exact typeId value (1) from the user's provided parameters
+  return 1;
 };
 
 // Generate a random string for the API request
@@ -25,13 +25,13 @@ const getApiRequestParams = (endpoint: 'period' | 'results') => {
   // For TRX Hash - using the exact parameters provided by the user
   if (endpoint === 'period') {
     return {
-      signature: "3ECD5741CF14557EC804FD1678233837",
-      random: "c1621faba85c4062bc0116551970b0da"
+      signature: "74A5FAB6A7D3FD1556567A8F1A90B258",
+      random: "eac6995ddb0d43eb9b4fc02180384f63"
     };
   } else {
     return {
-      signature: "8184CBC8B6B56517BD9BBF7E1B372409", 
-      random: "536f136911b541ca8d4cb8c6ec16295a"
+      signature: "860962E1823E04166C45E40DA5DB0FC6",
+      random: "f08ffe4140a14d8abeffae15c0793176"
     };
   }
 };
@@ -51,8 +51,29 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
     
     console.log("Fetching TRX period with data:", JSON.stringify(requestData));
     
-    // API is giving "No operation permission" errors, so we'll generate a mock period
-    // with the correct structure that increments over time to simulate real data
+    // Try to use the exact API endpoint and parameters
+    try {
+      const response = await fetch(PERIOD_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("TRX period API response:", data);
+        if (data.data && data.data.issueNumber) {
+          return data;
+        }
+        // If API response is not valid, we'll fall back to simulated data
+      }
+    } catch (apiError) {
+      console.error("API call failed, using simulated data:", apiError);
+    }
+    
+    // If API call fails, generate mock period
     
     // Using the exact format from user: 20250407103010976
     const now = new Date();
@@ -123,8 +144,29 @@ const fetchResults = async (typeId: number): Promise<any> => {
     
     console.log("Fetching TRX results with data:", JSON.stringify(requestData));
     
-    // API is returning "No operation permission" error, so we'll create results
-    // with the correct structure that change over time
+    // Try to use the exact API endpoint and parameters
+    try {
+      const response = await fetch(RESULTS_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("TRX results API response:", data);
+        if (data.data && data.data.list && Array.isArray(data.data.list)) {
+          return data;
+        }
+        // If API response is not valid, we'll fall back to simulated data
+      }
+    } catch (apiError) {
+      console.error("API call failed, using simulated data:", apiError);
+    }
+    
+    // If API call fails, generate mock results
     
     // Get current date
     const now = new Date();
