@@ -168,17 +168,16 @@ const HeroSection = () => {
             
             {/* Scroll indicator directly below buttons with 10px gap */}
             <motion.div
-              className="mt-12 inline-block text-[#00ECBE] text-center bg-[#05012B] bg-opacity-80 backdrop-blur-sm px-8 py-3 rounded-full shadow-[0_0_20px_rgba(0,236,190,0.4)] transition-opacity duration-500 border border-[#00ECBE]/30"
+              className="mt-12 inline-block text-[#00ECBE] text-center transition-opacity duration-500"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               id="scroll-indicator"
               whileHover={{ 
-                boxShadow: "0 0 25px rgba(0, 236, 190, 0.6)",
                 scale: 1.05
               }}
             >
-              <div className="flex items-center gap-3">
-                <ChevronDown size={25} />
+              <div className="flex items-center justify-center gap-3">
+                <ChevronDown size={26} />
                 <p className="text-base font-medium">Scroll to explore</p>
               </div>
             </motion.div>
