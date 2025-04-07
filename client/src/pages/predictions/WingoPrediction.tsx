@@ -378,14 +378,16 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
       {currentPrediction && (
         <div className="mt-4">
           <motion.h3 
-            className="text-center text-white text-xl font-semibold mb-5 flex items-center justify-center"
+            className="text-center text-white text-xl font-semibold mb-5 flex sm:flex-row flex-col items-center justify-center"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Lock size={16} className="text-[#00ECBE] mr-2" />
-            <span>VIP Prediction</span>
-            <span className="text-[#00ECBE] ml-1">#{currentPrediction.periodNumber}</span>
+            <div className="flex items-center">
+              <Lock size={16} className="text-[#00ECBE] mr-2" />
+              <span>VIP Prediction</span>
+            </div>
+            <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">#{currentPrediction.periodNumber}</span>
           </motion.h3>
           
           <motion.div
