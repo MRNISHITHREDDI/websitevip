@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, DollarSign, Check } from 'lucide-react';
 
 const HeroSection = () => {
   return (
@@ -79,34 +79,53 @@ const HeroSection = () => {
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="rounded-lg shadow-2xl border-2 border-[#00ECBE]/30 overflow-hidden" style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)" }}>
-                  {/* Replace with actual game interface */}
-                  <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-[#001c54] to-[#000c33] p-10 flex items-center justify-center">
-                    <div className="grid grid-cols-3 gap-4">
-                      {['red', 'green', 'blue'].map((color, i) => (
-                        <motion.div 
-                          key={i}
-                          className={`h-16 w-16 rounded-full bg-${color === 'red' ? 'red-500' : color === 'green' ? 'green-500' : 'blue-500'} shadow-lg`}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        />
-                      ))}
+                  {/* Game interface matching the image */}
+                  <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-[#001c54] to-[#000c33] p-6 flex items-center justify-center">
+                    <div className="flex justify-center items-center space-x-8">
+                      <motion.div 
+                        className="h-16 w-16 rounded-full bg-red-500 shadow-lg"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      />
+                      <motion.div 
+                        className="h-16 w-16 rounded-full bg-green-500 shadow-lg"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      />
                     </div>
                   </div>
                 </div>
-                <div className="absolute -bottom-6 -right-6 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 border border-[#00ECBE]/30 shadow-lg">
+                
+                {/* Money-earning graphic badge */}
+                <div className="absolute -bottom-8 -right-8 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 border border-[#00ECBE]/30 shadow-lg">
                   <motion.div 
                     className="flex items-center gap-2"
                     animate={{ y: [0, -5, 0] }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                   >
                     <div className="w-8 h-8 rounded-full bg-[#00ECBE] flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#05012B]" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
+                      <DollarSign className="h-5 w-5 text-[#05012B]" />
                     </div>
                     <div>
-                      <p className="text-[#00ECBE] font-semibold">100%</p>
-                      <p className="text-xs text-gray-300">Accurate Prediction</p>
+                      <p className="text-[#00ECBE] font-semibold">Earn Big</p>
+                      <p className="text-xs text-gray-300">Win instantly</p>
+                    </div>
+                  </motion.div>
+                </div>
+                
+                {/* Accuracy badge */}
+                <div className="absolute top-2 right-2 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-3 border border-[#00ECBE]/30 shadow-lg">
+                  <motion.div 
+                    className="flex items-center gap-2"
+                    animate={{ opacity: [0.9, 1, 0.9] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-[#00ECBE] flex items-center justify-center">
+                      <Check className="h-4 w-4 text-[#05012B]" />
+                    </div>
+                    <div>
+                      <p className="text-[#00ECBE] font-semibold text-sm">100%</p>
+                      <p className="text-[0.65rem] text-gray-300">Accurate Prediction</p>
                     </div>
                   </motion.div>
                 </div>
@@ -114,7 +133,7 @@ const HeroSection = () => {
             </div>
             
             <motion.div 
-              className="hidden md:flex absolute -bottom-10 left-0 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 shadow-lg border border-[#00ECBE]/30"
+              className="flex absolute -bottom-10 left-0 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 shadow-lg border border-[#00ECBE]/30"
               animate={{ opacity: [0.7, 1, 0.7] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
