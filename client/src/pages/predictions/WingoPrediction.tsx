@@ -350,9 +350,9 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     fetchData();
     
     // Set up auto-refresh interval - match the game time period exactly
-    // For 30 SEC, refresh every 30 seconds
-    // This ensures we stay in sync with the actual game period timing
-    const refreshInterval = timeOption === '30 SEC' ? 30000 : 
+    // For 30 SEC, we're now refreshing every 1 MIN per the request
+    // For other options, we maintain their respective intervals
+    const refreshInterval = timeOption === '30 SEC' ? 60000 : // Changed to 1 MIN (60000ms) for 30 SEC option
                          timeOption === '1 MIN' ? 60000 :
                          timeOption === '3 MIN' ? 180000 : 300000;
     

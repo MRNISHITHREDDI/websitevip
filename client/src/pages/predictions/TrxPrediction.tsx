@@ -11,18 +11,8 @@ const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdL
 
 // Get the correct typeId based on time option for TRX game
 const getTrxTypeId = (timeOption: string): number => {
-  switch (timeOption) {
-    case "30 SEC":
-      return 40; // Different typeIds for TRX
-    case "1 MIN":
-      return 51; // Updated to the correct typeId for 1 MIN TRX Hash
-    case "3 MIN":
-      return 53;
-    case "5 MIN":
-      return 55;
-    default:
-      return 51; // Default to 1 MIN which is the most common option for TRX Hash
-  }
+  // For TRX Hash, we're now using typeId: 13 for all options per the updated requirements
+  return 13;
 };
 
 // Generate a random string for the API request
@@ -32,16 +22,16 @@ const generateRandom = (): string => {
 
 // Get signature and random values based on endpoint
 const getApiRequestParams = (endpoint: 'period' | 'results') => {
-  // For TRX Hash - only 1 MIN is needed
+  // For TRX Hash - updated with the specific parameters provided
   if (endpoint === 'period') {
     return {
-      signature: "29E44D96FD78C678B13E49D2152E50F8",
-      random: "4a342cbe103044fea0b3a2e8cc4db99b"
+      signature: "65ADE1365F185A7D7DABD4090A5B19D9",
+      random: "dadb70f547014c27af415a3ccd900b27"
     };
   } else {
     return {
-      signature: "EC9A522B0E0F6C64C39BA766C02D5757", 
-      random: "97ce4ed37b074c06a9906da5f5aaa43b"
+      signature: "71FD350B97FDC523C7BF6CF951B99482", 
+      random: "4c823e2eac2b43f2ad6d5608aa616428"
     };
   }
 };
@@ -361,8 +351,9 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     fetchData();
     
     // Set up auto-refresh interval - match the game time period exactly
-    // Since we're only showing 1 MIN for TRX, we'll use 60 seconds
-    const refreshInterval = 60000; // 1 minute
+    // We're always using 1 MIN refresh interval for TRX predictions
+    // This ensures we stay in sync with the India time period timing
+    const refreshInterval = 60000; // 1 minute - as specified
     
     // Set up auto-refresh interval
     const interval = setInterval(() => {
