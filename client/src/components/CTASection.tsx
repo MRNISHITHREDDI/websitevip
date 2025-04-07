@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import InfoModal from './InfoModal';
 
 const CTASection = () => {
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,13 +74,7 @@ const CTASection = () => {
                 Start Playing Now
               </motion.button>
               <motion.button 
-                onClick={() => {
-                  // Scroll to the how it works section (Section 4)
-                  document.getElementById('howitworks')?.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }}
+                onClick={() => setInfoModalOpen(true)}
                 className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center"
                 whileHover={{ 
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -90,6 +87,12 @@ const CTASection = () => {
           </div>
         </div>
       </div>
+      
+      {/* Info Modal */}
+      <InfoModal 
+        isOpen={infoModalOpen} 
+        onClose={() => setInfoModalOpen(false)} 
+      />
     </section>
   );
 };
