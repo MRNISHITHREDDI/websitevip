@@ -26,9 +26,9 @@ export interface PredictionData {
   timeRemaining: number; // in seconds
 }
 
-// Color mappings for Win Go
+// Color mappings for Win Go (modified to only show red or green)
 export const wingoColorMap: Record<number, string> = {
-  0: 'violet',
+  0: 'green', // Changed from violet to green
   1: 'green',
   2: 'red',
   3: 'green',
@@ -40,13 +40,13 @@ export const wingoColorMap: Record<number, string> = {
   9: 'green',
 };
 
-// TRX has unique colors
+// TRX has unique colors (modified to only show red or green)
 export const trxColorMap: Record<string, string> = {
   'EVEN': 'green',
   'ODD': 'red',
   'SMALL': 'green',
   'BIG': 'red',
-  'VIOLET': 'violet',
+  'VIOLET': 'green', // Changed from violet to green
 };
 
 // Helper to determine big/small
@@ -59,8 +59,9 @@ export const getOddOrEven = (num: number): 'ODD' | 'EVEN' => {
   return num % 2 === 0 ? 'EVEN' : 'ODD';
 };
 
-// TRX result to color helper
+// TRX result to color helper (modified to only return red or green)
 export const getTrxResultColor = (result: string): string => {
   const lastChar = result.slice(-1);
-  return lastChar === '0' || lastChar === '5' ? 'violet' : (parseInt(lastChar) % 2 === 0 ? 'red' : 'green');
+  // Changed to avoid returning violet, always return green instead
+  return lastChar === '0' || lastChar === '5' ? 'green' : (parseInt(lastChar) % 2 === 0 ? 'red' : 'green');
 };

@@ -529,10 +529,11 @@ const getColorCode = (color: string): string => {
       return '#FF4D4F';
     case 'green':
       return '#52C41A';
+    // If violet is ever received, we'll convert it to green for display
     case 'violet':
-      return '#722ED1';
+      return '#52C41A'; // Same as green
     default:
-      return '#666666';
+      return '#52C41A'; // Default to green instead of gray
   }
 };
 

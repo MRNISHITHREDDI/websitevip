@@ -327,7 +327,10 @@ function analyzeColorStreak(results: PeriodResult[]): {
   insight: string, 
   recommendedColor: string 
 } {
-  const recentColors = results.slice(0, 8).map(r => r.color);
+  // Replace any violet with green before analysis
+  const recentColors = results.slice(0, 8).map(r => {
+    return r.color.toLowerCase() === 'violet' ? 'green' : r.color;
+  });
   
   // Count consecutive occurrences of the same color
   let currentStreak = 1;
@@ -402,13 +405,14 @@ function getOppositeColor(color: string): string {
   const colorMap: Record<string, string> = {
     'red': 'green',
     'green': 'red',
-    'violet': 'green', // Just picking one for violet
+    // Always map violet to either red or green consistently (green in this case)
+    'violet': 'green', 
     'RED': 'GREEN',
     'GREEN': 'RED',
     'VIOLET': 'GREEN',
   };
   
-  return colorMap[color] || 'green';
+  return colorMap[color] || 'green'; // Default to green if color not found
 }
 
 // Analyze trends for increasing or decreasing values
@@ -486,9 +490,11 @@ function analyzeBlockchainTrends(results: PeriodResult[]): string {
 
 // Determine color based on number and game type
 function getColorForNumber(num: number, gameType: 'wingo' | 'trx'): string {
+  // For prediction purposes, we only return red or green as instructed
   if (gameType === 'wingo') {
+    // Modified map to only predict red or green (changed violet to green)
     const wingoColorMap: Record<number, string> = {
-      0: 'violet',
+      0: 'green', // Changed from violet to green
       1: 'green',
       2: 'red',
       3: 'green',
@@ -501,7 +507,7 @@ function getColorForNumber(num: number, gameType: 'wingo' | 'trx'): string {
     };
     return wingoColorMap[num] || 'green';
   } else {
-    // TRX prediction
+    // TRX prediction - already only returning red or green
     return num % 2 === 0 ? 'green' : 'red';
   }
 }
