@@ -232,7 +232,7 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
           <AnimatePresence mode="wait">
             {showPredictions && (
               <motion.div
-                key={`predictions-content-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`}
+                key="predictions-content-fixed"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -361,7 +361,7 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
           <AnimatePresence mode="wait">
             {showHistory && (
               <motion.div
-                key={`history-content-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`}
+                key="history-content-fixed"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
