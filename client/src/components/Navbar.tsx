@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import jalwaLogo from '../assets/jalwa-logo.png';
@@ -9,6 +9,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [joinProModalOpen, setJoinProModalOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +70,17 @@ const Navbar = () => {
                 className="text-[#00ECBE] hover:text-white transition duration-300"
                 onClick={(e) => {
                   e.preventDefault();
-                  document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                  // If we're on the home page, scroll to the prediction section
+                  if (window.location.pathname === '/') {
+                    document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    // If we're on another page, go to home page and then scroll
+                    setLocation('/');
+                    // Timeout needed to let the page load before scrolling
+                    setTimeout(() => {
+                      document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }
                 }}
               >
                 Prediction
@@ -108,7 +119,17 @@ const Navbar = () => {
                 className="block text-[#00ECBE] py-2"
                 onClick={(e) => {
                   e.preventDefault();
-                  document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                  // If we're on the home page, scroll to the prediction section
+                  if (window.location.pathname === '/') {
+                    document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    // If we're on another page, go to home page and then scroll
+                    setLocation('/');
+                    // Timeout needed to let the page load before scrolling
+                    setTimeout(() => {
+                      document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }
                   setMobileMenuOpen(false);
                 }}
               >
