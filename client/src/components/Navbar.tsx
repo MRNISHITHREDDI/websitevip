@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'wouter';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import jalwaLogo from '../assets/jalwa-logo.png';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,10 +17,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-[#00ECBE]/20 flex items-center justify-center mr-2">
-                <span className="text-[#00ECBE] text-xl font-bold">W</span>
-              </div>
-              <span className="text-[#00ECBE] font-poppins font-bold text-xl">WinGo</span>
+              <motion.img 
+                src={jalwaLogo} 
+                alt="Jalwa Games" 
+                className="h-9"
+                whileHover={{ scale: 1.05 }} 
+                transition={{ duration: 0.2 }}
+              />
             </Link>
           </div>
           
