@@ -144,18 +144,20 @@ const fetchWingoData = async (timeOption: string) => {
     const currentPeriod = periodData.data;
     
     // Calculate time remaining in seconds based on endTime and current time
-    const endTime = new Date(currentPeriod.endTime).getTime();
+    // Using India time zone as shown in the API response
+    const endTime = new Date(currentPeriod.endTime).getTime();  
     const currentTime = new Date(periodData.serviceNowTime).getTime();
     const timeRemaining = Math.max(0, Math.floor((endTime - currentTime) / 1000));
     
+    // Use exact period number and time values from the API
     const currentPrediction: PredictionData = {
       id: 'next',
-      periodNumber: currentPeriod.issueNumber,
+      periodNumber: currentPeriod.issueNumber,  // This contains the exact period number from API
       prediction: predictionNumber,
       color: wingoColorMap[predictionNumber],
       bigOrSmall: getBigOrSmall(predictionNumber),
       oddOrEven: getOddOrEven(predictionNumber),
-      timestamp: periodData.serviceNowTime || new Date().toISOString(),
+      timestamp: periodData.serviceNowTime, // Use the exact service time from API
       timeRemaining: timeRemaining
     };
     
@@ -258,15 +260,22 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     }
   };
   
-  // Auto-refresh data every 30 seconds
+  // Auto-refresh data based on timeOption period
   useEffect(() => {
     // Fetch on component mount
     fetchData();
     
+    // Set up auto-refresh interval - match the game time period exactly
+    // For 30 SEC, refresh every 30 seconds
+    // This ensures we stay in sync with the actual game period timing
+    const refreshInterval = timeOption === '30 SEC' ? 30000 : 
+                         timeOption === '1 MIN' ? 60000 :
+                         timeOption === '3 MIN' ? 180000 : 300000;
+    
     // Set up auto-refresh interval
     const interval = setInterval(() => {
       fetchData();
-    }, 30000); // 30 seconds
+    }, refreshInterval);
     
     // Clean up interval on component unmount
     return () => clearInterval(interval);

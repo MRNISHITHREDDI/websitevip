@@ -147,6 +147,7 @@ const fetchTrxData = async (timeOption: string) => {
     const currentPeriod = periodData.data;
     
     // Calculate time remaining in seconds based on endTime and current time
+    // Using India time zone as shown in the API response
     const endTime = new Date(currentPeriod.endTime).getTime();
     const currentTime = new Date(periodData.serviceNowTime).getTime();
     const timeRemaining = Math.max(0, Math.floor((endTime - currentTime) / 1000));
@@ -155,14 +156,15 @@ const fetchTrxData = async (timeOption: string) => {
     // In real implementation, this would be an actual blockchain hash
     const mockHash = generateMockHash(predictionNumber);
     
+    // Use exact period number and time values from the API
     const currentPrediction: PredictionData = {
       id: 'next',
-      periodNumber: currentPeriod.issueNumber,
+      periodNumber: currentPeriod.issueNumber, // This contains the exact period number from API
       prediction: predictionNumber,
       color: getTrxResultColor(predictionHash),
       bigOrSmall: getBigOrSmall(predictionNumber),
       oddOrEven: getOddOrEven(predictionNumber),
-      timestamp: periodData.serviceNowTime || new Date().toISOString(),
+      timestamp: periodData.serviceNowTime, // Use the exact service time from API
       timeRemaining: timeRemaining
     };
     
@@ -328,8 +330,22 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     }
   };
   
+  // Auto-refresh data based on timeOption period
   useEffect(() => {
+    // Fetch on component mount
     fetchData();
+    
+    // Set up auto-refresh interval - match the game time period exactly
+    // Since we're only showing 1 MIN for TRX, we'll use 60 seconds
+    const refreshInterval = 60000; // 1 minute
+    
+    // Set up auto-refresh interval
+    const interval = setInterval(() => {
+      fetchData();
+    }, refreshInterval);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
   }, [timeOption]);
   
   // Generate shortened hash for display
