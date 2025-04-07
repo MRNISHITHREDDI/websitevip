@@ -53,19 +53,19 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                <div className="rounded-xl shadow-lg border-2 border-[#00ECBE]/30 overflow-hidden"
+                  style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.2)" }}>
                   {/* WinGo Image */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center p-2">
+                  <div className="bg-gradient-to-br from-[#050d42] to-[#020621] p-0">
                     <motion.div
-                      className="w-full h-full flex items-center justify-center"
-                      whileHover={{ scale: 1.03 }}
+                      className="w-full h-full"
+                      whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.3 }}
                     >
                       <img 
                         src={wingoImage} 
                         alt="Win Go Game" 
-                        className="w-full h-auto rounded-lg"
-                        style={{ maxHeight: "180px", objectFit: "contain" }}
+                        className="w-full h-auto"
                       />
                     </motion.div>
                   </div>
@@ -113,19 +113,19 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                <div className="rounded-xl shadow-lg border-2 border-[#00ECBE]/30 overflow-hidden"
+                  style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.2)" }}>
                   {/* TRX Win Image */}
-                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center p-2">
+                  <div className="bg-gradient-to-br from-[#050d42] to-[#020621] p-0">
                     <motion.div
-                      className="w-full h-full flex items-center justify-center"
-                      whileHover={{ scale: 1.03 }}
+                      className="w-full h-full"
+                      whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.3 }}
                     >
                       <img 
                         src={trxWinImage} 
                         alt="TRX Win Game" 
-                        className="w-full h-auto rounded-lg"
-                        style={{ maxHeight: "180px", objectFit: "contain" }}
+                        className="w-full h-auto"
                       />
                     </motion.div>
                   </div>
