@@ -17,7 +17,7 @@ const getWingoTypeId = (timeOption: string): number => {
     case "1 MIN":
       return 1; // Using 1 as requested in API parameters
     case "3 MIN":
-      return 3;
+      return 2; // Using 2 as specifically requested for 3 MIN
     case "5 MIN":
       return 5;
     default:
@@ -43,6 +43,18 @@ const getApiRequestParams = (timeOption: string, endpoint: 'period' | 'results')
       return {
         signature: "860962E1823E04166C45E40DA5DB0FC6", 
         random: "f08ffe4140a14d8abeffae15c0793176"
+      };
+    }
+  } else if (timeOption === '3 MIN') {
+    if (endpoint === 'period') {
+      return {
+        signature: "DB222239552EE11582747307465AAF2E",
+        random: "de8dbaf4d47d4e0794f0bbe99f6bcc3e"
+      };
+    } else {
+      return {
+        signature: "99C01770C4CB69BA795DBFC77873C6AA",
+        random: "e1866a175bce4a4cbd7645878aa66454"
       };
     }
   } else {
