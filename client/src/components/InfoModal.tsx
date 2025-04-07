@@ -1,7 +1,6 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -9,16 +8,32 @@ interface InfoModalProps {
 }
 
 const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
+  if (!isOpen) return null;
+  
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-3xl bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE]/20 max-h-[90vh] block">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white mb-4 flex items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg border border-[#00ECBE]/20 w-full max-w-3xl max-h-[90vh] flex flex-col"
+      >
+        {/* Header */}
+        <div className="p-4 sm:p-6 flex justify-between items-center border-b border-[#00ECBE]/10">
+          <h2 className="text-2xl font-bold text-white flex items-center">
             <span className="text-[#00ECBE] mr-2">VIP</span> Prediction Information
-          </DialogTitle>
-        </DialogHeader>
+          </h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
         
-        <ScrollArea className="max-h-[60vh] pr-4">
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="text-gray-300 space-y-6">
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
@@ -68,9 +83,10 @@ const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
               </div>
             </motion.div>
           </div>
-        </ScrollArea>
+        </div>
         
-        <div className="mt-6 flex justify-end">
+        {/* Footer */}
+        <div className="p-4 sm:p-6 border-t border-[#00ECBE]/10 flex justify-end">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -80,8 +96,8 @@ const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
             Got it
           </motion.button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </motion.div>
+    </div>
   );
 };
 
