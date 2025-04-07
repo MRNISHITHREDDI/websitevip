@@ -5,7 +5,79 @@ import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, wingoColorMap, getBigOrSmall, getOddOrEven } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock } from 'lucide-react';
 
-// Mock data generator for demo purposes
+// Real API endpoints for Wingo predictions
+const WINGO_30SEC_API = "https://wingo-api.onrender.com/api/wingo-30sec";
+const WINGO_1MIN_API = "https://wingo-api.onrender.com/api/wingo-1min";
+const WINGO_3MIN_API = "https://wingo-api.onrender.com/api/wingo-3min";
+const WINGO_5MIN_API = "https://wingo-api.onrender.com/api/wingo-5min";
+
+// Get the correct API URL based on time option
+const getWingoApiUrl = (timeOption: string): string => {
+  switch (timeOption) {
+    case "30 SEC":
+      return WINGO_30SEC_API;
+    case "1 MIN":
+      return WINGO_1MIN_API;
+    case "3 MIN":
+      return WINGO_3MIN_API;
+    case "5 MIN":
+      return WINGO_5MIN_API;
+    default:
+      return WINGO_30SEC_API;
+  }
+};
+
+// Fetch real data from API
+const fetchWingoData = async (timeOption: string) => {
+  try {
+    const apiUrl = getWingoApiUrl(timeOption);
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Process and format the API response
+    const results: PeriodResult[] = (data.results || []).map((result: any, index: number) => {
+      const number = parseInt(result.result);
+      
+      return {
+        id: `r-${index}`,
+        periodNumber: result.periodNumber,
+        result: number,
+        color: wingoColorMap[number],
+        bigOrSmall: getBigOrSmall(number),
+        oddOrEven: getOddOrEven(number),
+        timestamp: result.timestamp || new Date().toISOString(),
+      };
+    });
+    
+    // Current prediction
+    const predictionData = data.prediction || {};
+    const predictionNumber = parseInt(predictionData.prediction || "0");
+    
+    const currentPrediction: PredictionData = {
+      id: 'next',
+      periodNumber: predictionData.periodNumber || "Unknown",
+      prediction: predictionNumber,
+      color: wingoColorMap[predictionNumber],
+      bigOrSmall: getBigOrSmall(predictionNumber),
+      oddOrEven: getOddOrEven(predictionNumber),
+      timestamp: predictionData.timestamp || new Date().toISOString(),
+      timeRemaining: parseInt(predictionData.timeRemaining || "30") // seconds
+    };
+    
+    return { currentPrediction, results };
+  } catch (error) {
+    console.error("Error fetching Wingo data:", error);
+    // Fallback to mock data if API fails
+    return generateMockWingoData(timeOption);
+  }
+};
+
+// Mock data generator for demo purposes (used as fallback)
 const generateMockWingoData = (timeOption: string) => {
   // Generate a random period number
   const now = new Date();
@@ -66,15 +138,13 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     setIsLoading(true);
     
     try {
-      // In a real app, fetch from API
-      // Simulate API call with timeout
-      setTimeout(() => {
-        const { currentPrediction, results } = generateMockWingoData(timeOption);
-        setCurrentPrediction(currentPrediction);
-        setPeriodResults(results);
-        setIsLoading(false);
-      }, 1000);
+      // Fetch real data from API
+      const { currentPrediction, results } = await fetchWingoData(timeOption);
+      setCurrentPrediction(currentPrediction);
+      setPeriodResults(results);
+      setIsLoading(false);
     } catch (error) {
+      console.error("Error fetching data:", error);
       toast({
         title: "Error",
         description: "Failed to fetch prediction data. Please try again.",
@@ -84,8 +154,18 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     }
   };
   
+  // Auto-refresh data every 30 seconds
   useEffect(() => {
+    // Fetch on component mount
     fetchData();
+    
+    // Set up auto-refresh interval
+    const interval = setInterval(() => {
+      fetchData();
+    }, 30000); // 30 seconds
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
   }, [timeOption]);
   
   return (
