@@ -241,19 +241,18 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                   </div>
                 ) : periodResults.length > 0 ? (
                   <div className="p-4">
-                    <div className="grid grid-cols-5 gap-2 mb-3 text-sm text-[#00ECBE]/70 py-2 border-b border-[#00ECBE]/10">
+                    <div className="grid grid-cols-4 gap-2 mb-3 text-sm text-[#00ECBE]/70 py-2 border-b border-[#00ECBE]/10">
                       <div>Period</div>
                       <div>Result</div>
                       <div>Color</div>
                       <div>Big/Small</div>
-                      <div>Odd/Even</div>
                     </div>
                     
                     <div className="space-y-0.5 max-h-[350px] overflow-auto pr-1">
                       {periodResults.map((period, index) => (
                         <motion.div 
                           key={period.id} 
-                          className="grid grid-cols-5 gap-2 py-3 rounded-lg hover:bg-[#001845]/50 text-sm"
+                          className="grid grid-cols-4 gap-2 py-3 rounded-lg hover:bg-[#001845]/50 text-sm"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05, duration: 0.2 }}
@@ -275,9 +274,6 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                           </div>
                           <div className={`font-medium ${period.bigOrSmall === 'BIG' ? 'text-red-400' : 'text-green-400'}`}>
                             {period.bigOrSmall}
-                          </div>
-                          <div className={`font-medium ${period.oddOrEven === 'ODD' ? 'text-red-400' : 'text-green-400'}`}>
-                            {period.oddOrEven}
                           </div>
                         </motion.div>
                       ))}
