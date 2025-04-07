@@ -69,8 +69,13 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
-    // Open the license modal
-    setShowLicenseModal(true);
+    // Close this modal first for smoother transition
+    onClose();
+    
+    // Open the license modal after a short delay
+    setTimeout(() => {
+      setShowLicenseModal(true);
+    }, 50);
   };
   
   const handleLicenseModalClose = () => {
@@ -153,7 +158,7 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       
       {/* License verification modal */}
       <LicenseModal 
-        isOpen={showLicenseModal && isOpen} 
+        isOpen={showLicenseModal} 
         onClose={handleLicenseModalClose}
         gameType={gameType}
         timeOption={selectedOption}
