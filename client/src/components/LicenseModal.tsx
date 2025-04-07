@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { Copy, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface LicenseModalProps {
@@ -8,6 +8,47 @@ interface LicenseModalProps {
   gameType: 'wingo' | 'trx';
   timeOption: string;
 }
+
+// Optimized animations for better performance
+const overlayAnimation = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.15 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } }
+};
+
+const modalAnimation = {
+  initial: { scale: 0.96, y: 10, opacity: 0 },
+  animate: { 
+    scale: 1, 
+    y: 0, 
+    opacity: 1, 
+    transition: { 
+      type: "spring", 
+      damping: 20, 
+      stiffness: 300, 
+      duration: 0.2 
+    } 
+  },
+  exit: { 
+    scale: 0.96, 
+    y: 10, 
+    opacity: 0,
+    transition: { duration: 0.15 } 
+  }
+};
+
+const registerInfoAnimation = {
+  initial: { opacity: 0, y: 10, height: 0 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    height: 'auto',
+    transition: { 
+      duration: 0.2,
+      staggerChildren: 0.05 
+    }
+  }
+};
 
 const LicenseModal: React.FC<LicenseModalProps> = ({ 
   isOpen, 
@@ -18,6 +59,7 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
   const [licenseKey, setLicenseKey] = useState('');
   const [error, setError] = useState('');
   const [showRegisterInfo, setShowRegisterInfo] = useState(false);
+  const [copiedUID, setCopiedUID] = useState(false);
   
   // Generate a random UID for demo purposes
   const uid = `USER${Math.floor(100000 + Math.random() * 900000)}`;
@@ -49,28 +91,29 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
     }
   };
   
+  const copyUID = () => {
+    navigator.clipboard.writeText(uid);
+    setCopiedUID(true);
+    setTimeout(() => setCopiedUID(false), 2000);
+  };
+  
   const gameTitle = gameType === 'wingo' ? 'Win Go' : 'TRX Hash';
   
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4"
+          {...overlayAnimation}
           onClick={onClose}
         >
           <motion.div
             className="bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-2xl max-w-md w-full border border-[#00ECBE]/30 shadow-[0_0_25px_rgba(0,236,190,0.3)]"
-            initial={{ scale: 0.9, y: 20, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.9, y: 20, opacity: 0 }}
-            transition={{ type: "spring", bounce: 0.3 }}
+            {...modalAnimation}
             onClick={handleModalClick}
           >
-            <div className="flex justify-between items-center p-5 border-b border-[#00ECBE]/20">
-              <h3 className="text-[#00ECBE] text-xl font-bold">{gameTitle} License Verification</h3>
+            <div className="flex justify-between items-center p-4 border-b border-[#00ECBE]/20">
+              <h3 className="text-[#00ECBE] text-xl font-bold tracking-wide">{gameTitle} License Verification</h3>
               <button 
                 onClick={onClose} 
                 className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
@@ -79,10 +122,10 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
               </button>
             </div>
             
-            <div className="p-5">
-              <div className="mb-5">
+            <div className="p-4">
+              <div className="mb-4">
                 <p className="text-white mb-2">You selected:</p>
-                <div className="bg-[#05012B]/70 border border-[#00ECBE]/30 py-3 px-4 rounded-xl text-[#00ECBE] text-center font-medium">
+                <div className="bg-[#05012B]/70 border border-[#00ECBE]/30 py-2.5 px-4 rounded-xl text-[#00ECBE] text-center font-medium">
                   {timeOption}
                 </div>
               </div>
@@ -93,16 +136,18 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                   <input
                     type="text"
                     id="license"
-                    className="w-full bg-[#05012B]/70 border border-[#00ECBE]/30 py-3 px-4 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#00ECBE]/50"
+                    className="w-full bg-[#05012B]/70 border border-[#00ECBE]/30 py-2.5 px-4 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#00ECBE]/50 transition-all duration-200"
                     placeholder="Enter your license key"
                     value={licenseKey}
                     onChange={(e) => setLicenseKey(e.target.value)}
+                    autoComplete="off"
                   />
                   {error && (
                     <motion.p 
                       className="text-red-400 mt-2 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
                     >
                       {error}
                     </motion.p>
@@ -111,12 +156,18 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                 
                 <motion.button
                   type="submit"
-                  className="w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all"
+                  className="w-full bg-[#00ECBE] text-[#05012B] font-semibold py-2.5 rounded-xl transition-all"
                   whileHover={{ 
-                    boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
                     y: -2 
                   }}
                   whileTap={{ scale: 0.98 }}
+                  transition={{ 
+                    type: "spring", 
+                    damping: 12, 
+                    stiffness: 500, 
+                    duration: 0.1 
+                  }}
                 >
                   Verify License
                 </motion.button>
@@ -124,24 +175,65 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
               
               {showRegisterInfo && (
                 <motion.div
-                  className="mt-6 bg-[#05012B]/70 border border-[#00ECBE]/30 rounded-xl p-4"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{ duration: 0.3 }}
+                  className="mt-5 bg-[#05012B]/70 border border-[#00ECBE]/30 rounded-xl p-4 overflow-hidden"
+                  {...registerInfoAnimation}
                 >
-                  <h4 className="text-[#00ECBE] font-medium mb-2">Register for VIP Access</h4>
-                  <p className="text-white text-sm mb-3">
+                  <motion.h4 
+                    className="text-[#00ECBE] font-medium mb-2"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    Register for VIP Access
+                  </motion.h4>
+                  <motion.p 
+                    className="text-white text-sm mb-3"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
                     To access exclusive VIP predictions, please register under us and contact our team with your UID.
-                  </p>
-                  <div className="bg-[#001c54] p-3 rounded-lg mb-3">
+                  </motion.p>
+                  <motion.div 
+                    className="bg-[#001c54] p-3 rounded-lg mb-3 relative"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Your UID:</span>
-                      <span className="text-[#00ECBE] font-mono font-bold">{uid}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#00ECBE] font-mono font-bold">{uid}</span>
+                        <motion.button
+                          onClick={copyUID}
+                          className="text-gray-400 hover:text-white p-1 rounded hover:bg-[#00ECBE]/10"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          title="Copy UID"
+                        >
+                          <Copy size={16} />
+                        </motion.button>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-white text-sm">
+                    {copiedUID && (
+                      <motion.div 
+                        className="absolute -top-2 right-0 bg-[#00ECBE] text-[#05012B] text-xs py-1 px-2 rounded-md"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        Copied!
+                      </motion.div>
+                    )}
+                  </motion.div>
+                  <motion.p 
+                    className="text-white text-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
                     Contact our team on <span className="text-[#00ECBE]">support@jalwa.io</span> with your UID to get a free license.
-                  </p>
+                  </motion.p>
                 </motion.div>
               )}
             </div>

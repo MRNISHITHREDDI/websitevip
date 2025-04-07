@@ -10,6 +10,34 @@ interface PredictionModalProps {
   gameType: 'wingo' | 'trx';
 }
 
+// Optimized animations for better performance
+const overlayAnimation = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.15 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } }
+};
+
+const modalAnimation = {
+  initial: { scale: 0.96, y: 10, opacity: 0 },
+  animate: { 
+    scale: 1, 
+    y: 0, 
+    opacity: 1, 
+    transition: { 
+      type: "spring", 
+      damping: 20, 
+      stiffness: 300, 
+      duration: 0.2 
+    } 
+  },
+  exit: { 
+    scale: 0.96, 
+    y: 10, 
+    opacity: 0,
+    transition: { duration: 0.15 } 
+  }
+};
+
 const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, title, gameType }) => {
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -41,36 +69,30 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
-    // Close the current modal and open the license modal
+    // Open the license modal
     setShowLicenseModal(true);
   };
   
   const handleLicenseModalClose = () => {
     setShowLicenseModal(false);
-    // Don't close the prediction modal yet
   };
 
   return (
     <>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4"
+            {...overlayAnimation}
             onClick={onClose}
           >
             <motion.div
               className="bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-2xl max-w-md w-full border border-[#00ECBE]/30 shadow-[0_0_25px_rgba(0,236,190,0.3)]"
-              initial={{ scale: 0.9, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 20, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.3 }}
+              {...modalAnimation}
               onClick={handleModalClick}
             >
               <div className="flex justify-between items-center p-5 border-b border-[#00ECBE]/20">
-                <h3 className="text-[#00ECBE] text-xl font-bold">{title}</h3>
+                <h3 className="text-[#00ECBE] text-xl font-bold tracking-wide">{title}</h3>
                 <button 
                   onClick={onClose} 
                   className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
@@ -80,19 +102,25 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
               </div>
               
               <div className="p-5">
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {displayOptions.map((option) => (
                     <motion.button
                       key={option.id}
                       className={`w-full ${selectedOption === option.label 
-                        ? 'bg-[#00ECBE]/20 border-[#00ECBE]/70' 
-                        : 'bg-[#05012B]/70 hover:bg-[#00ECBE]/10 border-[#00ECBE]/30'
-                      } border py-4 px-6 rounded-xl text-white flex justify-center items-center transition-all`}
+                        ? 'bg-[#00ECBE]/20 border-[#00ECBE] text-white' 
+                        : 'bg-[#05012B]/70 hover:bg-[#00ECBE]/10 border-[#00ECBE]/30 text-gray-200'
+                      } border py-3 px-5 rounded-xl flex justify-center items-center transition-all duration-200`}
                       whileHover={{ 
-                        scale: 1.03,
-                        boxShadow: "0 0 10px 0 rgba(0, 236, 190, 0.3)",
+                        scale: 1.02,
+                        boxShadow: "0 0 8px 0 rgba(0, 236, 190, 0.3)",
                       }}
                       whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        type: "spring", 
+                        damping: 15, 
+                        stiffness: 300, 
+                        duration: 0.1 
+                      }}
                       onClick={() => handleOptionClick(option.label)}
                     >
                       {option.label}
@@ -101,12 +129,18 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
                 </div>
                 
                 <motion.button
-                  className="mt-6 w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all"
+                  className="mt-5 w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all"
                   whileHover={{ 
-                    boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
                     y: -2 
                   }}
                   whileTap={{ scale: 0.98 }}
+                  transition={{ 
+                    type: "spring", 
+                    damping: 12, 
+                    stiffness: 500, 
+                    duration: 0.1 
+                  }}
                   onClick={handleGetPrediction}
                 >
                   Get VIP Prediction
