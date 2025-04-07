@@ -92,3 +92,13 @@
   transform: translateY(-8px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
+
+/* Game image with perfect border-radius */
+.game-image {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  display: block;
+  box-shadow: 0 0 20px rgba(0, 236, 190, 0.3);
+  border: 2px solid rgba(0, 236, 190, 0.3);
+}

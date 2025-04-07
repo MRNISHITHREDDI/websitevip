@@ -56,11 +56,7 @@ const FeaturesSection = () => {
                 <img 
                   src={wingoImage} 
                   alt="Win Go Game" 
-                  className="w-full rounded-xl" 
-                  style={{ 
-                    border: "2px solid rgba(0, 236, 190, 0.3)",
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)"
-                  }}
+                  className="game-image"
                 />
               </div>
               <div className="w-full md:w-1/2">
