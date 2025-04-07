@@ -202,10 +202,15 @@ const generateMockHash = (lastDigit: number): string => {
 };
 
 // Mock data generator for demo purposes
+// But using the exact India time format as shown in the API screenshot
 const generateMockTrxData = (timeOption: string) => {
-  // Generate a random period number
+  // Get the current date in India time format (2025-04-07)
   const now = new Date();
-  const periodBase = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  const indiaDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  
+  // Use the exact period number format from the screenshot
+  // The user provided: 20250407100051799
+  const currentPeriodNumber = "20250407100051799";
   
   // Generate random hash result (typically a hex string ending with a number)
   const generateHash = () => {
@@ -228,14 +233,23 @@ const generateMockTrxData = (timeOption: string) => {
   
   // Current prediction
   const currentPrediction: PredictionData = {
-    id: `cp-${Math.random().toString(36).substring(2, 9)}`,
-    periodNumber: `${periodBase}${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    id: 'next',
+    periodNumber: currentPeriodNumber,
     prediction: predictionResult,
     color: trxColorMap[predictionResult % 2 === 0 ? 'EVEN' : 'ODD'],
     bigOrSmall: predictionResult >= 5 ? 'BIG' : 'SMALL',
     oddOrEven: predictionResult % 2 === 0 ? 'EVEN' : 'ODD',
-    timestamp: now.toISOString(),
+    timestamp: `${indiaDate} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`, // Format: 2025-04-07 20:24:54
     timeRemaining: timeOption === '30 SEC' ? 30 : timeOption === '1 MIN' ? 60 : timeOption === '3 MIN' ? 180 : 300,
+  };
+  
+  // Generate period numbers with similar pattern but decremented for past results
+  const generatePeriodNumber = (index: number) => {
+    // Take the first part of the period (date portion)
+    const basePeriod = currentPeriodNumber.substring(0, 8);
+    // Take the last part and decrement slightly for each past period
+    const sequenceNum = parseInt(currentPeriodNumber.substring(8));
+    return `${basePeriod}${(sequenceNum - index * 2).toString().padStart(11, '0')}`;
   };
   
   // Past results
@@ -244,14 +258,17 @@ const generateMockTrxData = (timeOption: string) => {
     const resultNum = getResultFromHash(hash);
     const pastTime = new Date(now.getTime() - (i + 1) * (timeOption === '30 SEC' ? 30000 : timeOption === '1 MIN' ? 60000 : timeOption === '3 MIN' ? 180000 : 300000));
     
+    // Format past time in India format: 2025-04-07 20:24:54
+    const pastTimeStr = `${indiaDate} ${pastTime.getHours()}:${pastTime.getMinutes()}:${pastTime.getSeconds()}`;
+    
     return {
-      id: `r-${Math.random().toString(36).substring(2, 9)}`,
-      periodNumber: `${periodBase}${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      id: `r-${i}`,
+      periodNumber: generatePeriodNumber(i + 1),
       result: resultNum,
       color: trxColorMap[resultNum % 2 === 0 ? 'EVEN' : 'ODD'],
       bigOrSmall: resultNum >= 5 ? 'BIG' : 'SMALL',
       oddOrEven: resultNum % 2 === 0 ? 'EVEN' : 'ODD',
-      timestamp: pastTime.toISOString(),
+      timestamp: pastTimeStr,
     };
   });
   

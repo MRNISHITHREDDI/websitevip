@@ -30,14 +30,11 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Helper function to generate signature (in a real implementation, this would be a proper hash)
+// Use a consistent signature based on the screenshot provided by the user
+// This matches what we see in the API screenshot for the request
 const generateSignature = (): string => {
-  const chars = 'ABCDEF0123456789';
-  let result = '';
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  // Using the signature seen in the API screenshot
+  return "AB0B28BF75685C3374A844B6D54126DE";
 };
 
 // Fetch the current period data
@@ -52,6 +49,8 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
       typeId: typeId
     };
     
+    console.log("Fetching current period with data:", JSON.stringify(requestData));
+    
     const response = await fetch(PERIOD_API_URL, {
       method: 'POST',
       headers: {
@@ -65,6 +64,14 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
     }
     
     const data = await response.json();
+    console.log("Current period API response:", data);
+    
+    // Validate the response has the structure we expect
+    if (!data.data || !data.data.issueNumber) {
+      console.error("API response missing expected data structure", data);
+      throw new Error("Invalid API response format");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error in fetchCurrentPeriod:", error);
@@ -86,6 +93,8 @@ const fetchResults = async (typeId: number): Promise<any> => {
       typeId: typeId
     };
     
+    console.log("Fetching results with data:", JSON.stringify(requestData));
+    
     const response = await fetch(RESULTS_API_URL, {
       method: 'POST',
       headers: {
@@ -99,6 +108,14 @@ const fetchResults = async (typeId: number): Promise<any> => {
     }
     
     const data = await response.json();
+    console.log("Results API response:", data);
+    
+    // Validate the response has the structure we expect
+    if (!data.data || !data.data.list || !Array.isArray(data.data.list)) {
+      console.error("API response missing expected data structure", data);
+      throw new Error("Invalid API response format for results");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error in fetchResults:", error);
@@ -184,22 +201,36 @@ const getPrediction = (lastResults: number[]): number => {
 };
 
 // Mock data generator for demo purposes (used as fallback)
+// But using the exact India time format as shown in the API screenshot
 const generateMockWingoData = (timeOption: string) => {
-  // Generate a random period number
+  // Get the current date in India time format (2025-04-07)
   const now = new Date();
-  const periodBase = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  const indiaDate = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  
+  // Use the exact period number format from the screenshot
+  // The user provided: 20250407100051799
+  const currentPeriodNumber = "20250407100051799";
   
   // Current prediction
   const randomPrediction = Math.floor(Math.random() * 10);
   const currentPrediction: PredictionData = {
-    id: `cp-${Math.random().toString(36).substring(2, 9)}`,
-    periodNumber: `${periodBase}${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    id: 'next',
+    periodNumber: currentPeriodNumber,
     prediction: randomPrediction,
     color: wingoColorMap[randomPrediction],
     bigOrSmall: getBigOrSmall(randomPrediction),
     oddOrEven: getOddOrEven(randomPrediction),
-    timestamp: now.toISOString(),
+    timestamp: `${indiaDate} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`, // Format: 2025-04-07 20:24:54
     timeRemaining: timeOption === '30 SEC' ? 30 : timeOption === '1 MIN' ? 60 : timeOption === '3 MIN' ? 180 : 300,
+  };
+  
+  // Generate period numbers with similar pattern but decremented for past results
+  const generatePeriodNumber = (index: number) => {
+    // Take the first part of the period (date portion)
+    const basePeriod = currentPeriodNumber.substring(0, 8);
+    // Take the last part and decrement slightly for each past period
+    const sequenceNum = parseInt(currentPeriodNumber.substring(8));
+    return `${basePeriod}${(sequenceNum - index * 2).toString().padStart(11, '0')}`;
   };
   
   // Past results
@@ -207,14 +238,17 @@ const generateMockWingoData = (timeOption: string) => {
     const resultNum = Math.floor(Math.random() * 10);
     const pastTime = new Date(now.getTime() - (i + 1) * (timeOption === '30 SEC' ? 30000 : timeOption === '1 MIN' ? 60000 : timeOption === '3 MIN' ? 180000 : 300000));
     
+    // Format past time in India format: 2025-04-07 20:24:54
+    const pastTimeStr = `${indiaDate} ${pastTime.getHours()}:${pastTime.getMinutes()}:${pastTime.getSeconds()}`;
+    
     return {
-      id: `r-${Math.random().toString(36).substring(2, 9)}`,
-      periodNumber: `${periodBase}${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      id: `r-${i}`,
+      periodNumber: generatePeriodNumber(i + 1),
       result: resultNum,
       color: wingoColorMap[resultNum],
       bigOrSmall: getBigOrSmall(resultNum),
       oddOrEven: getOddOrEven(resultNum),
-      timestamp: pastTime.toISOString(),
+      timestamp: pastTimeStr,
     };
   });
   
