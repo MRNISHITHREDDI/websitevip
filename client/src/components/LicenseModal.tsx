@@ -67,7 +67,7 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
     e.stopPropagation();
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!licenseKey.trim()) {
@@ -75,15 +75,34 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
       return;
     }
     
-    // For demo purposes, show registration info if license isn't "DEMO123"
-    if (licenseKey !== 'DEMO123') {
-      setError('Invalid or expired license key');
-    } else {
-      // License accepted
-      setError('');
-      // Here you would typically redirect to prediction page or show prediction
-      alert(`Access granted to ${timeOption} predictions!`);
-      onClose();
+    try {
+      // Call the license verification API
+      const response = await fetch('/api/verify-license', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          licenseKey,
+          gameType,
+          timeOption
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // License is valid
+        setError('');
+        alert(`Access granted to ${timeOption} predictions! Valid until ${new Date(result.data.expiresAt).toLocaleDateString()}`);
+        onClose();
+      } else {
+        // License is invalid
+        setError(result.message || 'Invalid or expired license key');
+      }
+    } catch (error) {
+      console.error('License verification error:', error);
+      setError('An error occurred during verification. Please try again.');
     }
   };
   
