@@ -38,7 +38,7 @@ const HeroSection = () => {
     };
   }, []);
   return (
-    <section className="relative py-16 lg:py-24 overflow-hidden">
+    <section className="relative pt-24 lg:pt-28 pb-16 lg:pb-24 overflow-hidden">
       {/* Video background with color overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video 

@@ -25,7 +25,7 @@ const Home = () => {
         const targetElement = document.querySelector(targetId as string);
         if (targetElement) {
           window.scrollTo({
-            top: targetElement.getBoundingClientRect().top + window.scrollY - 80,
+            top: targetElement.getBoundingClientRect().top + window.scrollY - 100, // Increased offset for fixed navbar
             behavior: 'smooth'
           });
         }
