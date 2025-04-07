@@ -241,38 +241,44 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                   </div>
                 ) : periodResults.length > 0 ? (
                   <div className="p-4">
-                    <div className="grid grid-cols-4 gap-2 mb-3 text-sm text-[#00ECBE]/70 py-2 border-b border-[#00ECBE]/10">
-                      <div>Period</div>
-                      <div>Result</div>
-                      <div>Color</div>
-                      <div>Big/Small</div>
+                    <div className="grid grid-cols-4 gap-x-4 sm:gap-x-6 mb-3 text-sm text-[#00ECBE]/70 py-2 border-b border-[#00ECBE]/10">
+                      <div className="text-left">
+                        <span className="hidden sm:inline">Period</span>
+                        <span className="sm:hidden">Period#</span>
+                      </div>
+                      <div className="text-center sm:text-left">Result</div>
+                      <div className="text-center sm:text-left">Color</div>
+                      <div className="text-center sm:text-left">Big/Small</div>
                     </div>
                     
-                    <div className="space-y-0.5 max-h-[350px] overflow-auto pr-1">
+                    <div className="space-y-1 max-h-[350px] overflow-auto pr-1">
                       {periodResults.map((period, index) => (
                         <motion.div 
                           key={period.id} 
-                          className="grid grid-cols-4 gap-2 py-3 rounded-lg hover:bg-[#001845]/50 text-sm"
+                          className="grid grid-cols-4 gap-x-4 sm:gap-x-6 py-3 px-1 rounded-lg hover:bg-[#001845]/50 text-sm"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05, duration: 0.2 }}
                         >
-                          <div className="font-medium">{period.periodNumber}</div>
-                          <div className="font-bold flex items-center">
+                          <div className="font-medium truncate text-left">
+                            <span className="hidden sm:inline">{period.periodNumber}</span>
+                            <span className="sm:hidden">#{period.periodNumber.slice(-3)}</span>
+                          </div>
+                          <div className="font-bold flex items-center justify-center sm:justify-start">
                             <span 
-                              className="inline-flex items-center justify-center w-7 h-7 rounded-full mr-1 text-white"
+                              className="inline-flex items-center justify-center w-7 h-7 rounded-full text-white"
                               style={{ backgroundColor: getColorCode(period.color) }}
                             >
                               {period.result}
                             </span>
                           </div>
-                          <div>
+                          <div className="flex justify-center sm:justify-start">
                             <span 
                               className="inline-block w-7 h-7 rounded-full border border-white/10"
                               style={{ backgroundColor: getColorCode(period.color) }}
                             ></span>
                           </div>
-                          <div className={`font-medium ${period.bigOrSmall === 'BIG' ? 'text-red-400' : 'text-green-400'}`}>
+                          <div className={`font-medium text-center sm:text-left ${period.bigOrSmall === 'BIG' ? 'text-red-400' : 'text-green-400'}`}>
                             {period.bigOrSmall}
                           </div>
                         </motion.div>
