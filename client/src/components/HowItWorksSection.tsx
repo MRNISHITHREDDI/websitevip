@@ -103,7 +103,7 @@ const HowItWorksSection = () => {
           >
             <p className="text-[#00ECBE] font-medium flex items-center justify-center gap-2">
               <Info size={20} />
-              All results are verified by TRON blockchain technology for transparency and fairness.
+              All results are verified by technology for transparency and fairness.
             </p>
           </motion.div>
         </motion.div>
