@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import wingoImage from "../assets/wingo-image.png";
 import trxWinImage from "../assets/trx-win-image.png";
+import PredictionModal from './PredictionModal';
 
 const cardVariants = {
   initial: { y: 50, opacity: 0 },
@@ -22,6 +24,9 @@ const cardVariants = {
 };
 
 const FeaturesSection = () => {
+  const [isWinGoModalOpen, setIsWinGoModalOpen] = useState(false);
+  const [isTRXModalOpen, setIsTRXModalOpen] = useState(false);
+  
   return (
     <section id="prediction" className="py-16 lg:py-24 bg-gradient-to-b from-[#001c54] to-[#000c33]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,8 +87,8 @@ const FeaturesSection = () => {
                   >
                     Demo
                   </motion.a>
-                  <motion.a 
-                    href="#" 
+                  <motion.button 
+                    onClick={() => setIsWinGoModalOpen(true)}
                     className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -91,7 +96,7 @@ const FeaturesSection = () => {
                     }}
                   >
                     VIP Prediction
-                  </motion.a>
+                  </motion.button>
                 </div>
               </div>
             </div>
@@ -137,8 +142,8 @@ const FeaturesSection = () => {
                   >
                     Demo
                   </motion.a>
-                  <motion.a 
-                    href="#" 
+                  <motion.button 
+                    onClick={() => setIsTRXModalOpen(true)}
                     className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -146,13 +151,29 @@ const FeaturesSection = () => {
                     }}
                   >
                     VIP Prediction
-                  </motion.a>
+                  </motion.button>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Win Go Prediction Modal */}
+      <PredictionModal 
+        isOpen={isWinGoModalOpen}
+        onClose={() => setIsWinGoModalOpen(false)}
+        title="WINGO VIP PREDICTION"
+        gameType="wingo"
+      />
+
+      {/* TRX Hash Prediction Modal */}
+      <PredictionModal 
+        isOpen={isTRXModalOpen}
+        onClose={() => setIsTRXModalOpen(false)}
+        title="TRX HASH VIP PREDICTION"
+        gameType="trx"
+      />
     </section>
   );
 };
