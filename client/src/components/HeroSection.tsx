@@ -12,7 +12,7 @@ const HeroSection = () => {
       const scrollPosition = window.scrollY;
       
       // Get the height of the hero section (approximately)
-      const heroSectionHeight = window.innerHeight - 100;
+      const heroSectionHeight = window.innerHeight * 0.5; // Hide after scrolling 50% of view height
       
       // Hide the scroll indicator when scrolled past the hero section
       if (scrollIndicator) {
@@ -25,6 +25,9 @@ const HeroSection = () => {
         }
       }
     };
+    
+    // Execute once on load
+    handleScroll();
     
     // Add the scroll event listener
     window.addEventListener("scroll", handleScroll);
@@ -81,7 +84,7 @@ const HeroSection = () => {
             </p>
 
             {/* Three buttons: Register, Start Playing, How It Works */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5">
               <motion.button
                 className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
                 whileHover={{
@@ -115,20 +118,21 @@ const HeroSection = () => {
             </div>
 
             {/* Removed money animation elements as requested */}
+            
+            {/* Scroll indicator directly below buttons with 5px gap */}
+            <motion.div
+              className="mt-5 inline-block text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-2 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] transition-opacity duration-500"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              id="scroll-indicator"
+            >
+              <div className="flex items-center gap-2">
+                <ChevronDown size={20} />
+                <p className="text-sm font-medium">Scroll to explore</p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
-
-        <motion.div
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 text-[#00ECBE] text-center bg-[#05012B]/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-[0_0_15px_rgba(0,236,190,0.3)] z-50 transition-opacity duration-500"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          id="scroll-indicator"
-        >
-          <div className="flex items-center gap-2">
-            <ChevronDown size={20} />
-            <p className="text-sm font-medium">Scroll to explore</p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
