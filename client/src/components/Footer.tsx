@@ -18,8 +18,7 @@ const Footer = () => {
             </div>
             <p className="text-gray-400 mb-6">The most advanced color prediction platform powered by blockchain technology.</p>
             <div className="flex gap-4">
-              <motion.a 
-                href="#" 
+              <motion.button 
                 className="w-8 h-8 rounded-full bg-[#00ECBE]/20 flex items-center justify-center text-[#00ECBE]"
                 whileHover={{ 
                   backgroundColor: "#00ECBE",
@@ -29,9 +28,8 @@ const Footer = () => {
                 transition={{ duration: 0.3 }}
               >
                 <Twitter size={16} />
-              </motion.a>
-              <motion.a 
-                href="#" 
+              </motion.button>
+              <motion.button 
                 className="w-8 h-8 rounded-full bg-[#00ECBE]/20 flex items-center justify-center text-[#00ECBE]"
                 whileHover={{ 
                   backgroundColor: "#00ECBE",
@@ -41,9 +39,8 @@ const Footer = () => {
                 transition={{ duration: 0.3 }}
               >
                 <MessageCircle size={16} />
-              </motion.a>
-              <motion.a 
-                href="#" 
+              </motion.button>
+              <motion.button 
                 className="w-8 h-8 rounded-full bg-[#00ECBE]/20 flex items-center justify-center text-[#00ECBE]"
                 whileHover={{ 
                   backgroundColor: "#00ECBE",
@@ -53,7 +50,7 @@ const Footer = () => {
                 transition={{ duration: 0.3 }}
               >
                 <Share2 size={16} />
-              </motion.a>
+              </motion.button>
             </div>
           </div>
           
@@ -61,21 +58,29 @@ const Footer = () => {
             <h3 className="text-[#00ECBE] font-poppins font-medium text-lg mb-6">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/">
-                  <a className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Home</a>
+                <Link href="/" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">
+                  Home
                 </Link>
               </li>
               <li>
-                <a href="#prediction" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Predictions</a>
+                <button onClick={() => document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' })} className="text-gray-400 hover:text-[#00ECBE] transition duration-300">
+                  Predictions
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">How It Works</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">
+                  How It Works
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">VIP Access</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">
+                  VIP Access
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Blog</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">
+                  Blog
+                </button>
               </li>
             </ul>
           </div>
@@ -84,19 +89,19 @@ const Footer = () => {
             <h3 className="text-[#00ECBE] font-poppins font-medium text-lg mb-6">Support</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">FAQ</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">FAQ</button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Help Center</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Help Center</button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Terms of Service</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Terms of Service</button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Privacy Policy</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Privacy Policy</button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Contact Us</a>
+                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Contact Us</button>
               </li>
             </ul>
           </div>
@@ -130,9 +135,9 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm mb-4 md:mb-0">© {currentYear} WinGo. All rights reserved.</p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Terms</a>
-              <a href="#" className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Privacy</a>
-              <a href="#" className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Cookies</a>
+              <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Terms</button>
+              <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Privacy</button>
+              <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">Cookies</button>
             </div>
           </div>
         </div>
