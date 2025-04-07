@@ -20,18 +20,20 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Get signature and random values based on endpoint
+// Get signature and random values based on endpoint - using exact parameters provided by user
 const getApiRequestParams = (endpoint: 'period' | 'results') => {
-  // For TRX Hash - updated with the specific parameters provided
+  // For TRX Hash - exactly as provided in the request
   if (endpoint === 'period') {
     return {
       signature: "65ADE1365F185A7D7DABD4090A5B19D9",
-      random: "dadb70f547014c27af415a3ccd900b27"
+      random: "dadb70f547014c27af415a3ccd900b27",
+      timestamp: 1744039692  // Using the exact timestamp provided
     };
   } else {
     return {
       signature: "71FD350B97FDC523C7BF6CF951B99482", 
-      random: "4c823e2eac2b43f2ad6d5608aa616428"
+      random: "4c823e2eac2b43f2ad6d5608aa616428",
+      timestamp: 1744039709  // Using the exact timestamp provided
     };
   }
 };
@@ -39,13 +41,12 @@ const getApiRequestParams = (endpoint: 'period' | 'results') => {
 // Fetch the current period data
 const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
   try {
-    const timestamp = Math.floor(Date.now() / 1000);
     const params = getApiRequestParams('period');
     const requestData = {
       language: 0,
       random: params.random,
       signature: params.signature,
-      timestamp: timestamp,
+      timestamp: params.timestamp, // Using the exact timestamp provided
       typeId: typeId
     };
     
@@ -72,7 +73,6 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
 // Fetch past results
 const fetchResults = async (typeId: number): Promise<any> => {
   try {
-    const timestamp = Math.floor(Date.now() / 1000);
     const params = getApiRequestParams('results');
     const requestData = {
       language: 0,
@@ -80,7 +80,7 @@ const fetchResults = async (typeId: number): Promise<any> => {
       pageSize: 10,
       random: params.random,
       signature: params.signature,
-      timestamp: timestamp,
+      timestamp: params.timestamp, // Using the exact timestamp provided
       typeId: typeId
     };
     
@@ -311,22 +311,8 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     setIsLoading(true);
     setVerificationComplete(false);
     
-    // Use mock data for TRX Hash 1 MIN as it's having API issues
-    // We'll update this when we get the correct API parameters
-    const { currentPrediction, results, hash } = generateMockTrxData(timeOption);
-    setCurrentPrediction(currentPrediction);
-    setPeriodResults(results);
-    setPredictionHash(hash);
-    setIsLoading(false);
-    
-    // Simulate blockchain verification process
-    setTimeout(() => {
-      setVerificationComplete(true);
-    }, 2000);
-    
-    /* Temporarily comment out real API fetch until we get the correct parameters
     try {
-      // Use the real API data
+      // Use the real API data with the exact parameters provided
       const { currentPrediction, results, hash } = await fetchTrxData(timeOption);
       setCurrentPrediction(currentPrediction);
       setPeriodResults(results);
@@ -357,7 +343,6 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         setVerificationComplete(true);
       }, 2000);
     }
-    */
   };
   
   // Auto-refresh data based on timeOption period
