@@ -111,13 +111,15 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
             className="flex items-center text-[#00ECBE] font-semibold transition-all hover:text-white cursor-pointer"
           >
             <ArrowLeft size={20} className="mr-2" />
-            <span>Back to Home</span>
+            <span className="hidden sm:inline">Back to Home</span>
           </div>
           
-          <h1 className="text-xl font-bold tracking-wide flex items-center">
-            <Trophy size={20} className="text-yellow-400 mr-2" />
-            <span className="text-white">{gameName}</span> 
-            <span className="text-[#00ECBE] ml-2">{timeOption}</span>
+          <h1 className="text-xl font-bold tracking-wide flex items-center sm:flex-row flex-col">
+            <div className="flex items-center">
+              <Trophy size={18} className="text-yellow-400 mr-2" />
+              <span className="text-white">{gameName}</span>
+            </div> 
+            <span className="text-[#00ECBE] sm:ml-2">{timeOption}</span>
           </h1>
           
           <motion.button
