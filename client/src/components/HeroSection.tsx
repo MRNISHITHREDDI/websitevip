@@ -77,11 +77,11 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {/* VIP PREDICTION heading on same line */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold font-poppins mb-6 tracking-wide flex justify-center items-center">
-              <span className="text-white mr-4">VIP</span>
+            {/* VIP PREDICTION heading - fixed for mobile display */}
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-poppins mb-6 tracking-wide">
+              <span className="text-white inline-block">VIP</span>{" "}
               <motion.span 
-                className="text-[#00ECBE]"
+                className="text-[#00ECBE] inline-block"
                 initial={{ textShadow: "0 0 0px rgba(0, 236, 190, 0)" }}
                 animate={{ textShadow: "0 0 20px rgba(0, 236, 190, 0.7)" }}
                 transition={{
@@ -134,17 +134,7 @@ const HeroSection = () => {
               <motion.button
                 onClick={() => {
                   // Find the HowItWorksSection and scroll to it (Section 4)
-                  // Look for the section that has "How It Works" title
-                  const sections = document.querySelectorAll('section');
-                  let howItWorksSection = null;
-                  
-                  // Just use the ID we added to the how-it-works section
-                  howItWorksSection = document.getElementById('how-it-works');
-                  
-                  // If not found, try to find the fourth section (index 3)
-                  if (!howItWorksSection && sections.length >= 4) {
-                    howItWorksSection = sections[3]; // Fourth section (0-indexed)
-                  }
+                  const howItWorksSection = document.getElementById('how-it-works');
                   
                   if (howItWorksSection) {
                     howItWorksSection.scrollIntoView({ 
@@ -153,7 +143,7 @@ const HeroSection = () => {
                     });
                   }
                 }}
-                className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
+                className="hidden sm:flex bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 items-center justify-center gap-2"
                 whileHover={{
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                   y: -2,
