@@ -15,13 +15,13 @@ const getTrxTypeId = (timeOption: string): number => {
     case "30 SEC":
       return 40; // Different typeIds for TRX
     case "1 MIN":
-      return 41;
+      return 51; // Updated to the correct typeId for 1 MIN TRX Hash
     case "3 MIN":
-      return 43;
+      return 53;
     case "5 MIN":
-      return 45;
+      return 55;
     default:
-      return 40;
+      return 51; // Default to 1 MIN which is the most common option for TRX Hash
   }
 };
 
@@ -30,24 +30,31 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Helper function to generate signature (in a real implementation, this would be a proper hash)
-const generateSignature = (): string => {
-  const chars = 'ABCDEF0123456789';
-  let result = '';
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+// Get signature and random values based on endpoint
+const getApiRequestParams = (endpoint: 'period' | 'results') => {
+  // For TRX Hash - only 1 MIN is needed
+  if (endpoint === 'period') {
+    return {
+      signature: "29E44D96FD78C678B13E49D2152E50F8",
+      random: "4a342cbe103044fea0b3a2e8cc4db99b"
+    };
+  } else {
+    return {
+      signature: "EC9A522B0E0F6C64C39BA766C02D5757", 
+      random: "97ce4ed37b074c06a9906da5f5aaa43b"
+    };
   }
-  return result;
 };
 
 // Fetch the current period data
 const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
+    const params = getApiRequestParams('period');
     const requestData = {
       language: 0,
-      random: generateRandom(),
-      signature: generateSignature(),
+      random: params.random,
+      signature: params.signature,
       timestamp: timestamp,
       typeId: typeId
     };
@@ -76,12 +83,13 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
 const fetchResults = async (typeId: number): Promise<any> => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
+    const params = getApiRequestParams('results');
     const requestData = {
       language: 0,
       pageNo: 1,
       pageSize: 10,
-      random: generateRandom(),
-      signature: generateSignature(),
+      random: params.random,
+      signature: params.signature,
       timestamp: timestamp,
       typeId: typeId
     };

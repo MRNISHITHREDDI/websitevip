@@ -15,11 +15,11 @@ const getWingoTypeId = (timeOption: string): number => {
     case "30 SEC":
       return 30;
     case "1 MIN":
-      return 31;
+      return 1; // Using 1 as requested in API parameters
     case "3 MIN":
-      return 33;
+      return 3;
     case "5 MIN":
-      return 35;
+      return 5;
     default:
       return 30;
   }
@@ -30,25 +30,46 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Use exact signature values based on the request details provided by the user
-const generateSignature = (endpoint: 'period' | 'results'): string => {
-  // Using the exact signature values provided for each endpoint
-  if (endpoint === 'period') {
-    return "ABB82B8F75685C3374A844B6D541260E";
+// Get signature and random values based on time option and endpoint
+const getApiRequestParams = (timeOption: string, endpoint: 'period' | 'results') => {
+  // Different parameters for each time option
+  if (timeOption === '1 MIN') {
+    if (endpoint === 'period') {
+      return {
+        signature: "74A5FAB6A7D3FD1556567A8F1A90B258",
+        random: "eac6995ddb0d43eb9b4fc02180384f63"
+      };
+    } else {
+      return {
+        signature: "860962E1823E04166C45E40DA5DB0FC6", 
+        random: "f08ffe4140a14d8abeffae15c0793176"
+      };
+    }
   } else {
-    // For results endpoint
-    return "AD9A3C8521D62D64DFE9E94097E3A57F";
+    // Default to 30 SEC parameters
+    if (endpoint === 'period') {
+      return {
+        signature: "ABB82B8F75685C3374A844B6D541260E",
+        random: "60b845c0299b4fcda63f766ea8ede25f"
+      };
+    } else {
+      return {
+        signature: "AD9A3C8521D62D64DFE9E94097E3A57F",
+        random: "17910a15ea54457a97b161cf59d2a7c5"
+      };
+    }
   }
 };
 
 // Fetch the current period data
-const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
+const fetchCurrentPeriod = async (typeId: number, timeOption: string): Promise<any> => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
+    const params = getApiRequestParams(timeOption, 'period');
     const requestData = {
       language: 0,
-      random: "60b845c0299b4fcda63f766ea8ede25f", // Use exact value provided
-      signature: generateSignature('period'),
+      random: params.random,
+      signature: params.signature,
       timestamp: timestamp,
       typeId: typeId
     };
@@ -84,15 +105,16 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
 };
 
 // Fetch past results
-const fetchResults = async (typeId: number): Promise<any> => {
+const fetchResults = async (typeId: number, timeOption: string): Promise<any> => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
+    const params = getApiRequestParams(timeOption, 'results');
     const requestData = {
       language: 0,
       pageNo: 1,
       pageSize: 10,
-      random: "17910a15ea54457a97b161cf59d2a7c5", // Use exact value provided
-      signature: generateSignature('results'),
+      random: params.random,
+      signature: params.signature,
       timestamp: timestamp,
       typeId: typeId
     };
@@ -134,8 +156,8 @@ const fetchWingoData = async (timeOption: string) => {
     
     // Fetch period and results data in parallel
     const [periodData, resultsData] = await Promise.all([
-      fetchCurrentPeriod(typeId),
-      fetchResults(typeId)
+      fetchCurrentPeriod(typeId, timeOption),
+      fetchResults(typeId, timeOption)
     ]);
     
     if (!periodData.data || !resultsData.data || !resultsData.data.list) {
