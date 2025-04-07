@@ -44,7 +44,7 @@ const FeaturesSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* WinGo Feature */}
           <motion.div 
-            className="bg-[#05012B]/50 rounded-xl p-6 lg:p-8 border border-[#00ECBE]/20 relative overflow-hidden"
+            className="bg-[#05012B]/50 rounded-3xl p-6 lg:p-8 border border-[#00ECBE]/20 relative overflow-hidden"
             variants={cardVariants}
             initial="initial"
             whileInView="animate"
@@ -53,13 +53,13 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                <div className="rounded-3xl shadow-lg border border-[#00ECBE]/30 overflow-hidden">
                   {/* WinGo Image */}
                   <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
                     <motion.img 
                       src={wingoImage} 
                       alt="Win Go Game" 
-                      className="w-full object-cover"
+                      className="w-full object-cover rounded-2xl"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.3 }}
                     />
@@ -99,7 +99,7 @@ const FeaturesSection = () => {
           
           {/* TRX Hash Feature */}
           <motion.div 
-            className="bg-[#05012B]/50 rounded-xl p-6 lg:p-8 border border-[#00ECBE]/20"
+            className="bg-[#05012B]/50 rounded-3xl p-6 lg:p-8 border border-[#00ECBE]/20"
             variants={cardVariants}
             initial="initial"
             whileInView="animate"
@@ -108,13 +108,13 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                <div className="rounded-3xl shadow-lg border border-[#00ECBE]/30 overflow-hidden">
                   {/* TRX Win Image */}
                   <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
                     <motion.img 
                       src={trxWinImage} 
                       alt="TRX Win Game" 
-                      className="w-full object-cover"
+                      className="w-full object-cover rounded-2xl"
                       whileHover={{ scale: 1.03 }}
                       transition={{ duration: 0.3 }}
                     />
