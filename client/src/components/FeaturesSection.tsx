@@ -53,11 +53,18 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <img 
-                  src={wingoImage} 
-                  alt="Win Go Game" 
-                  className="game-image"
-                />
+                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                  {/* WinGo Image */}
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
+                    <motion.img 
+                      src={wingoImage} 
+                      alt="Win Go Game" 
+                      className="w-full object-cover"
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="w-full md:w-1/2">
                 <h3 className="text-[#00ECBE] text-2xl font-poppins font-bold mb-3">Win Go</h3>
@@ -101,15 +108,18 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <img 
-                  src={trxWinImage} 
-                  alt="TRX Win Game" 
-                  className="w-full rounded-xl" 
-                  style={{ 
-                    border: "2px solid rgba(0, 236, 190, 0.3)",
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)"
-                  }}
-                />
+                <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
+                  {/* TRX Win Image */}
+                  <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] flex items-center justify-center">
+                    <motion.img 
+                      src={trxWinImage} 
+                      alt="TRX Win Game" 
+                      className="w-full object-cover"
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="w-full md:w-1/2">
                 <h3 className="text-[#00ECBE] text-2xl font-poppins font-bold mb-3">TRX Hash</h3>
