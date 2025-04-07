@@ -39,8 +39,20 @@ const HeroSection = () => {
   }, []);
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden">
-      {/* Solid background color instead of video */}
-      <div className="absolute inset-0 z-0 bg-[#05012B]"></div>
+      {/* Video background with color overlay */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          className="absolute w-full h-full object-cover"
+        >
+          <source src="/assets/88697-606080045_small.mp4" type="video/mp4" />
+        </video>
+        {/* Color overlay with 92% opacity */}
+        <div className="absolute inset-0 bg-[#05012B]/92"></div>
+      </div>
 
       {/* Subtle pulsing glow effects */}
       <motion.div
