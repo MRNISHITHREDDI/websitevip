@@ -104,7 +104,7 @@ const Navbar = () => {
               </a>
               <motion.button 
                 onClick={openJoinProModal}
-                className="hidden md:flex items-center bg-gradient-to-r from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-5 py-2 rounded-full transition duration-300 relative overflow-hidden group"
+                className="hidden md:flex items-center bg-gradient-to-r from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-1.5 rounded-full transition duration-300 relative overflow-hidden group text-sm"
                 whileHover={{ 
                   boxShadow: '0 0 20px 0 rgba(0, 236, 190, 0.6)',
                   y: -2,
