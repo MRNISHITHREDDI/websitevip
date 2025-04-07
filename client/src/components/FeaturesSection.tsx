@@ -54,17 +54,11 @@ const FeaturesSection = () => {
                 <div className="rounded-lg shadow-lg border border-[#00ECBE]/30 overflow-hidden">
                   {/* Game interface visualization */}
                   <div className="bg-gradient-to-br from-[#001c54] to-[#000c33] aspect-w-4 aspect-h-3 flex items-center justify-center p-4">
-                    <div className="grid grid-cols-3 gap-2">
-                      {['red', 'green', 'violet'].map((color, i) => (
-                        <div 
-                          key={i}
-                          className={`h-8 w-8 rounded-full ${
-                            color === 'red' ? 'bg-red-500' : 
-                            color === 'green' ? 'bg-green-500' : 
-                            'bg-purple-500'
-                          }`}
-                        />
-                      ))}
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-[#00ECBE]/20 flex items-center justify-center mb-2">
+                        <span className="text-[#00ECBE] text-xl font-bold">W</span>
+                      </div>
+                      <p className="text-[#00ECBE] text-sm">Win Instantly</p>
                     </div>
                   </div>
                 </div>

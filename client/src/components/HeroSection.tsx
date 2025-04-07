@@ -79,19 +79,25 @@ const HeroSection = () => {
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="rounded-lg shadow-2xl border-2 border-[#00ECBE]/30 overflow-hidden" style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)" }}>
-                  {/* Game interface matching the image */}
+                  {/* Game interface with animated money earnings visualization */}
                   <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-[#001c54] to-[#000c33] p-6 flex items-center justify-center">
-                    <div className="flex justify-center items-center space-x-8">
+                    <div className="flex flex-col items-center justify-center">
                       <motion.div 
-                        className="h-16 w-16 rounded-full bg-red-500 shadow-lg"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      />
-                      <motion.div 
-                        className="h-16 w-16 rounded-full bg-green-500 shadow-lg"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      />
+                        className="flex items-center justify-center mb-4"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 3, repeat: Infinity }}
+                      >
+                        <DollarSign className="text-[#00ECBE] h-12 w-12" />
+                      </motion.div>
+                      <div className="bg-[#00ECBE]/10 border border-[#00ECBE]/30 rounded-lg p-3">
+                        <motion.p 
+                          className="text-[#00ECBE] font-semibold"
+                          animate={{ opacity: [0.7, 1, 0.7] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          Predict & Win
+                        </motion.p>
+                      </div>
                     </div>
                   </div>
                 </div>
