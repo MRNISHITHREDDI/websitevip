@@ -53,22 +53,24 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-xl shadow-lg border-2 border-[#00ECBE]/30 overflow-hidden"
-                  style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.2)" }}>
+                <div className="rounded-xl overflow-hidden"
+                  style={{ 
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
+                    border: "2px solid rgba(0, 236, 190, 0.3)",
+                    aspectRatio: "16/9"
+                  }}>
                   {/* WinGo Image */}
-                  <div className="bg-gradient-to-br from-[#050d42] to-[#020621] p-0">
-                    <motion.div
-                      className="w-full h-full"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <img 
-                        src={wingoImage} 
-                        alt="Win Go Game" 
-                        className="w-full h-auto"
-                      />
-                    </motion.div>
-                  </div>
+                  <motion.div
+                    className="w-full h-full"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <img 
+                      src={wingoImage} 
+                      alt="Win Go Game" 
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
                 </div>
               </div>
               <div className="w-full md:w-1/2">
@@ -113,22 +115,24 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-xl shadow-lg border-2 border-[#00ECBE]/30 overflow-hidden"
-                  style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.2)" }}>
+                <div className="rounded-xl overflow-hidden"
+                  style={{ 
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
+                    border: "2px solid rgba(0, 236, 190, 0.3)",
+                    aspectRatio: "16/9"
+                  }}>
                   {/* TRX Win Image */}
-                  <div className="bg-gradient-to-br from-[#050d42] to-[#020621] p-0">
-                    <motion.div
-                      className="w-full h-full"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <img 
-                        src={trxWinImage} 
-                        alt="TRX Win Game" 
-                        className="w-full h-auto"
-                      />
-                    </motion.div>
-                  </div>
+                  <motion.div
+                    className="w-full h-full"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <img 
+                      src={trxWinImage} 
+                      alt="TRX Win Game" 
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
                 </div>
               </div>
               <div className="w-full md:w-1/2">
