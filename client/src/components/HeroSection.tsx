@@ -1,17 +1,33 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, DollarSign, Check, UserPlus, Play, Info } from 'lucide-react';
+import { ChevronDown, Check, UserPlus, Play, Info } from 'lucide-react';
+import backgroundVideo from '../assets/videos/background-video.mp4';
 
 const HeroSection = () => {
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden">
+      {/* Video Background with 5% opacity */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video 
+          className="absolute top-0 left-0 min-h-full min-w-full object-cover"
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+        >
+          <source src={backgroundVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[#000C33] opacity-5"></div>
+        <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
+      </div>
+      
       {/* Subtle pulsing glow effects */}
       <motion.div 
-        className="absolute top-[20%] left-[15%] w-24 h-24 bg-[#00ECBE]/5 rounded-full filter blur-xl"
+        className="absolute top-[20%] left-[15%] w-24 h-24 bg-[#00ECBE]/5 rounded-full filter blur-xl z-10"
         animate={{ scale: [1, 1.2, 1] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute top-[60%] right-[10%] w-32 h-32 bg-[#00ECBE]/5 rounded-full filter blur-xl"
+        className="absolute top-[60%] right-[10%] w-32 h-32 bg-[#00ECBE]/5 rounded-full filter blur-xl z-10"
         animate={{ scale: [1, 1.3, 1] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -74,37 +90,7 @@ const HeroSection = () => {
               </motion.button>
             </div>
 
-            {/* Money animation elements */}
-            <div className="relative">
-              <motion.div
-                className="absolute -left-10 bottom-0 opacity-40"
-                animate={{ y: [0, -80, 0], rotate: [0, 10, 0] }}
-                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <DollarSign className="text-[#00ECBE] h-16 w-16" />
-              </motion.div>
-              <motion.div
-                className="absolute right-0 bottom-10 opacity-40"
-                animate={{ y: [0, -60, 0], rotate: [0, -15, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              >
-                <DollarSign className="text-[#00ECBE] h-16 w-16" />
-              </motion.div>
-              <motion.div
-                className="absolute left-1/4 -bottom-5 opacity-30"
-                animate={{ y: [0, -40, 0], rotate: [0, 5, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
-                <DollarSign className="text-[#00ECBE] h-12 w-12" />
-              </motion.div>
-              <motion.div
-                className="absolute right-1/4 bottom-2 opacity-30"
-                animate={{ y: [0, -50, 0], rotate: [0, -8, 0] }}
-                transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-              >
-                <DollarSign className="text-[#00ECBE] h-12 w-12" />
-              </motion.div>
-            </div>
+            {/* Removed money animation elements as requested */}
           </motion.div>
         </div>
         
