@@ -62,9 +62,26 @@ const Navbar = () => {
             
             {/* Desktop menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-[#00ECBE] hover:text-white transition duration-300">
+              <a 
+                href="/" 
+                className="text-[#00ECBE] hover:text-white transition duration-300"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (window.location.pathname === '/') {
+                    // If already on home page, just scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else {
+                    // Navigate to home page
+                    setLocation('/');
+                    // Scroll to top after navigation
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                  }
+                }}
+              >
                 Home
-              </Link>
+              </a>
               <a 
                 href="#prediction" 
                 className="text-[#00ECBE] hover:text-white transition duration-300"
@@ -113,7 +130,27 @@ const Navbar = () => {
                   : "bg-gradient-to-b from-[#001c54] to-[#000c33]"
               }`}
             >
-              <Link href="/" className="block text-[#00ECBE] py-2">Home</Link>
+              <a 
+                href="/" 
+                className="block text-[#00ECBE] py-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (window.location.pathname === '/') {
+                    // If already on home page, just scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else {
+                    // Navigate to home page
+                    setLocation('/');
+                    // Scroll to top after navigation
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                  }
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Home
+              </a>
               <a 
                 href="#prediction" 
                 className="block text-[#00ECBE] py-2"
