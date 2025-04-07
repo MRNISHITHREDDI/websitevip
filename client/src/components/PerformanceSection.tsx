@@ -58,7 +58,7 @@ const PerformanceCard = ({ score, title, description, delay }: PerformanceCardPr
       <div className="flex flex-col items-center">
         <div className="relative mb-4">
           <div className="text-6xl font-bold text-[#00ECBE]" style={{ textShadow: "0 0 10px rgba(0, 236, 190, 0.5)" }}>
-            {displayScore.toString().includes('.') ? displayScore.toFixed(1) : displayScore}
+            {displayScore === 10 ? "10.0" : (displayScore.toString().includes('.') ? displayScore.toFixed(1) : displayScore + ".0")}
           </div>
           <div className="absolute -top-1 right-0 text-gray-400 text-sm">/10</div>
         </div>
