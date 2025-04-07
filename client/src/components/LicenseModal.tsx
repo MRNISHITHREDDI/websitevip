@@ -185,45 +185,44 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                   Register for VIP Access
                 </motion.h4>
                 <motion.p 
-                  className="text-white text-sm mb-4"
+                  className="text-white text-sm mb-3"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  To access exclusive VIP predictions, please register under us and contact our team with your UID.
+                  To access exclusive VIP predictions, please register under us and contact our team for license.
                 </motion.p>
                 
                 <motion.div 
-                  className="bg-[#001c54] p-3 rounded-lg mb-3 relative"
+                  className="mb-3 relative"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Your UID:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#00ECBE] font-mono font-bold">USER502999</span>
-                      <motion.button
-                        onClick={copyUID}
-                        className="text-gray-400 hover:text-white p-1 rounded hover:bg-[#00ECBE]/10"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        title="Copy UID"
-                      >
-                        <Copy size={16} />
-                      </motion.button>
-                    </div>
-                  </div>
-                  {copiedUID && (
-                    <motion.div 
-                      className="absolute -top-2 right-0 bg-[#00ECBE] text-[#05012B] text-xs py-1 px-2 rounded-md"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
+                  <a 
+                    href={invitationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full"
+                  >
+                    <motion.button
+                      className="w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+                      whileHover={{ 
+                        boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
+                        y: -2 
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        type: "spring", 
+                        damping: 12, 
+                        stiffness: 500, 
+                        duration: 0.1 
+                      }}
                     >
-                      Copied!
-                    </motion.div>
-                  )}
+                      <span>Register Now</span>
+                      <ExternalLink size={16} />
+                    </motion.button>
+                  </a>
                 </motion.div>
                 
                 <motion.p 
@@ -232,7 +231,7 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  Contact <a href="https://t.me/Blackdoom1" target="_blank" rel="noopener noreferrer" className="text-[#00ECBE] hover:underline">@Blackdoom1</a> at telegram with your UID to get a free license.
+                  Contact <a href="https://t.me/Blackdoom1" target="_blank" rel="noopener noreferrer" className="text-[#00ECBE] hover:underline">@Blackdoom1</a> at telegram after registering to get a free license.
                 </motion.p>
               </motion.div>
             </div>
