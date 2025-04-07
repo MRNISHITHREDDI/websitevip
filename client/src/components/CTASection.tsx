@@ -54,8 +54,14 @@ const CTASection = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true, margin: "-100px" }}
             >
-              <motion.a 
-                href="#" 
+              <motion.button 
+                onClick={() => {
+                  // Scroll to the prediction section (Section 2)
+                  document.getElementById('prediction')?.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
                 className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 text-center"
                 whileHover={{ 
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -63,21 +69,15 @@ const CTASection = () => {
                 }}
               >
                 Start Playing Now
-              </motion.a>
-              <motion.a 
-                href="https://t.me/ManagerChetanaOfficial" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 text-center flex items-center justify-center gap-2"
-                whileHover={{ 
-                  boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                  y: -2 
+              </motion.button>
+              <motion.button 
+                onClick={() => {
+                  // Scroll to the how it works section (Section 4)
+                  document.getElementById('howitworks')?.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
                 }}
-              >
-                Join Our Community <span className="ml-1">→</span>
-              </motion.a>
-              <motion.a 
-                href="#" 
                 className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center"
                 whileHover={{ 
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
@@ -85,7 +85,7 @@ const CTASection = () => {
                 }}
               >
                 Learn More
-              </motion.a>
+              </motion.button>
             </motion.div>
           </div>
         </div>
