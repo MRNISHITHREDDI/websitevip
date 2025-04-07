@@ -53,7 +53,7 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-xl overflow-hidden"
+                <div className="relative rounded-xl overflow-hidden"
                   style={{ 
                     boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
                     border: "2px solid rgba(0, 236, 190, 0.3)",
@@ -61,14 +61,15 @@ const FeaturesSection = () => {
                   }}>
                   {/* WinGo Image */}
                   <motion.div
-                    className="w-full h-full"
+                    className="absolute inset-0 w-full h-full"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
                     <img 
                       src={wingoImage} 
                       alt="Win Go Game" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-fill"
+                      style={{ display: "block" }}
                     />
                   </motion.div>
                 </div>
@@ -115,7 +116,7 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="rounded-xl overflow-hidden"
+                <div className="relative rounded-xl overflow-hidden"
                   style={{ 
                     boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
                     border: "2px solid rgba(0, 236, 190, 0.3)",
@@ -123,14 +124,15 @@ const FeaturesSection = () => {
                   }}>
                   {/* TRX Win Image */}
                   <motion.div
-                    className="w-full h-full"
+                    className="absolute inset-0 w-full h-full"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
                     <img 
                       src={trxWinImage} 
                       alt="TRX Win Game" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-fill"
+                      style={{ display: "block" }}
                     />
                   </motion.div>
                 </div>
