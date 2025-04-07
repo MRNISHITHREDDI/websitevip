@@ -53,29 +53,15 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="relative overflow-hidden cursor-pointer" 
-                  style={{ aspectRatio: "16/9" }}>
-                  {/* WinGo Image - Complete Replacement */}
-                  <motion.div 
-                    className="absolute inset-0 rounded-xl"
-                    style={{ 
-                      backgroundImage: `url(${wingoImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                      border: "2px solid rgba(0, 236, 190, 0.3)",
-                      boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
-                    }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: "0 0 25px 0 rgba(0, 236, 190, 0.5)"
-                    }}
-                    transition={{ 
-                      scale: { duration: 0.4, ease: "easeOut" },
-                      boxShadow: { duration: 0.4 }
-                    }}
-                  />
-                </div>
+                <img 
+                  src={wingoImage} 
+                  alt="Win Go Game" 
+                  className="w-full rounded-xl" 
+                  style={{ 
+                    border: "2px solid rgba(0, 236, 190, 0.3)",
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)"
+                  }}
+                />
               </div>
               <div className="w-full md:w-1/2">
                 <h3 className="text-[#00ECBE] text-2xl font-poppins font-bold mb-3">Win Go</h3>
@@ -119,29 +105,15 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="relative overflow-hidden cursor-pointer" 
-                  style={{ aspectRatio: "16/9" }}>
-                  {/* TRX Win Image - Complete Replacement */}
-                  <motion.div 
-                    className="absolute inset-0 rounded-xl"
-                    style={{ 
-                      backgroundImage: `url(${trxWinImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                      border: "2px solid rgba(0, 236, 190, 0.3)",
-                      boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
-                    }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: "0 0 25px 0 rgba(0, 236, 190, 0.5)"
-                    }}
-                    transition={{ 
-                      scale: { duration: 0.4, ease: "easeOut" },
-                      boxShadow: { duration: 0.4 }
-                    }}
-                  />
-                </div>
+                <img 
+                  src={trxWinImage} 
+                  alt="TRX Win Game" 
+                  className="w-full rounded-xl" 
+                  style={{ 
+                    border: "2px solid rgba(0, 236, 190, 0.3)",
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)"
+                  }}
+                />
               </div>
               <div className="w-full md:w-1/2">
                 <h3 className="text-[#00ECBE] text-2xl font-poppins font-bold mb-3">TRX Hash</h3>
