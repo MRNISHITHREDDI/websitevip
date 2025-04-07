@@ -74,7 +74,7 @@ const FeaturesSection = () => {
                 <div className="flex gap-4">
                   <motion.a 
                     href="#" 
-                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300 text-sm"
+                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                       y: -2 
@@ -84,7 +84,7 @@ const FeaturesSection = () => {
                   </motion.a>
                   <motion.a 
                     href="#" 
-                    className="bg-[#00ECBE] text-[#05012B] px-4 py-2 rounded-full transition duration-300 text-sm"
+                    className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                       y: -2 
@@ -129,7 +129,7 @@ const FeaturesSection = () => {
                 <div className="flex gap-4">
                   <motion.a 
                     href="#" 
-                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300 text-sm"
+                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                       y: -2 
@@ -139,7 +139,7 @@ const FeaturesSection = () => {
                   </motion.a>
                   <motion.a 
                     href="#" 
-                    className="bg-[#00ECBE] text-[#05012B] px-4 py-2 rounded-full transition duration-300 text-sm"
+                    className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
                     whileHover={{ 
                       boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                       y: -2 
