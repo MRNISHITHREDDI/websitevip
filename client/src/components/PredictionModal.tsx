@@ -81,12 +81,12 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     e.stopPropagation();
   };
 
-  // Options based on game type
+  // Options based on game type - using exact format needed for API verification
   const options = [
-    { id: '30sec', label: '30 SEC' },
-    { id: '1min', label: '1 MIN' },
-    { id: '3min', label: '3 MIN' },
-    { id: '5min', label: '5 MIN' },
+    { id: '30sec', label: '30 SEC', value: '30 SEC' },
+    { id: '1min', label: '1 MIN', value: '1 MIN' },
+    { id: '3min', label: '3 MIN', value: '3 MIN' },
+    { id: '5min', label: '5 MIN', value: '5 MIN' },
   ];
 
   // Filter options based on game type to show proper text
@@ -95,8 +95,9 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     label: `${opt.label} ${gameType === 'trx' ? 'TRX HASH' : 'WINGO'}`
   }));
     
-  const handleOptionClick = (optionLabel: string) => {
-    setSelectedOption(optionLabel);
+  const handleOptionClick = (option: any) => {
+    // Use the actual time value for API matching
+    setSelectedOption(option.value);
   };
   
   const handleGetPrediction = () => {
@@ -162,7 +163,7 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
                   {displayOptions.map((option) => (
                     <motion.button
                       key={option.id}
-                      className={`w-full ${selectedOption === option.label 
+                      className={`w-full ${selectedOption === option.value 
                         ? 'bg-[#00ECBE]/20 border-[#00ECBE] text-white' 
                         : 'bg-[#05012B]/70 hover:bg-[#00ECBE]/10 border-[#00ECBE]/30 text-gray-200'
                       } border py-3 px-5 rounded-xl flex justify-center items-center transition-all duration-200`}
@@ -177,7 +178,7 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
                         stiffness: 300, 
                         duration: 0.1 
                       }}
-                      onClick={() => handleOptionClick(option.label)}
+                      onClick={() => handleOptionClick(option)}
                     >
                       {option.label}
                     </motion.button>
