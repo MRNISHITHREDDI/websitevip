@@ -241,15 +241,15 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                   </div>
                 ) : periodResults.length > 0 ? (
                   <div className="p-4">
-                    {/* Fixed width consistent columns for better alignment */}
+                    {/* Fixed width consistent columns with perfect centering */}
                     <div className="flex mb-3 text-sm text-[#00ECBE]/70 py-2 border-b border-[#00ECBE]/10">
-                      <div className="w-[25%] pl-2">
+                      <div className="w-[25%] flex justify-center">
                         <span className="hidden sm:inline">Period</span>
                         <span className="sm:hidden">Period#</span>
                       </div>
-                      <div className="w-[25%] flex justify-center sm:justify-start">Result</div>
-                      <div className="w-[25%] flex justify-center sm:justify-start">Color</div>
-                      <div className="w-[25%] flex justify-center sm:justify-start">Big/Small</div>
+                      <div className="w-[25%] flex justify-center">Result</div>
+                      <div className="w-[25%] flex justify-center">Color</div>
+                      <div className="w-[25%] flex justify-center">Big/Small</div>
                     </div>
                     
                     <div className="space-y-1 max-h-[350px] overflow-auto pr-1">
@@ -261,11 +261,13 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05, duration: 0.2 }}
                         >
-                          <div className="w-[25%] font-medium truncate pl-2">
-                            <span className="hidden sm:inline">{period.periodNumber}</span>
-                            <span className="sm:hidden">#{period.periodNumber.slice(-3)}</span>
+                          <div className="w-[25%] flex justify-center">
+                            <div className="font-medium">
+                              <span className="hidden sm:inline max-w-[100px] truncate block text-center">{period.periodNumber}</span>
+                              <span className="sm:hidden text-center">#{period.periodNumber.slice(-3)}</span>
+                            </div>
                           </div>
-                          <div className="w-[25%] flex justify-center sm:justify-start">
+                          <div className="w-[25%] flex justify-center">
                             <span 
                               className="inline-flex items-center justify-center w-7 h-7 rounded-full text-white"
                               style={{ backgroundColor: getColorCode(period.color) }}
@@ -273,13 +275,13 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                               {period.result}
                             </span>
                           </div>
-                          <div className="w-[25%] flex justify-center sm:justify-start">
+                          <div className="w-[25%] flex justify-center">
                             <span 
                               className="inline-block w-7 h-7 rounded-full border border-white/10"
                               style={{ backgroundColor: getColorCode(period.color) }}
                             ></span>
                           </div>
-                          <div className="w-[25%] flex justify-center sm:justify-start">
+                          <div className="w-[25%] flex justify-center">
                             <span className={`font-medium ${period.bigOrSmall === 'BIG' ? 'text-red-400' : 'text-green-400'}`}>
                               {period.bigOrSmall}
                             </span>
