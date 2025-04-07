@@ -13,7 +13,7 @@ const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdL
 const getWingoTypeId = (timeOption: string): number => {
   switch (timeOption) {
     case "30 SEC":
-      return 13; // Updated to use the new typeId for 30 SEC which is 13
+      return 30; // Updated to use 30 for 30 SEC as per the latest request
     case "1 MIN":
       return 1; // Using 1 as requested in API parameters
     case "3 MIN":
@@ -21,7 +21,7 @@ const getWingoTypeId = (timeOption: string): number => {
     case "5 MIN":
       return 3; // Using 3 as specifically requested for 5 MIN
     default:
-      return 13; // Default to new typeId
+      return 30; // Default to new typeId
   }
 };
 
@@ -70,16 +70,16 @@ const getApiRequestParams = (timeOption: string, endpoint: 'period' | 'results')
       };
     }
   } else {
-    // 30 SEC parameters (updated with the new values)
+    // 30 SEC parameters (updated with the latest values)
     if (endpoint === 'period') {
       return {
-        signature: "65ADE1365F185A7D7DABD4090A5B19D9",
-        random: "dadb70f547014c27af415a3ccd900b27"
+        signature: "ABB82B8F75685C3374A844B6D541260E",
+        random: "60b845c0299b4fcda63f766ea8ede25f"
       };
     } else {
       return {
-        signature: "71FD350B97FDC523C7BF6CF951B99482",
-        random: "4c823e2eac2b43f2ad6d5608aa616428"
+        signature: "AD9A3C8521D62D64DFE9E94097E3A57F",
+        random: "17910a15ea54457a97b161cf59d2a7c5"
       };
     }
   }
@@ -350,9 +350,9 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     fetchData();
     
     // Set up auto-refresh interval - match the game time period exactly
-    // For 30 SEC, we're now refreshing every 1 MIN per the request
+    // For 30 SEC, we're now refreshing every 30 SEC as per the latest request
     // For other options, we maintain their respective intervals
-    const refreshInterval = timeOption === '30 SEC' ? 60000 : // Changed to 1 MIN (60000ms) for 30 SEC option
+    const refreshInterval = timeOption === '30 SEC' ? 30000 : // Changed to 30 SEC (30000ms) for 30 SEC option
                          timeOption === '1 MIN' ? 60000 :
                          timeOption === '3 MIN' ? 180000 : 300000;
     

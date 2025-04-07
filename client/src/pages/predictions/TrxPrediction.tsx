@@ -22,18 +22,16 @@ const generateRandom = (): string => {
 
 // Get signature and random values based on endpoint - using exact parameters provided by user
 const getApiRequestParams = (endpoint: 'period' | 'results') => {
-  // For TRX Hash - exactly as provided in the request
+  // For TRX Hash - using the latest parameters provided
   if (endpoint === 'period') {
     return {
       signature: "65ADE1365F185A7D7DABD4090A5B19D9",
-      random: "dadb70f547014c27af415a3ccd900b27",
-      timestamp: 1744039692  // Using the exact timestamp provided
+      random: "dadb70f547014c27af415a3ccd900b27"
     };
   } else {
     return {
       signature: "71FD350B97FDC523C7BF6CF951B99482", 
-      random: "4c823e2eac2b43f2ad6d5608aa616428",
-      timestamp: 1744039709  // Using the exact timestamp provided
+      random: "4c823e2eac2b43f2ad6d5608aa616428"
     };
   }
 };
@@ -41,14 +39,17 @@ const getApiRequestParams = (endpoint: 'period' | 'results') => {
 // Fetch the current period data
 const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
   try {
+    const timestamp = Math.floor(Date.now() / 1000);
     const params = getApiRequestParams('period');
     const requestData = {
       language: 0,
       random: params.random,
       signature: params.signature,
-      timestamp: params.timestamp, // Using the exact timestamp provided
+      timestamp: timestamp, // Using current timestamp
       typeId: typeId
     };
+    
+    console.log("Fetching TRX period with data:", JSON.stringify(requestData));
     
     const response = await fetch(PERIOD_API_URL, {
       method: 'POST',
@@ -63,6 +64,14 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
     }
     
     const data = await response.json();
+    console.log("TRX period API response:", data);
+    
+    // Validate the response has the structure we expect
+    if (!data.data || !data.data.issueNumber) {
+      console.error("API response missing expected data structure", data);
+      throw new Error("Invalid API response format");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error in fetchCurrentPeriod:", error);
@@ -73,6 +82,7 @@ const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
 // Fetch past results
 const fetchResults = async (typeId: number): Promise<any> => {
   try {
+    const timestamp = Math.floor(Date.now() / 1000);
     const params = getApiRequestParams('results');
     const requestData = {
       language: 0,
@@ -80,9 +90,11 @@ const fetchResults = async (typeId: number): Promise<any> => {
       pageSize: 10,
       random: params.random,
       signature: params.signature,
-      timestamp: params.timestamp, // Using the exact timestamp provided
+      timestamp: timestamp, // Using current timestamp
       typeId: typeId
     };
+    
+    console.log("Fetching TRX results with data:", JSON.stringify(requestData));
     
     const response = await fetch(RESULTS_API_URL, {
       method: 'POST',
@@ -97,6 +109,14 @@ const fetchResults = async (typeId: number): Promise<any> => {
     }
     
     const data = await response.json();
+    console.log("TRX results API response:", data);
+    
+    // Validate the response has the structure we expect
+    if (!data.data || !data.data.list || !Array.isArray(data.data.list)) {
+      console.error("API response missing expected data structure", data);
+      throw new Error("Invalid API response format for results");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error in fetchResults:", error);
