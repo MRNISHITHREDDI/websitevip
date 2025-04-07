@@ -50,8 +50,8 @@ const HeroSection = () => {
         >
           <source src="/assets/88697-606080045_small.mp4" type="video/mp4" />
         </video>
-        {/* Color overlay with 90% opacity */}
-        <div className="absolute inset-0 bg-[#05012B]/90"></div>
+        {/* Color overlay with 92% opacity */}
+        <div className="absolute inset-0 bg-[#05012B]/92"></div>
       </div>
 
       {/* Subtle pulsing glow effects */}
