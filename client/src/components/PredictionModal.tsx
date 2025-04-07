@@ -78,7 +78,29 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     // Close this modal first for smoother transition
     onClose();
     
-    // Open the license modal after a short delay
+    // Check if user already has a valid license for this game and time option
+    const storedLicenses = localStorage.getItem('validLicenses');
+    if (storedLicenses) {
+      try {
+        const licenses = JSON.parse(storedLicenses);
+        const licenseKey = licenses[`${gameType}-${selectedOption}`]?.licenseKey;
+        
+        if (licenseKey) {
+          // User already has a license for this game and time option
+          // We'll redirect directly to the prediction page
+          if (gameType === 'wingo') {
+            window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
+          } else {
+            window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
+          }
+          return;
+        }
+      } catch (error) {
+        console.error('Error parsing stored licenses:', error);
+      }
+    }
+    
+    // If no valid license found, open the license modal after a short delay
     setTimeout(() => {
       setShowLicenseModal(true);
     }, 50);

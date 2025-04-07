@@ -96,6 +96,27 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
       if (response.ok && result.success) {
         // License is valid
         setError('');
+        
+        // Store the valid license in localStorage for future use
+        try {
+          // Get existing licenses if any
+          const storedLicenses = localStorage.getItem('validLicenses');
+          let licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
+          
+          // Store the license for this game type and time option
+          licenses[`${gameType}-${timeOption}`] = { 
+            licenseKey,
+            validatedAt: new Date().toISOString(),
+            // We could store expiration date from result.licenseData if available
+          };
+          
+          // Save back to localStorage
+          localStorage.setItem('validLicenses', JSON.stringify(licenses));
+        } catch (error) {
+          console.error('Error storing license in localStorage:', error);
+          // Continue even if storage fails
+        }
+        
         // Close the modal first for better UX
         onClose();
         
