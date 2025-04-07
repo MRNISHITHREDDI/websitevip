@@ -5,14 +5,14 @@ import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
 
-// Real API endpoints for TRX predictions
-const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
-const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdList";
+// Real API endpoints for TRX predictions - using the exact URLs provided by the user
+const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetTRXGameIssue";
+const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetTRXNoaverageEmerdList";
 
 // Get the correct typeId based on time option for TRX game
 const getTrxTypeId = (timeOption: string): number => {
-  // Try with a different typeId since 13 is giving errors
-  return 1; // Trying with typeId 1 for TRX Hash
+  // Using the exact typeId value (13) from the user's provided parameters
+  return 13;
 };
 
 // Generate a random string for the API request
@@ -20,18 +20,18 @@ const generateRandom = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Get signature and random values based on endpoint - trying with the original parameters
+// Get signature and random values based on endpoint - using the EXACT values provided by user
 const getApiRequestParams = (endpoint: 'period' | 'results') => {
-  // For TRX Hash - try with original parameters
+  // For TRX Hash - using the exact parameters provided by the user
   if (endpoint === 'period') {
     return {
-      signature: "65ADE1365F185A7D7DABD4090A5B19D9",
-      random: "dadb70f547014c27af415a3ccd900b27"
+      signature: "3ECD5741CF14557EC804FD1678233837",
+      random: "c1621faba85c4062bc0116551970b0da"
     };
   } else {
     return {
-      signature: "71FD350B97FDC523C7BF6CF951B99482", 
-      random: "4c823e2eac2b43f2ad6d5608aa616428"
+      signature: "8184CBC8B6B56517BD9BBF7E1B372409", 
+      random: "536f136911b541ca8d4cb8c6ec16295a"
     };
   }
 };
