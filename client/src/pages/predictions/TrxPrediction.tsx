@@ -295,27 +295,36 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     setVerificationComplete(false);
     
     try {
-      // In a real app, fetch from API
-      // Simulate API call with timeout
+      // Use the real API data
+      const { currentPrediction, results, hash } = await fetchTrxData(timeOption);
+      setCurrentPrediction(currentPrediction);
+      setPeriodResults(results);
+      setPredictionHash(hash);
+      setIsLoading(false);
+      
+      // Simulate blockchain verification process
       setTimeout(() => {
-        const { currentPrediction, results, hash } = generateMockTrxData(timeOption);
-        setCurrentPrediction(currentPrediction);
-        setPeriodResults(results);
-        setPredictionHash(hash);
-        setIsLoading(false);
-        
-        // Simulate blockchain verification
-        setTimeout(() => {
-          setVerificationComplete(true);
-        }, 2000);
-      }, 1000);
+        setVerificationComplete(true);
+      }, 2000);
     } catch (error) {
+      console.error("Error fetching TRX data:", error);
+      
+      // Fallback to mock data if API fails
+      const { currentPrediction, results, hash } = generateMockTrxData(timeOption);
+      setCurrentPrediction(currentPrediction);
+      setPeriodResults(results);
+      setPredictionHash(hash);
+      
       toast({
-        title: "Error",
-        description: "Failed to fetch prediction data. Please try again.",
+        title: "Warning",
+        description: "Using demo data. Could not connect to blockchain server.",
         variant: "destructive",
       });
+      
       setIsLoading(false);
+      setTimeout(() => {
+        setVerificationComplete(true);
+      }, 2000);
     }
   };
   

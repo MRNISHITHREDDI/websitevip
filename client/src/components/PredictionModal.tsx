@@ -89,11 +89,14 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     { id: '5min', label: '5 MIN', value: '5 MIN' },
   ];
 
-  // Filter options based on game type to show proper text
-  const displayOptions = options.map(opt => ({
-    ...opt,
-    label: `${opt.label} ${gameType === 'trx' ? 'TRX HASH' : 'WINGO'}`
-  }));
+  // Filter options based on game type
+  // For TRX, only show 1 MIN option
+  const displayOptions = gameType === 'trx' 
+    ? [{ id: '1min', label: '1 MIN TRX HASH', value: '1 MIN' }]
+    : options.map(opt => ({
+        ...opt,
+        label: `${opt.label} WINGO`
+      }));
     
   const handleOptionClick = (option: any) => {
     // Use the actual time value for API matching
