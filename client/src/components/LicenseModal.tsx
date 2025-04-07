@@ -55,14 +55,36 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
   gameType,
   timeOption
 }) => {
+  const [licenseKey, setLicenseKey] = useState('');
+  const [error, setError] = useState('');
   const [copiedUID, setCopiedUID] = useState(false);
   
-  // Generate a random UID for demo purposes
-  const uid = `USER${Math.floor(100000 + Math.random() * 900000)}`;
+  // Fixed UID as per requirement
+  const uid = "USER502999";
   
   // Prevent clicks inside the modal from closing it
   const handleModalClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!licenseKey.trim()) {
+      setError('Please enter your license key');
+      return;
+    }
+    
+    // For demo purposes, show registration info if license isn't "DEMO123"
+    if (licenseKey !== 'DEMO123') {
+      setError('Invalid or expired license key');
+    } else {
+      // License accepted
+      setError('');
+      // Here you would typically redirect to prediction page or show prediction
+      alert(`Access granted to ${timeOption} predictions!`);
+      onClose();
+    }
   };
   
   const copyUID = () => {
@@ -105,36 +127,82 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                 </div>
               </div>
               
+              <form onSubmit={handleSubmit} className="mb-5">
+                <div className="mb-4">
+                  <label htmlFor="license" className="block text-white mb-2">Enter License Key</label>
+                  <input
+                    type="text"
+                    id="license"
+                    className="w-full bg-[#05012B]/70 border border-[#00ECBE]/30 py-2.5 px-4 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#00ECBE]/50 transition-all duration-200"
+                    placeholder="Enter your license key"
+                    value={licenseKey}
+                    onChange={(e) => setLicenseKey(e.target.value)}
+                    autoComplete="off"
+                  />
+                  {error && (
+                    <motion.p 
+                      className="text-red-400 mt-2 text-sm"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {error}
+                    </motion.p>
+                  )}
+                </div>
+                
+                <motion.button
+                  type="submit"
+                  className="w-full bg-[#00ECBE] text-[#05012B] font-semibold py-2.5 rounded-xl transition-all"
+                  whileHover={{ 
+                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
+                    y: -2 
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ 
+                    type: "spring", 
+                    damping: 12, 
+                    stiffness: 500, 
+                    duration: 0.1 
+                  }}
+                >
+                  Verify License
+                </motion.button>
+              </form>
+              
               <motion.div
-                className="bg-[#05012B]/70 border border-[#00ECBE]/30 rounded-xl p-4 overflow-hidden mb-5"
-                {...registerInfoAnimation}
+                className="bg-[#05012B]/70 border border-[#00ECBE]/30 rounded-2xl p-4 overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
               >
                 <motion.h4 
                   className="text-[#00ECBE] font-medium mb-2"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  Register for VIP Access
-                </motion.h4>
-                <motion.p 
-                  className="text-white text-sm mb-3"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
+                  Register for VIP Access
+                </motion.h4>
+                <motion.p 
+                  className="text-white text-sm mb-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
                   To access exclusive VIP predictions, please register under us and contact our team with your UID.
                 </motion.p>
+                
                 <motion.div 
                   className="bg-[#001c54] p-3 rounded-lg mb-3 relative"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-gray-300">Your UID:</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[#00ECBE] font-mono font-bold">{uid}</span>
+                      <span className="text-[#00ECBE] font-mono font-bold">USER502999</span>
                       <motion.button
                         onClick={copyUID}
                         className="text-gray-400 hover:text-white p-1 rounded hover:bg-[#00ECBE]/10"
@@ -157,40 +225,16 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
                     </motion.div>
                   )}
                 </motion.div>
+                
                 <motion.p 
                   className="text-white text-sm"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.5 }}
                 >
                   Contact <a href="https://t.me/Blackdoom1" target="_blank" rel="noopener noreferrer" className="text-[#00ECBE] hover:underline">@Blackdoom1</a> at telegram with your UID to get a free license.
                 </motion.p>
               </motion.div>
-              
-              <a 
-                href={invitationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full"
-              >
-                <motion.button
-                  className="w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
-                  whileHover={{ 
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
-                    y: -2 
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ 
-                    type: "spring", 
-                    damping: 12, 
-                    stiffness: 500, 
-                    duration: 0.1 
-                  }}
-                >
-                  <span>Register Now</span>
-                  <ExternalLink size={16} />
-                </motion.button>
-              </a>
             </div>
           </motion.div>
         </motion.div>
