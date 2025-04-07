@@ -216,10 +216,10 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                 >
                   <div className="flex items-center justify-center mb-2">
                     <Zap size={18} className="text-[#00ECBE] mr-2" />
-                    <p className="text-sm text-[#00ECBE] font-medium">Odd/Even</p>
+                    <p className="text-sm text-[#00ECBE] font-medium">Number</p>
                   </div>
-                  <p className={`text-xl font-bold ${currentPrediction.oddOrEven === 'ODD' ? 'text-red-400' : 'text-green-400'}`}>
-                    {currentPrediction.oddOrEven}
+                  <p className="text-xl font-bold text-white">
+                    {currentPrediction.prediction}
                   </p>
                 </motion.div>
               </div>
