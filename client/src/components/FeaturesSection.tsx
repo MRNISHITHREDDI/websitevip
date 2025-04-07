@@ -57,19 +57,21 @@ const FeaturesSection = () => {
                   style={{ 
                     boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
                     border: "2px solid rgba(0, 236, 190, 0.3)",
-                    aspectRatio: "16/9"
+                    aspectRatio: "16/9",
+                    backgroundColor: "#0F1A4A" // Match background color with image edge color
                   }}>
                   {/* WinGo Image */}
                   <motion.div
-                    className="absolute inset-0 w-full h-full"
+                    className="absolute inset-0 flex items-center justify-center"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
                   >
                     <img 
                       src={wingoImage} 
                       alt="Win Go Game" 
-                      className="w-full h-full object-fill"
-                      style={{ display: "block" }}
+                      className="min-w-[102%] min-h-[102%] object-cover" // Slightly larger to ensure edge-to-edge filling
+                      style={{ borderRadius: "10px", margin: "-1px" }}
                     />
                   </motion.div>
                 </div>
@@ -120,19 +122,21 @@ const FeaturesSection = () => {
                   style={{ 
                     boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
                     border: "2px solid rgba(0, 236, 190, 0.3)",
-                    aspectRatio: "16/9"
+                    aspectRatio: "16/9",
+                    backgroundColor: "#0F1A4A" // Match background color with image edge color
                   }}>
                   {/* TRX Win Image */}
                   <motion.div
-                    className="absolute inset-0 w-full h-full"
+                    className="absolute inset-0 flex items-center justify-center"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
                   >
                     <img 
                       src={trxWinImage} 
                       alt="TRX Win Game" 
-                      className="w-full h-full object-fill"
-                      style={{ display: "block" }}
+                      className="min-w-[102%] min-h-[102%] object-cover" // Slightly larger to ensure edge-to-edge filling
+                      style={{ borderRadius: "10px", margin: "-1px" }}
                     />
                   </motion.div>
                 </div>
