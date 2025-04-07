@@ -123,16 +123,16 @@ const fetchWingoData = async (timeOption: string) => {
     
     // Process and format past results
     const results: PeriodResult[] = resultsData.data.list.map((item: any, index: number) => {
-      const number = parseInt(item.value);
+      const number = parseInt(item.number);
       
       return {
         id: `r-${index}`,
-        periodNumber: item.issue,
+        periodNumber: item.issueNumber,
         result: number,
-        color: wingoColorMap[number],
+        color: item.colour.split(',')[0], // API returns 'green', 'red', or 'green,violet' format
         bigOrSmall: getBigOrSmall(number),
         oddOrEven: getOddOrEven(number),
-        timestamp: new Date().toISOString(), // API doesn't provide timestamp, using current time
+        timestamp: resultsData.serviceNowTime || new Date().toISOString(),
       };
     });
     
@@ -143,15 +143,20 @@ const fetchWingoData = async (timeOption: string) => {
     
     const currentPeriod = periodData.data;
     
+    // Calculate time remaining in seconds based on endTime and current time
+    const endTime = new Date(currentPeriod.endTime).getTime();
+    const currentTime = new Date(periodData.serviceNowTime).getTime();
+    const timeRemaining = Math.max(0, Math.floor((endTime - currentTime) / 1000));
+    
     const currentPrediction: PredictionData = {
       id: 'next',
-      periodNumber: currentPeriod.issue,
+      periodNumber: currentPeriod.issueNumber,
       prediction: predictionNumber,
       color: wingoColorMap[predictionNumber],
       bigOrSmall: getBigOrSmall(predictionNumber),
       oddOrEven: getOddOrEven(predictionNumber),
-      timestamp: new Date().toISOString(),
-      timeRemaining: currentPeriod.seconds || 30 // seconds
+      timestamp: periodData.serviceNowTime || new Date().toISOString(),
+      timeRemaining: timeRemaining
     };
     
     return { currentPrediction, results };

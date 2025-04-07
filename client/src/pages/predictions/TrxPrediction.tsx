@@ -2,8 +2,202 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import PredictionLayout from '@/components/predictions/PredictionLayout';
-import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven } from './types';
+import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
+
+// Real API endpoints for TRX predictions
+const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
+const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdList";
+
+// Get the correct typeId based on time option for TRX game
+const getTrxTypeId = (timeOption: string): number => {
+  switch (timeOption) {
+    case "30 SEC":
+      return 40; // Different typeIds for TRX
+    case "1 MIN":
+      return 41;
+    case "3 MIN":
+      return 43;
+    case "5 MIN":
+      return 45;
+    default:
+      return 40;
+  }
+};
+
+// Generate a random string for the API request
+const generateRandom = (): string => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
+// Helper function to generate signature (in a real implementation, this would be a proper hash)
+const generateSignature = (): string => {
+  const chars = 'ABCDEF0123456789';
+  let result = '';
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+// Fetch the current period data
+const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
+  try {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const requestData = {
+      language: 0,
+      random: generateRandom(),
+      signature: generateSignature(),
+      timestamp: timestamp,
+      typeId: typeId
+    };
+    
+    const response = await fetch(PERIOD_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching period data: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in fetchCurrentPeriod:", error);
+    throw error;
+  }
+};
+
+// Fetch past results
+const fetchResults = async (typeId: number): Promise<any> => {
+  try {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const requestData = {
+      language: 0,
+      pageNo: 1,
+      pageSize: 10,
+      random: generateRandom(),
+      signature: generateSignature(),
+      timestamp: timestamp,
+      typeId: typeId
+    };
+    
+    const response = await fetch(RESULTS_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching results: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in fetchResults:", error);
+    throw error;
+  }
+};
+
+// Fetch real TRX data from API
+const fetchTrxData = async (timeOption: string) => {
+  try {
+    const typeId = getTrxTypeId(timeOption);
+    
+    // Fetch period and results data in parallel
+    const [periodData, resultsData] = await Promise.all([
+      fetchCurrentPeriod(typeId),
+      fetchResults(typeId)
+    ]);
+    
+    if (!periodData.data || !resultsData.data || !resultsData.data.list) {
+      throw new Error("Invalid data structure received from API");
+    }
+    
+    // Process and format past results
+    const results: PeriodResult[] = resultsData.data.list.map((item: any, index: number) => {
+      // For TRX, we'll extract the last character of the number as our result
+      // In real TRX hash, this would be the last character of a blockchain hash
+      const hashResult = item.number.slice(-1);
+      const number = parseInt(hashResult) || 0;
+      
+      return {
+        id: `r-${index}`,
+        periodNumber: item.issueNumber,
+        result: number,
+        color: getTrxResultColor(hashResult),
+        bigOrSmall: getBigOrSmall(number),
+        oddOrEven: getOddOrEven(number),
+        timestamp: resultsData.serviceNowTime || new Date().toISOString(),
+      };
+    });
+    
+    // For prediction, we'll use our VIP algorithm - in this example, just a basic pattern
+    const lastResults = results.slice(0, 5).map(r => r.result);
+    const predictionNumber = getPrediction(lastResults);
+    const predictionHash = predictionNumber.toString();
+    
+    const currentPeriod = periodData.data;
+    
+    // Calculate time remaining in seconds based on endTime and current time
+    const endTime = new Date(currentPeriod.endTime).getTime();
+    const currentTime = new Date(periodData.serviceNowTime).getTime();
+    const timeRemaining = Math.max(0, Math.floor((endTime - currentTime) / 1000));
+    
+    // Generate a mock blockchain hash for demonstration
+    // In real implementation, this would be an actual blockchain hash
+    const mockHash = generateMockHash(predictionNumber);
+    
+    const currentPrediction: PredictionData = {
+      id: 'next',
+      periodNumber: currentPeriod.issueNumber,
+      prediction: predictionNumber,
+      color: getTrxResultColor(predictionHash),
+      bigOrSmall: getBigOrSmall(predictionNumber),
+      oddOrEven: getOddOrEven(predictionNumber),
+      timestamp: periodData.serviceNowTime || new Date().toISOString(),
+      timeRemaining: timeRemaining
+    };
+    
+    return { currentPrediction, results, hash: mockHash };
+  } catch (error) {
+    console.error("Error fetching TRX data:", error);
+    throw error;
+  }
+};
+
+// Simple prediction algorithm (example only)
+const getPrediction = (lastResults: number[]): number => {
+  // This is where your proprietary prediction algorithm would go
+  // For this example, we're just returning a semi-random number
+  // based on patterns in recent results
+  
+  if (lastResults.length === 0) return Math.floor(Math.random() * 10);
+  
+  // Example pattern: average of last results + 1, modulo 10
+  const sum = lastResults.reduce((a, b) => a + b, 0);
+  const avg = Math.floor(sum / lastResults.length);
+  return (avg + 1) % 10;
+};
+
+// Generate a mock blockchain hash for demonstration
+const generateMockHash = (lastDigit: number): string => {
+  const hexChars = '0123456789abcdef';
+  let hash = '0x';
+  for (let i = 0; i < 63; i++) {
+    hash += hexChars[Math.floor(Math.random() * 16)];
+  }
+  // Make sure the last digit matches our prediction
+  hash += lastDigit.toString();
+  return hash;
+};
 
 // Mock data generator for demo purposes
 const generateMockTrxData = (timeOption: string) => {
