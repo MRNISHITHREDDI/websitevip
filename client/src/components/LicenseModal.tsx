@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, ExternalLink, X } from 'lucide-react';
 import React, { useState } from 'react';
+import { useLocation } from 'wouter';
 
 interface LicenseModalProps {
   isOpen: boolean;
@@ -58,6 +59,7 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
   const [licenseKey, setLicenseKey] = useState('');
   const [error, setError] = useState('');
   const [copiedUID, setCopiedUID] = useState(false);
+  const [, navigate] = useLocation();
   
   // Fixed UID as per requirement
   const uid = "USER502999";
@@ -94,8 +96,12 @@ const LicenseModal: React.FC<LicenseModalProps> = ({
       if (response.ok && result.success) {
         // License is valid
         setError('');
-        alert(`Access granted to ${timeOption} predictions! Valid until ${new Date(result.data.expiresAt).toLocaleDateString()}`);
+        // Close the modal first for better UX
         onClose();
+        
+        // Navigate to the appropriate prediction page
+        const encodedTimeOption = encodeURIComponent(timeOption);
+        navigate(`/predictions/${gameType}/${encodedTimeOption}`);
       } else {
         // License is invalid
         setError(result.message || 'Invalid or expired license key');
