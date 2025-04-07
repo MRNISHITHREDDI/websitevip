@@ -1,0 +1,66 @@
+i want to create a beatiful ui website of color game prediction. 
+
+nav bar : 
+
+at navbar logo should be place at left side with some space and at right side home prediction , join pro button.
+
+navbar colors : for font color code is #00ECBE and background color ( background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%)); )
+
+Body : 
+
+section 1 :  
+
+make a best beautiful ui with wingo color prediction content with images and animation 
+
+colors : background color of body is #05012B and if any 2nd background color need use this code background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%));  and font color is #00ECBE
+
+section 2 : 
+
+add a layout with beautiful in that i want add two images and one image down matter is this 
+
+Win Go
+Win Go event celebrates luck and chance by providing big prizes for little money. The lottery’s simplicity and potential jackpot appeal make it popular. Every ticket has the opportunity of a life-changing win, making it a symbol of hope and excitement.
+
+
+and another image down matter is this 
+
+TRX Hash
+TRX Hash feature combines technology with games. TRON’s (TRX) blockchain technology ensures fair and transparent event results in these games. Every ticket has the opportunity of a life-changing win, making it a symbol of hope and excitement.
+
+colors : background color of body is #05012B and if any 2nd background color need use this code background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%));  and font color is #00ECBE
+
+
+and for both sides add demo button and vip prediction button with colors of : background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%));  and font color is #00ECBE
+
+
+section 3 : 
+
+add our performance 
+
+API Response Speed
+9.8
+/10
+Lightning-fast predictions
+
+Prediction Accuracy
+10
+/10
+100% accurate predictions
+
+Development Team
+9.9
+/10
+Expert developers & analysts
+
+User Satisfaction
+9.7
+/10
+Trusted by thousands    
+
+
+for this content background color should be this background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%)); and font color #00ECBE
+
+
+footer :  
+
+background color : #05012B  and second background color background: var(--bg_HomeModule_Padding, linear-gradient(180deg, #001c54 0%, #000c33 100%)); and font color #00ECBE
