@@ -53,27 +53,28 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="relative rounded-xl overflow-hidden"
-                  style={{ 
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
-                    border: "2px solid rgba(0, 236, 190, 0.3)",
-                    aspectRatio: "16/9",
-                    backgroundColor: "#0F1A4A" // Match background color with image edge color
-                  }}>
-                  {/* WinGo Image */}
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-center"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    <img 
-                      src={wingoImage} 
-                      alt="Win Go Game" 
-                      className="min-w-[102%] min-h-[102%] object-cover" // Slightly larger to ensure edge-to-edge filling
-                      style={{ borderRadius: "10px", margin: "-1px" }}
-                    />
-                  </motion.div>
+                <div className="relative overflow-hidden cursor-pointer" 
+                  style={{ aspectRatio: "16/9" }}>
+                  {/* WinGo Image - Complete Replacement */}
+                  <motion.div 
+                    className="absolute inset-0 rounded-xl"
+                    style={{ 
+                      backgroundImage: `url(${wingoImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      border: "2px solid rgba(0, 236, 190, 0.3)",
+                      boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 0 25px 0 rgba(0, 236, 190, 0.5)"
+                    }}
+                    transition={{ 
+                      scale: { duration: 0.4, ease: "easeOut" },
+                      boxShadow: { duration: 0.4 }
+                    }}
+                  />
                 </div>
               </div>
               <div className="w-full md:w-1/2">
@@ -118,27 +119,28 @@ const FeaturesSection = () => {
           >
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="w-full md:w-1/2">
-                <div className="relative rounded-xl overflow-hidden"
-                  style={{ 
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
-                    border: "2px solid rgba(0, 236, 190, 0.3)",
-                    aspectRatio: "16/9",
-                    backgroundColor: "#0F1A4A" // Match background color with image edge color
-                  }}>
-                  {/* TRX Win Image */}
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-center"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    <img 
-                      src={trxWinImage} 
-                      alt="TRX Win Game" 
-                      className="min-w-[102%] min-h-[102%] object-cover" // Slightly larger to ensure edge-to-edge filling
-                      style={{ borderRadius: "10px", margin: "-1px" }}
-                    />
-                  </motion.div>
+                <div className="relative overflow-hidden cursor-pointer" 
+                  style={{ aspectRatio: "16/9" }}>
+                  {/* TRX Win Image - Complete Replacement */}
+                  <motion.div 
+                    className="absolute inset-0 rounded-xl"
+                    style={{ 
+                      backgroundImage: `url(${trxWinImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      border: "2px solid rgba(0, 236, 190, 0.3)",
+                      boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)",
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 0 25px 0 rgba(0, 236, 190, 0.5)"
+                    }}
+                    transition={{ 
+                      scale: { duration: 0.4, ease: "easeOut" },
+                      boxShadow: { duration: 0.4 }
+                    }}
+                  />
                 </div>
               </div>
               <div className="w-full md:w-1/2">
