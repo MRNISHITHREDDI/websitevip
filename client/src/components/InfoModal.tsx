@@ -1,6 +1,7 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion } from 'framer-motion';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -10,22 +11,23 @@ interface InfoModalProps {
 const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-3xl bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE]/20">
+      <DialogContent className="sm:max-w-3xl bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE]/20 max-h-[90vh] block">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white mb-4 flex items-center">
             <span className="text-[#00ECBE] mr-2">VIP</span> Prediction Information
           </DialogTitle>
         </DialogHeader>
-        <DialogDescription className="text-gray-300">
-          <div className="space-y-6">
+        
+        <ScrollArea className="max-h-[60vh] pr-4">
+          <div className="text-gray-300 space-y-6">
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <p className="mb-4">
+              <div className="mb-4">
                 At Vip Prediction, we believe in empowering our users with knowledge. It's crucial to understand that Playing Color Game, claim to use advanced systems like SHA-256 for generating random results, there's always a potential for manipulation. This is where our expertise comes in handy.
-              </p>
+              </div>
             </motion.div>
 
             <motion.div 
@@ -61,12 +63,12 @@ const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
               className="bg-[#001232] p-4 rounded-lg border border-[#00ECBE]/10"
             >
               <h3 className="text-[#00ECBE] text-lg font-semibold mb-2">Stay Informed, Play Smart:</h3>
-              <p>
+              <div>
                 We urge all our users to approach these platforms with a critical eye. Always verify a platform's credibility before engaging. With Predict Vip by your side, you're equipped with the insights needed to make informed decisions and maximize your chances of success. Remember, knowledge is power – especially in the world of online lotteries!
-              </p>
+              </div>
             </motion.div>
           </div>
-        </DialogDescription>
+        </ScrollArea>
         
         <div className="mt-6 flex justify-end">
           <motion.button
