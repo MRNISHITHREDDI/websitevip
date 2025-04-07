@@ -295,7 +295,7 @@ const fetchTrxData = async (timeOption: string) => {
     
     // Use exact period number and time values from the API
     const currentPrediction: PredictionData = {
-      id: 'next',
+      id: `next-trx-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       periodNumber: currentPeriod.issueNumber, // This contains the exact period number from API
       prediction: predictionNumber,
       color: getTrxResultColor(predictionHash),
@@ -370,7 +370,7 @@ const generateMockTrxData = (timeOption: string) => {
   
   // Current prediction
   const currentPrediction: PredictionData = {
-    id: 'next',
+    id: `next-mock-trx-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
     periodNumber: currentPeriodNumber,
     prediction: predictionResult,
     color: trxColorMap[predictionResult % 2 === 0 ? 'EVEN' : 'ODD'],
@@ -409,7 +409,7 @@ const generateMockTrxData = (timeOption: string) => {
     const pastTimeStr = `${indiaDate} ${pastTime.getHours()}:${pastTime.getMinutes()}:${pastTime.getSeconds()}`;
     
     return {
-      id: `r-${i}`,
+      id: `r-trx-${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${i}`,
       periodNumber: generatePeriodNumber(i + 1),
       result: resultNum,
       color: trxColorMap[resultNum % 2 === 0 ? 'EVEN' : 'ODD'],
@@ -453,6 +453,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [periodResults, setPeriodResults] = useState<PeriodResult[]>([]);
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
+  const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
   const [predictionHash, setPredictionHash] = useState<string>('');
   const [verificationComplete, setVerificationComplete] = useState<boolean>(false);
   
@@ -463,6 +464,65 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     try {
       // Use the real API data with the exact parameters provided
       const { currentPrediction, results, hash } = await fetchTrxData(timeOption);
+      
+      // Check if we have a previous prediction to compare with the latest result
+      if (currentPrediction && results.length > 0) {
+        // Store current prediction in previous predictions before updating it
+        if (currentPrediction) {
+          const latestResult = results[0];
+          
+          // Update previous predictions by checking if the current prediction needs to be updated
+          setPreviousPredictions(prev => {
+            const updatedPredictions = [...prev];
+            
+            // First, check if we have a prediction for the latest result period
+            const latestResultIndex = updatedPredictions.findIndex(
+              p => p.periodNumber === latestResult.periodNumber
+            );
+            
+            if (latestResultIndex !== -1) {
+              // Update existing prediction with actual result
+              const predBigSmall = updatedPredictions[latestResultIndex].bigOrSmall;
+              const resultNumber = parseInt(latestResult.result.toString());
+              const actualBigSmall = resultNumber >= 5 ? 'BIG' as const : 'SMALL' as const;
+              updatedPredictions[latestResultIndex] = {
+                ...updatedPredictions[latestResultIndex],
+                actualResult: resultNumber,
+                status: predBigSmall === actualBigSmall ? 'WIN' as const : 'LOSS' as const
+              };
+            }
+            
+            // Only add current prediction if it's not already in the list
+            const currentPredictionExists = updatedPredictions.some(
+              p => p.periodNumber === currentPrediction.periodNumber
+            );
+            
+            if (!currentPredictionExists && currentPrediction.periodNumber !== latestResult.periodNumber) {
+              // Add the current prediction to the list
+              updatedPredictions.unshift({
+                ...currentPrediction,
+                actualResult: null,
+                status: null
+              });
+              
+              // Keep only the last 20 predictions
+              if (updatedPredictions.length > 20) {
+                updatedPredictions.pop();
+              }
+            }
+            
+            return updatedPredictions;
+          });
+        }
+      } else if (currentPrediction && previousPredictions.length === 0) {
+        // Initialize with the first prediction
+        setPreviousPredictions([{
+          ...currentPrediction,
+          actualResult: null,
+          status: null
+        }]);
+      }
+      
       setCurrentPrediction(currentPrediction);
       setPeriodResults(results);
       setPredictionHash(hash);
@@ -477,6 +537,16 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
       
       // Fallback to mock data if API fails
       const { currentPrediction, results, hash } = generateMockTrxData(timeOption);
+      
+      // Handle win/loss tracking for mock data too
+      if (currentPrediction && previousPredictions.length === 0) {
+        setPreviousPredictions([{
+          ...currentPrediction,
+          actualResult: null,
+          status: null
+        }]);
+      }
+      
       setCurrentPrediction(currentPrediction);
       setPeriodResults(results);
       setPredictionHash(hash);
@@ -542,6 +612,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
       currentPrediction={currentPrediction}
       isLoading={isLoading}
       onRefresh={fetchData}
+      previousPredictions={previousPredictions}
     >
       {/* TRX specific prediction display */}
       {currentPrediction && (

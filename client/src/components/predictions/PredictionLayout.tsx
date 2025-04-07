@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Clock, ChevronDown, RefreshCw, BarChart3, Trophy } from 'lucide-react';
+import { ArrowLeft, Clock, ChevronDown, RefreshCw, BarChart3, Trophy, Check, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PeriodResult, PredictionData } from '@/pages/predictions/types';
 
@@ -13,6 +13,7 @@ interface PredictionLayoutProps {
   isLoading: boolean;
   onRefresh: () => void;
   children: React.ReactNode;
+  previousPredictions?: PredictionData[]; // Add previous predictions for tracking win/loss
 }
 
 // Floating animation for background elements
@@ -36,11 +37,13 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
   currentPrediction,
   isLoading,
   onRefresh,
-  children
+  children,
+  previousPredictions = []
 }) => {
   const { toast } = useToast();
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [showPredictions, setShowPredictions] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   
   // Format time properly from seconds
@@ -202,12 +205,141 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
           )}
         </motion.div>
         
-        {/* History Section */}
+        {/* Prediction History with Win/Loss */}
+        <motion.div 
+          className="bg-gradient-to-br from-[#001c54] to-[#000c33] rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,60,150,0.5)] border border-[#00ECBE]/10 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, type: "spring", damping: 15 }}
+        >
+          <motion.div 
+            className="p-4 flex justify-between items-center cursor-pointer" 
+            onClick={() => setShowPredictions(!showPredictions)}
+            whileHover={{ backgroundColor: "rgba(0, 236, 190, 0.05)" }}
+          >
+            <h2 className="text-lg font-semibold text-[#00ECBE] flex items-center">
+              <Trophy size={18} className="mr-2 text-yellow-400" />
+              <span>Prediction History</span>
+            </h2>
+            <motion.div
+              animate={{ rotate: showPredictions ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronDown size={20} className="text-[#00ECBE]" />
+            </motion.div>
+          </motion.div>
+          
+          <AnimatePresence mode="wait">
+            {showPredictions && (
+              <motion.div
+                key={`predictions-content-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                {isLoading ? (
+                  <div className="flex justify-center items-center p-6">
+                    <div className="w-8 h-8 border-4 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : previousPredictions.length > 0 ? (
+                  <div className="p-4">
+                    <div className="max-h-[350px] overflow-auto">
+                      <table className="w-full border-collapse text-sm">
+                        <thead>
+                          <tr className="text-[#00ECBE]/70 border-b border-[#00ECBE]/10">
+                            <th className="py-2 font-medium text-center">
+                              <span className="hidden sm:inline">Period</span>
+                              <span className="sm:hidden">Period#</span>
+                            </th>
+                            <th className="py-2 font-medium text-center">Big/Small</th>
+                            <th className="py-2 font-medium text-center">Actual</th>
+                            <th className="py-2 font-medium text-center">Win/Loss</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {previousPredictions.map((prediction, index) => {
+                            // Determine if the Big/Small prediction was correct
+                            let bigSmallStatus = null;
+                            if (prediction.actualResult !== undefined && prediction.actualResult !== null) {
+                              const actualBigSmall = prediction.actualResult >= 5 ? 'BIG' : 'SMALL';
+                              bigSmallStatus = prediction.bigOrSmall === actualBigSmall ? 'WIN' : 'LOSS';
+                            }
+                            
+                            return (
+                              <motion.tr 
+                                key={prediction.id} 
+                                className="hover:bg-[#001845]/50"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05, duration: 0.2 }}
+                              >
+                                <td className="py-3 text-center">
+                                  <span className="hidden sm:inline truncate inline-block max-w-[100px]">
+                                    {prediction.periodNumber}
+                                  </span>
+                                  <span className="sm:hidden">
+                                    #{prediction.periodNumber.slice(-3)}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-center">
+                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                    prediction.bigOrSmall === 'BIG' ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+                                  }`}>
+                                    {prediction.bigOrSmall}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-center">
+                                  {prediction.actualResult !== undefined && prediction.actualResult !== null ? (
+                                    <span className="font-medium">{prediction.actualResult}</span>
+                                  ) : (
+                                    <span className="text-gray-500">-</span>
+                                  )}
+                                </td>
+                                <td className="py-3 text-center">
+                                  {bigSmallStatus === 'WIN' ? (
+                                    <div className="flex justify-center">
+                                      <span className="bg-green-500/20 text-green-400 rounded-full flex items-center justify-center w-7 h-7">
+                                        <Check size={14} />
+                                      </span>
+                                    </div>
+                                  ) : bigSmallStatus === 'LOSS' ? (
+                                    <div className="flex justify-center">
+                                      <span className="bg-red-500/20 text-red-400 rounded-full flex items-center justify-center w-7 h-7">
+                                        <X size={14} />
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-gray-500">-</span>
+                                  )}
+                                </td>
+                              </motion.tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center p-8 text-gray-400">
+                    <div className="text-center">
+                      <p className="mb-2">No prediction history available yet</p>
+                      <p className="text-sm">Play a few rounds to see your prediction accuracy</p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Results History Section */}
         <motion.div 
           className="bg-gradient-to-br from-[#001c54] to-[#000c33] rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,60,150,0.5)] border border-[#00ECBE]/10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, type: "spring", damping: 15 }}
+          transition={{ duration: 0.4, delay: 0.2, type: "spring", damping: 15 }}
         >
           <motion.div 
             className="p-4 flex justify-between items-center cursor-pointer" 
@@ -226,9 +358,10 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
             </motion.div>
           </motion.div>
           
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {showHistory && (
               <motion.div
+                key={`history-content-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`}
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}

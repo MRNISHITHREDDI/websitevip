@@ -24,6 +24,8 @@ export interface PredictionData {
   oddOrEven: 'ODD' | 'EVEN';
   timestamp: string;
   timeRemaining: number; // in seconds
+  status?: 'WIN' | 'LOSS' | null; // To track if prediction was correct
+  actualResult?: number | null; // The actual result if available
 }
 
 // Color mappings for Win Go (modified to only show red or green)

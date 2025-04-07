@@ -112,8 +112,8 @@ export const getPrediction = (
   );
 
   // Determine number-based predictions
-  let bigSmallPrediction = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
-  let oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
+  let bigSmallPrediction: 'BIG' | 'SMALL' = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
+  let oddEvenPrediction: 'ODD' | 'EVEN' = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
   
   // IMPORTANT ENHANCEMENT: Use the color analysis directly
   // This prioritizes the pattern/streak analysis over the number prediction
@@ -139,9 +139,9 @@ export const getPrediction = (
   return {
     prediction: finalPrediction.number,
     confidence: finalPrediction.confidence,
-    colorPrediction,
-    bigSmallPrediction,
-    oddEvenPrediction,
+    colorPrediction: colorPrediction,
+    bigSmallPrediction: bigSmallPrediction,
+    oddEvenPrediction: oddEvenPrediction,
     reasoning: reasonings
   };
 };
