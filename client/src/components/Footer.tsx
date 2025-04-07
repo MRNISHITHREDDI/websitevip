@@ -96,7 +96,7 @@ const Footer = () => {
                 <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">FAQ</button>
               </li>
               <li>
-                <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Help Center</button>
+                <a href="https://t.me/Blackdoom1" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Help Center</a>
               </li>
               <li>
                 <button className="text-gray-400 hover:text-[#00ECBE] transition duration-300">Terms of Service</button>
