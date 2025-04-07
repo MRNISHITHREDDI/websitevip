@@ -4,64 +4,17 @@ import { ChevronDown, DollarSign, Check, UserPlus, Play, Info } from 'lucide-rea
 const HeroSection = () => {
   return (
     <section className="relative py-16 lg:py-24 overflow-hidden">
-      {/* Background effects with 40% transparency */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[#05012B]/40">
-        {/* Blue and purple streaming light effects similar to the image */}
-        <motion.div 
-          className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#001c54]/40 to-transparent"
-          animate={{ opacity: [0.4, 0.6, 0.4] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        {/* Animated light streaks */}
-        <motion.div 
-          className="absolute top-[10%] left-[5%] w-[150%] h-2 bg-[#00ECBE]/20 rounded-full rotate-[-20deg]"
-          animate={{ 
-            x: [-500, 1000],
-            opacity: [0, 0.6, 0] 
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        <motion.div 
-          className="absolute top-[30%] left-[15%] w-[150%] h-1 bg-[#7B42F6]/20 rounded-full rotate-[-15deg]"
-          animate={{ 
-            x: [-300, 1200],
-            opacity: [0, 0.7, 0] 
-          }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-        
-        <motion.div 
-          className="absolute top-[50%] left-0 w-[150%] h-3 bg-[#00ECBE]/20 rounded-full rotate-[-25deg]"
-          animate={{ 
-            x: [-400, 1100],
-            opacity: [0, 0.5, 0] 
-          }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
-        
-        <motion.div 
-          className="absolute top-[70%] left-[10%] w-[150%] h-2 bg-[#7B42F6]/20 rounded-full rotate-[-10deg]"
-          animate={{ 
-            x: [-600, 900],
-            opacity: [0, 0.6, 0] 
-          }}
-          transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-        />
-        
-        {/* Pulsing glow circles */}
-        <motion.div 
-          className="absolute top-[20%] left-[15%] w-24 h-24 bg-[#00ECBE]/10 rounded-full filter blur-xl"
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute top-[60%] right-[10%] w-32 h-32 bg-[#7B42F6]/10 rounded-full filter blur-xl"
-          animate={{ scale: [1, 1.3, 1] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </div>
+      {/* Subtle pulsing glow effects */}
+      <motion.div 
+        className="absolute top-[20%] left-[15%] w-24 h-24 bg-[#00ECBE]/5 rounded-full filter blur-xl"
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div 
+        className="absolute top-[60%] right-[10%] w-32 h-32 bg-[#00ECBE]/5 rounded-full filter blur-xl"
+        animate={{ scale: [1, 1.3, 1] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
@@ -148,116 +101,100 @@ const HeroSection = () => {
           >
             <div className="relative">
               <motion.div 
-                className="absolute -top-10 -left-10 w-32 h-32 bg-[#00ECBE]/10 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
                 className="relative z-10"
-                animate={{ y: [0, -10, 0] }}
+                animate={{ y: [0, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="rounded-lg shadow-2xl border-2 border-[#00ECBE]/30 overflow-hidden" style={{ boxShadow: "0 0 25px 0 rgba(0, 236, 190, 0.3)" }}>
-                  {/* Game interface with animated money earnings visualization */}
-                  <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-[#001c54] to-[#000c33] p-6 flex items-center justify-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <motion.div 
-                        className="flex items-center justify-center mb-4"
-                        animate={{ scale: [1, 1.2, 1], rotateY: [0, 360] }}
-                        transition={{ 
-                          scale: { duration: 3, repeat: Infinity },
-                          rotateY: { duration: 6, repeat: Infinity }
-                        }}
-                      >
-                        <DollarSign className="text-[#00ECBE] h-16 w-16" />
-                      </motion.div>
-
-                      {/* Rain of dollar signs */}
-                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        {[...Array(10)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="absolute text-[#00ECBE]/40"
-                            initial={{ 
-                              top: -50, 
-                              left: `${10 + i * 8}%`,
-                              scale: Math.random() * 0.5 + 0.5
-                            }}
-                            animate={{ 
-                              top: ['0%', '100%'],
-                              opacity: [0, 1, 0]
-                            }}
-                            transition={{ 
-                              duration: 4 + Math.random() * 4,
-                              repeat: Infinity,
-                              delay: i * 0.7,
-                              ease: "linear"
-                            }}
-                          >
-                            <DollarSign />
-                          </motion.div>
-                        ))}
+                {/* Main container that resembles the image you shared */}
+                <div className="rounded-lg border border-[#00ECBE]/30 bg-[#052652] p-4" 
+                    style={{ boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.3)" }}>
+                  
+                  {/* 100% Accurate Prediction box */}
+                  <div className="mb-6 relative">
+                    <motion.div 
+                      className="bg-[#052652] border border-[#00ECBE]/30 rounded-lg p-3 flex items-center gap-2"
+                      animate={{ boxShadow: ["0 0 5px rgba(0, 236, 190, 0.2)", "0 0 10px rgba(0, 236, 190, 0.4)", "0 0 5px rgba(0, 236, 190, 0.2)"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-[#00ECBE] flex items-center justify-center">
+                        <Check className="h-4 w-4 text-[#052652]" />
                       </div>
-
-                      <div className="bg-[#00ECBE]/10 border border-[#00ECBE]/30 rounded-lg p-4">
-                        <motion.p 
-                          className="text-[#00ECBE] font-semibold text-xl"
-                          animate={{ opacity: [0.7, 1, 0.7] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          Predict & Earn Big
-                        </motion.p>
+                      <div>
+                        <p className="text-[#00ECBE] font-semibold text-lg">100%</p>
+                        <p className="text-sm text-gray-300">Accurate Prediction</p>
                       </div>
-                    </div>
+                    </motion.div>
+                    
+                    {/* Floating dollar signs */}
+                    <motion.div 
+                      className="absolute -bottom-4 left-8 text-[#00ECBE]"
+                      animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <DollarSign size={18} />
+                    </motion.div>
+                    <motion.div 
+                      className="absolute -bottom-6 left-20 text-[#00ECBE]"
+                      animate={{ y: [0, -15, 0], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    >
+                      <DollarSign size={20} />
+                    </motion.div>
+                    <motion.div 
+                      className="absolute -bottom-4 left-32 text-[#00ECBE]"
+                      animate={{ y: [0, -8, 0], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    >
+                      <DollarSign size={16} />
+                    </motion.div>
                   </div>
-                </div>
-                
-                {/* Money-earning graphic badge */}
-                <div className="absolute -bottom-8 -right-8 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 border border-[#00ECBE]/30 shadow-lg">
+                  
+                  {/* Predict & Earn Big box */}
+                  <div className="mb-6">
+                    <motion.div 
+                      className="bg-[#052652] border border-[#00ECBE]/30 rounded-lg p-4 flex justify-center"
+                      animate={{ boxShadow: ["0 0 5px rgba(0, 236, 190, 0.2)", "0 0 10px rgba(0, 236, 190, 0.4)", "0 0 5px rgba(0, 236, 190, 0.2)"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    >
+                      <motion.p 
+                        className="text-[#00ECBE] font-semibold text-2xl"
+                        animate={{ textShadow: ["0 0 5px rgba(0, 236, 190, 0)", "0 0 10px rgba(0, 236, 190, 0.5)", "0 0 5px rgba(0, 236, 190, 0)"] }}
+                        transition={{ duration: 2.5, repeat: Infinity }}
+                      >
+                        Predict & Earn Big
+                      </motion.p>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Earn Big & Win instantly box */}
+                  <div className="relative flex justify-end">
+                    <motion.div 
+                      className="bg-[#052652] border border-[#00ECBE]/30 rounded-lg p-3 flex items-center gap-3 max-w-[240px]"
+                      animate={{ boxShadow: ["0 0 5px rgba(0, 236, 190, 0.2)", "0 0 10px rgba(0, 236, 190, 0.4)", "0 0 5px rgba(0, 236, 190, 0.2)"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-[#00ECBE] flex items-center justify-center">
+                        <DollarSign className="h-6 w-6 text-[#052652]" />
+                      </div>
+                      <div>
+                        <p className="text-[#00ECBE] font-semibold text-xl">Earn Big</p>
+                        <p className="text-gray-300 text-sm">Win instantly</p>
+                      </div>
+                    </motion.div>
+                  </div>
+                  
+                  {/* 400+ Daily Winners */}
                   <motion.div 
-                    className="flex items-center gap-2"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                    className="absolute left-4 bottom-0 flex items-center gap-2"
+                    animate={{ y: [0, -5, 0], opacity: [0.8, 1, 0.8] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#00ECBE] flex items-center justify-center">
-                      <DollarSign className="h-6 w-6 text-[#05012B]" />
-                    </div>
-                    <div>
-                      <p className="text-[#00ECBE] font-semibold">Earn Big</p>
-                      <p className="text-xs text-gray-300">Win instantly</p>
-                    </div>
-                  </motion.div>
-                </div>
-                
-                {/* Accuracy badge */}
-                <div className="absolute top-2 right-2 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-3 border border-[#00ECBE]/30 shadow-lg">
-                  <motion.div 
-                    className="flex items-center gap-2"
-                    animate={{ opacity: [0.9, 1, 0.9] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <div className="w-6 h-6 rounded-full bg-[#00ECBE] flex items-center justify-center">
-                      <Check className="h-4 w-4 text-[#05012B]" />
-                    </div>
-                    <div>
-                      <p className="text-[#00ECBE] font-semibold text-sm">100%</p>
-                      <p className="text-[0.65rem] text-gray-300">Accurate Prediction</p>
-                    </div>
+                    <span className="text-[#00ECBE] font-bold text-xl">400+</span>
+                    <span className="text-gray-300 text-sm">Daily Winners</span>
                   </motion.div>
                 </div>
               </motion.div>
             </div>
-            
-            <motion.div 
-              className="flex absolute -bottom-10 left-0 bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-lg p-4 shadow-lg border border-[#00ECBE]/30"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="text-[#00ECBE] font-bold text-lg">400+</div>
-                <div className="text-xs text-gray-300">Daily Winners</div>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
         
