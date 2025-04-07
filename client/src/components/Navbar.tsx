@@ -104,7 +104,21 @@ const Navbar = () => {
               </a>
               <motion.button 
                 onClick={openJoinProModal}
-                className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300"
+                className="hidden md:flex items-center bg-gradient-to-r from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-2.5 rounded-full transition duration-300 relative overflow-hidden group"
+                whileHover={{ 
+                  boxShadow: '0 0 20px 0 rgba(0, 236, 190, 0.6)',
+                  y: -2,
+                }}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-[#00ECBE]/10 to-transparent w-0 group-hover:w-full transition-all duration-700"></span>
+                <span className="relative font-medium">Join Pro</span>
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#00ECBE] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
+              </motion.button>
+              
+              {/* Mobile version of Join Pro button */}
+              <motion.button 
+                onClick={openJoinProModal}
+                className="md:hidden bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300"
                 whileHover={{ 
                   boxShadow: '0 0 20px 0 rgba(0, 236, 190, 0.6)',
                   y: -2,
