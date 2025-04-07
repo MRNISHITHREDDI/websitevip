@@ -6,67 +6,152 @@ import { PredictionPageProps, PeriodResult, PredictionData, wingoColorMap, getBi
 import { TrendingUp, BadgeCheck, Zap, Award, Lock } from 'lucide-react';
 
 // Real API endpoints for Wingo predictions
-const WINGO_30SEC_API = "https://wingo-api.onrender.com/api/wingo-30sec";
-const WINGO_1MIN_API = "https://wingo-api.onrender.com/api/wingo-1min";
-const WINGO_3MIN_API = "https://wingo-api.onrender.com/api/wingo-3min";
-const WINGO_5MIN_API = "https://wingo-api.onrender.com/api/wingo-5min";
+const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
+const RESULTS_API_URL = "https://imgametransit.com/api/webapi/GetNoaverageEmerdList";
 
-// Get the correct API URL based on time option
-const getWingoApiUrl = (timeOption: string): string => {
+// Get the correct typeId based on time option
+const getWingoTypeId = (timeOption: string): number => {
   switch (timeOption) {
     case "30 SEC":
-      return WINGO_30SEC_API;
+      return 30;
     case "1 MIN":
-      return WINGO_1MIN_API;
+      return 31;
     case "3 MIN":
-      return WINGO_3MIN_API;
+      return 33;
     case "5 MIN":
-      return WINGO_5MIN_API;
+      return 35;
     default:
-      return WINGO_30SEC_API;
+      return 30;
+  }
+};
+
+// Generate a random string for the API request
+const generateRandom = (): string => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
+// Helper function to generate signature (in a real implementation, this would be a proper hash)
+const generateSignature = (): string => {
+  const chars = 'ABCDEF0123456789';
+  let result = '';
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+// Fetch the current period data
+const fetchCurrentPeriod = async (typeId: number): Promise<any> => {
+  try {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const requestData = {
+      language: 0,
+      random: generateRandom(),
+      signature: generateSignature(),
+      timestamp: timestamp,
+      typeId: typeId
+    };
+    
+    const response = await fetch(PERIOD_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching period data: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in fetchCurrentPeriod:", error);
+    throw error;
+  }
+};
+
+// Fetch past results
+const fetchResults = async (typeId: number): Promise<any> => {
+  try {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const requestData = {
+      language: 0,
+      pageNo: 1,
+      pageSize: 10,
+      random: generateRandom(),
+      signature: generateSignature(),
+      timestamp: timestamp,
+      typeId: typeId
+    };
+    
+    const response = await fetch(RESULTS_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching results: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in fetchResults:", error);
+    throw error;
   }
 };
 
 // Fetch real data from API
 const fetchWingoData = async (timeOption: string) => {
   try {
-    const apiUrl = getWingoApiUrl(timeOption);
-    const response = await fetch(apiUrl);
+    const typeId = getWingoTypeId(timeOption);
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.status}`);
+    // Fetch period and results data in parallel
+    const [periodData, resultsData] = await Promise.all([
+      fetchCurrentPeriod(typeId),
+      fetchResults(typeId)
+    ]);
+    
+    if (!periodData.data || !resultsData.data || !resultsData.data.list) {
+      throw new Error("Invalid data structure received from API");
     }
     
-    const data = await response.json();
-    
-    // Process and format the API response
-    const results: PeriodResult[] = (data.results || []).map((result: any, index: number) => {
-      const number = parseInt(result.result);
+    // Process and format past results
+    const results: PeriodResult[] = resultsData.data.list.map((item: any, index: number) => {
+      const number = parseInt(item.value);
       
       return {
         id: `r-${index}`,
-        periodNumber: result.periodNumber,
+        periodNumber: item.issue,
         result: number,
         color: wingoColorMap[number],
         bigOrSmall: getBigOrSmall(number),
         oddOrEven: getOddOrEven(number),
-        timestamp: result.timestamp || new Date().toISOString(),
+        timestamp: new Date().toISOString(), // API doesn't provide timestamp, using current time
       };
     });
     
-    // Current prediction
-    const predictionData = data.prediction || {};
-    const predictionNumber = parseInt(predictionData.prediction || "0");
+    // For prediction, we'll use our VIP algorithm - in this example, just a basic pattern
+    // In real implementation, this would be your proprietary prediction algorithm
+    const lastResults = results.slice(0, 5).map(r => r.result);
+    const predictionNumber = getPrediction(lastResults);
+    
+    const currentPeriod = periodData.data;
     
     const currentPrediction: PredictionData = {
       id: 'next',
-      periodNumber: predictionData.periodNumber || "Unknown",
+      periodNumber: currentPeriod.issue,
       prediction: predictionNumber,
       color: wingoColorMap[predictionNumber],
       bigOrSmall: getBigOrSmall(predictionNumber),
       oddOrEven: getOddOrEven(predictionNumber),
-      timestamp: predictionData.timestamp || new Date().toISOString(),
-      timeRemaining: parseInt(predictionData.timeRemaining || "30") // seconds
+      timestamp: new Date().toISOString(),
+      timeRemaining: currentPeriod.seconds || 30 // seconds
     };
     
     return { currentPrediction, results };
@@ -75,6 +160,20 @@ const fetchWingoData = async (timeOption: string) => {
     // Fallback to mock data if API fails
     return generateMockWingoData(timeOption);
   }
+};
+
+// Simple prediction algorithm (example only)
+const getPrediction = (lastResults: number[]): number => {
+  // This is where your proprietary prediction algorithm would go
+  // For this example, we're just returning a semi-random number
+  // based on patterns in recent results
+  
+  if (lastResults.length === 0) return Math.floor(Math.random() * 10);
+  
+  // Example pattern: average of last results + 1, modulo 10
+  const sum = lastResults.reduce((a, b) => a + b, 0);
+  const avg = Math.floor(sum / lastResults.length);
+  return (avg + 1) % 10;
 };
 
 // Mock data generator for demo purposes (used as fallback)
