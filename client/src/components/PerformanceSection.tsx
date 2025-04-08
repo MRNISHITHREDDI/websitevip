@@ -136,7 +136,9 @@ const PerformanceSection = () => {
           viewport={{ once: true, margin: "-100px" }}
         >
           <motion.a 
-            href="#" 
+            href="https://t.me/ManagerChetanaOfficial" 
+            target="_blank" 
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300"
             whileHover={{ 
               boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
