@@ -19,17 +19,113 @@ interface RegistrationModalProps {
 
 const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalProps) => {
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  const [isPolling, setIsPolling] = useState<boolean>(false);
+  const [depositStatus, setDepositStatus] = useState<{ amount: number; required: number }>({ 
+    amount: 0, 
+    required: 500 
+  });
   
-  // This would normally connect to your backend to verify registration
-  // For now, we'll simulate this with localStorage
+  // Poll function to check registration and deposit status
+  const checkRegistrationStatus = () => {
+    console.log("Checking registration status...");
+    
+    // In production, this would make an API call to Jalwa.club
+    // For demo, simulate API behavior with gradual deposit increase
+    
+    if (isPolling) {
+      // Simulate API response with increasing deposit amount
+      setDepositStatus(prev => {
+        // Simulate increasing deposit amount if less than required
+        if (prev.amount < prev.required) {
+          const newAmount = Math.min(prev.amount + Math.floor(Math.random() * 200), prev.required);
+          
+          // If deposit reaches required amount, set as registered
+          if (newAmount >= prev.required && !isRegistered) {
+            localStorage.setItem('userRegistered', 'true');
+            setIsRegistered(true);
+          }
+          
+          return { ...prev, amount: newAmount };
+        }
+        return prev;
+      });
+    }
+  };
+  
+  // Start polling when "Start" button is clicked
+  const startPolling = () => {
+    if (!isPolling) {
+      setIsPolling(true);
+    }
+  };
+  
+  // Effect to check registration and deposit status
   useEffect(() => {
+    // For demo purposes, check localStorage
     const userRegistered = localStorage.getItem('userRegistered') === 'true';
     setIsRegistered(userRegistered);
-  }, [isOpen]);
+    
+    // Set up polling to check status regularly if polling is active
+    let intervalId: NodeJS.Timeout | null = null;
+    
+    if (isPolling && isOpen) {
+      // Call immediately once
+      checkRegistrationStatus();
+      
+      // Then set up interval
+      intervalId = setInterval(checkRegistrationStatus, 5000); // Check every 5 seconds
+    }
+    
+    // PRODUCTION CODE WOULD BE LIKE THIS:
+    /*
+    if (isPolling && isOpen) {
+      intervalId = setInterval(() => {
+        // Get user ID from localStorage or cookies
+        const userId = localStorage.getItem('jalwaUserId');
+        
+        if (userId) {
+          // Call API to check registration and deposit status
+          fetch('https://www.Jalwa.club/api/check-user-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, inviteCode: '28328129045' })
+          })
+          .then(res => res.json())
+          .then(data => {
+            // Update deposit amount
+            setDepositStatus({
+              amount: data.deposit || 0,
+              required: 500
+            });
+            
+            // If deposit is enough, enable continue button
+            if (data.registered && data.deposit >= 500) {
+              setIsRegistered(true);
+              // Store in localStorage to persist between sessions
+              localStorage.setItem('userRegistered', 'true');
+              // Stop polling as requirement is met
+              setIsPolling(false);
+            }
+          });
+        }
+      }, 10000); // Check every 10 seconds in production
+    }
+    */
+    
+    // Clean up interval on unmount or when dependencies change
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isOpen, isPolling]);
   
   const handleStartClick = () => {
     // Open registration link in a new tab
     window.open('https://www.Jalwa.club/#/register?invitationCode=28328129045', '_blank');
+    
+    // Start polling for status updates
+    startPolling();
   };
   
   const handleHelpClick = () => {
@@ -38,9 +134,12 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
   };
   
   // Only for demo purposes - in a real app this would be connected to your backend
+  // This simulates the user completing registration and making a 500 Rs deposit
   const simulateRegistration = () => {
     localStorage.setItem('userRegistered', 'true');
     setIsRegistered(true);
+    
+    // In production, this button wouldn't exist - status would be checked automatically
   };
 
   return (
@@ -118,6 +217,50 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
         </div>
         
         <div className="w-full h-px bg-gradient-to-r from-transparent via-[#00ECBE]/20 to-transparent my-2"></div>
+        
+        {/* Deposit status indicator - only show when polling is active */}
+        {isPolling && !isRegistered && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-300 mb-1 flex justify-between">
+              <span>Deposit status:</span>
+              <span className={depositStatus.amount >= depositStatus.required ? "text-green-400" : "text-yellow-400"}>
+                {depositStatus.amount} / {depositStatus.required} Rs
+              </span>
+            </p>
+            <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-blue-500 to-[#00ECBE]"
+                initial={{ width: 0 }}
+                animate={{ 
+                  width: `${Math.min(100, (depositStatus.amount / depositStatus.required) * 100)}%` 
+                }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1 italic">
+              {isRegistered 
+                ? "Deposit complete! You can continue to predictions."
+                : depositStatus.amount > 0 
+                  ? "Deposit in progress... Please wait while we verify your payment."
+                  : "Waiting for deposit confirmation..."}
+            </p>
+          </div>
+        )}
+        
+        {/* Show success message when registered */}
+        {isRegistered && (
+          <motion.div 
+            className="mb-4 py-2 px-4 bg-green-500/20 border border-green-500/30 rounded-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-sm text-green-400 flex items-center">
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Deposit verification complete! You can now access VIP predictions.
+            </p>
+          </motion.div>
+        )}
         
         <DialogFooter className="flex sm:flex-row flex-col gap-3 sm:gap-2 mt-2">
           <Button 
