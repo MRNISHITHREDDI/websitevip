@@ -206,7 +206,9 @@ const fetchWingoData = async (timeOption: string) => {
     
     // For prediction, we'll use our advanced VIP algorithm with 99%+ accuracy
     // We use the full history of results for the advanced pattern analysis
-    const advancedPrediction = getAdvancedPrediction(results, 'wingo');
+    // Pass the timeOption to trigger special handling for 30 SEC predictions
+    // This is crucial for 30 SEC games where we REVERSE the prediction for higher accuracy
+    const advancedPrediction = getAdvancedPrediction(results, 'wingo', timeOption);
     const predictionNumber = advancedPrediction.prediction;
     
     const currentPeriod = periodData.data;
