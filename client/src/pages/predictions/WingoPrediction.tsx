@@ -317,6 +317,27 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
   const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
   
+  // License verification check
+  useEffect(() => {
+    // Check if user has a valid license for this game type and time option
+    const storedLicenses = localStorage.getItem('validLicenses');
+    const licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
+    const hasValidLicense = licenses[`wingo-${timeOption}`];
+    
+    if (!hasValidLicense) {
+      // No valid license, redirect to home
+      toast({
+        title: "License Required",
+        description: "You need a valid license to access this prediction.",
+        variant: "destructive",
+      });
+      
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    }
+  }, [timeOption, toast]);
+  
   const fetchData = async () => {
     setIsLoading(true);
     
