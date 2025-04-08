@@ -132,52 +132,40 @@ const Navbar = () => {
                   : "bg-gradient-to-b from-[#001c54] to-[#000c33]"
               }`}
             >
-              <a 
-                href="/" 
-                className="block text-[#00ECBE] py-2"
-                onClick={(e) => {
-                  e.preventDefault();
+              <div 
+                className="block text-[#00ECBE] py-2 cursor-pointer"
+                onClick={() => {
                   // Close mobile menu first
                   setMobileMenuOpen(false);
                   
-                  if (window.location.pathname === '/') {
-                    // If already on home page, just scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  } else {
-                    // Navigate to home page
-                    setLocation('/');
-                    // Scroll to top after navigation
-                    setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 100);
-                  }
+                  // Navigate to home page
+                  window.location.href = '/';
                 }}
               >
                 Home
-              </a>
-              <a 
-                href="#prediction" 
-                className="block text-[#00ECBE] py-2"
-                onClick={(e) => {
-                  e.preventDefault();
+              </div>
+              <div 
+                className="block text-[#00ECBE] py-2 cursor-pointer"
+                onClick={() => {
                   // Close mobile menu first
                   setMobileMenuOpen(false);
                   
-                  // If we're on the home page, scroll to the prediction section
+                  // If on homepage, scroll to prediction
                   if (window.location.pathname === '/') {
-                    document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    // If we're on another page, go to home page and then scroll
-                    setLocation('/');
-                    // Timeout needed to let the page load before scrolling
                     setTimeout(() => {
-                      document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                      const element = document.getElementById('prediction');
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
                     }, 100);
+                  } else {
+                    // Navigate to prediction section
+                    window.location.href = '/#prediction';
                   }
                 }}
               >
                 Prediction
-              </a>
+              </div>
               <button 
                 onClick={() => {
                   setMobileMenuOpen(false);
