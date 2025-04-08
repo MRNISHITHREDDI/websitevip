@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
-import RegistrationModal from './RegistrationModal';
+import LicenseModal from './LicenseModal';
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -78,11 +78,13 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     // Close this modal first for smoother transition
     onClose();
     
-    // Check if user is already registered (for demo purposes, in production this would verify with backend)
-    const userRegistered = localStorage.getItem('userRegistered') === 'true';
+    // Check if user has a valid license (for this game/time combo)
+    const storedLicenses = localStorage.getItem('validLicenses');
+    const licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
+    const hasValidLicense = licenses[`${gameType}-${selectedOption}`];
     
-    if (userRegistered) {
-      // User is registered and has deposited, redirect to prediction page
+    if (hasValidLicense) {
+      // User already has a valid license, redirect directly to prediction page
       if (gameType === 'wingo') {
         window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
       } else {
@@ -91,7 +93,7 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
-    // If user not registered, show registration modal after a short delay
+    // If user doesn't have a valid license, show license verification modal after a short delay
     setTimeout(() => {
       setShowLicenseModal(true);
     }, 50);
@@ -99,15 +101,6 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
   
   const handleModalClose = () => {
     setShowLicenseModal(false);
-  };
-  
-  const handleContinue = () => {
-    // User has completed registration and deposited, redirect to prediction page
-    if (gameType === 'wingo') {
-      window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
-    } else {
-      window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
-    }
   };
 
   return (
@@ -185,11 +178,12 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         )}
       </AnimatePresence>
       
-      {/* Registration modal */}
-      <RegistrationModal 
+      {/* License verification modal */}
+      <LicenseModal 
         isOpen={showLicenseModal} 
         onClose={handleModalClose}
-        onContinue={handleContinue}
+        gameType={gameType}
+        timeOption={selectedOption}
       />
     </>
   );
