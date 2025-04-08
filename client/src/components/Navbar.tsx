@@ -132,24 +132,18 @@ const Navbar = () => {
                   : "bg-gradient-to-b from-[#001c54] to-[#000c33]"
               }`}
             >
-              <Link 
+              <a 
                 href="/"
                 className="block text-[#00ECBE] py-2"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                }}
               >
                 Home
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/#prediction"
                 className="block text-[#00ECBE] py-2"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                }}
               >
                 Prediction
-              </Link>
+              </a>
               <button 
                 onClick={() => {
                   setMobileMenuOpen(false);
