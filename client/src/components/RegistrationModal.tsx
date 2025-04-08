@@ -19,6 +19,8 @@ interface RegistrationModalProps {
 
 const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalProps) => {
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  const [hasStartedRegistration, setHasStartedRegistration] = useState<boolean>(false);
+  const [verificationCode, setVerificationCode] = useState<string>('');
   
   // Effect to check registration status on component mount
   useEffect(() => {
@@ -57,9 +59,17 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     // Open registration link in a new tab
     window.open('https://www.Jalwa.club/#/register?invitationCode=28328129045', '_blank');
     
-    // In production, API verification would happen here instead of direct localStorage setting
-    localStorage.setItem('userRegistered', 'true');
-    setIsRegistered(true);
+    // Mark that user has started registration process
+    setHasStartedRegistration(true);
+  };
+  
+  const handleVerifyClick = () => {
+    // In a real implementation, this would validate the code with Jalwa.club API
+    // For now, any 6-digit code will be accepted
+    if (verificationCode.length >= 6) {
+      localStorage.setItem('userRegistered', 'true');
+      setIsRegistered(true);
+    }
   };
   
   const handleHelpClick = () => {
@@ -142,6 +152,42 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
         </div>
         
         <div className="w-full h-px bg-gradient-to-r from-transparent via-[#00ECBE]/20 to-transparent my-2"></div>
+        
+        {/* Show verification input after starting registration */}
+        {hasStartedRegistration && !isRegistered && (
+          <motion.div 
+            className="mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-sm mb-2 text-white">
+              After registering and depositing, enter the verification code below:
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                className="flex-1 h-10 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#00ECBE] focus:border-transparent"
+                placeholder="Enter 6-digit code"
+                minLength={6}
+                maxLength={6}
+              />
+              <Button
+                type="button"
+                className="bg-[#00ECBE] text-gray-900 hover:bg-[#00ECBE]/80"
+                onClick={handleVerifyClick}
+                disabled={verificationCode.length < 6}
+              >
+                Verify
+              </Button>
+            </div>
+            <p className="text-xs mt-1 text-gray-400">
+              Your code will be sent to you after your deposit is confirmed.
+            </p>
+          </motion.div>
+        )}
         
         {/* Show success message when registered */}
         {isRegistered && (
