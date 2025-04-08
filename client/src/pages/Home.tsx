@@ -7,14 +7,10 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ParticleBackground from '@/components/ParticleBackground';
 import SEO from '@/components/SEO';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import RegistrationModal from '@/components/RegistrationModal';
-import { Button } from '@/components/ui/button';
 
 const Home = () => {
-  const [showTestRegistration, setShowTestRegistration] = useState(false);
-  
   // Smooth scroll for anchor links
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -43,12 +39,6 @@ const Home = () => {
       document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
-  
-  const handleContinue = () => {
-    setShowTestRegistration(false);
-    // In a real app, this would navigate to the prediction page
-    alert('Registration successful! Redirecting to predictions...');
-  };
 
   return (
     <motion.div 
@@ -83,25 +73,6 @@ const Home = () => {
       <HowItWorksSection />
       <CTASection />
       <Footer />
-      
-      {/* Test button - only visible in development */}
-      <div className="fixed bottom-4 right-4 z-50">
-        <Button 
-          onClick={() => setShowTestRegistration(true)}
-          className="bg-purple-600 hover:bg-purple-700"
-        >
-          Test Registration
-        </Button>
-      </div>
-
-      {/* Registration modal for testing - only shows when button is clicked */}
-      {showTestRegistration && (
-        <RegistrationModal 
-          isOpen={true}
-          onClose={() => setShowTestRegistration(false)}
-          onContinue={handleContinue}
-        />
-      )}
     </motion.div>
   );
 };
