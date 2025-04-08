@@ -28,28 +28,49 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     const userRegistered = localStorage.getItem('userRegistered') === 'true';
     setIsRegistered(userRegistered);
     
-    // In production, we would make an API call to Jalwa.club to verify registration status
-    // Example production code (commented for reference):
-    /*
-    // Get user ID from localStorage or cookies
-    const userId = localStorage.getItem('jalwaUserId');
+    // To add real API integration with Jalwa's API, we would need to:
+    // 1. Securely store the JWT token (which would be obtained during login)
+    // 2. Make authenticated requests to their API
+
+    /* REAL API INTEGRATION (add this when ready to use real API):
     
-    if (userId) {
-      fetch('https://www.Jalwa.club/api/check-user-status', {
+    // Get auth token from secure storage
+    const jwtToken = localStorage.getItem('jalwaAuthToken');
+    
+    if (jwtToken) {
+      // Generate random string and timestamp for signature
+      const random = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const timestamp = Math.floor(Date.now() / 1000);
+      
+      // This should be calculated properly using a secure method
+      // For production, this would be done on your server to keep secrets secure
+      const signature = "6F38334EB2B72A668482E12033639279"; 
+      
+      fetch('https://api.jalwaapi.com/api/webapi/GetUserInfo', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId: userId, 
-          inviteCode: '28328129045' 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({
+          signature: signature, 
+          language: 0,
+          random: random,
+          timestamp: timestamp
         })
       })
       .then(res => res.json())
       .then(data => {
-        // If user is registered and has deposited enough
-        if (data.registered && data.deposit >= 500) {
+        console.log("User data:", data);
+        
+        // If user has deposited at least 500 Rs
+        if (data.code === 0 && data.data && data.data.amount >= 500) {
           setIsRegistered(true);
           localStorage.setItem('userRegistered', 'true');
         }
+      })
+      .catch(err => {
+        console.error("Error checking user status:", err);
       });
     }
     */
@@ -64,12 +85,68 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
   };
   
   const handleVerifyClick = () => {
-    // In a real implementation, this would validate the code with Jalwa.club API
-    // For now, any 6-digit code will be accepted
+    // For demo purposes, we accept any 6-digit code
     if (verificationCode.length >= 6) {
       localStorage.setItem('userRegistered', 'true');
       setIsRegistered(true);
     }
+    
+    /* REAL API VERIFICATION (uncomment when ready for production):
+    
+    // In a production implementation, we would:
+    // 1. Validate that the verification code matches what the user received
+    // 2. Exchange it for a JWT token
+    // 3. Store that token for future API calls
+
+    fetch('https://api.jalwaapi.com/api/auth/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        verificationCode: verificationCode
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.token) {
+        // Store the JWT token securely
+        localStorage.setItem('jalwaAuthToken', data.token);
+        
+        // Now use the token to check user's balance
+        const random = Math.random().toString(36).substring(2, 15);
+        const timestamp = Math.floor(Date.now() / 1000);
+        const signature = "6F38334EB2B72A668482E12033639279"; 
+        
+        return fetch('https://api.jalwaapi.com/api/webapi/GetUserInfo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${data.token}`
+          },
+          body: JSON.stringify({
+            signature: signature, 
+            language: 0,
+            random: random,
+            timestamp: timestamp
+          })
+        });
+      }
+      throw new Error('Verification failed');
+    })
+    .then(res => res.json())
+    .then(userData => {
+      // Check if user has deposited enough
+      if (userData.code === 0 && userData.data && userData.data.amount >= 500) {
+        localStorage.setItem('userRegistered', 'true');
+        setIsRegistered(true);
+      } else {
+        alert('Please deposit at least 500 Rs to access VIP predictions');
+      }
+    })
+    .catch(err => {
+      console.error('Verification error:', err);
+      alert('Verification failed. Please try again or contact support.');
+    });
+    */
   };
   
   const handleHelpClick = () => {
@@ -162,7 +239,7 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
             transition={{ duration: 0.3 }}
           >
             <p className="text-sm mb-2 text-white">
-              After registering and depositing, enter the verification code below:
+              After registering and depositing 500+ Rs, enter the verification code:
             </p>
             <div className="flex gap-2">
               <input
@@ -184,7 +261,10 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
               </Button>
             </div>
             <p className="text-xs mt-1 text-gray-400">
-              Your code will be sent to you after your deposit is confirmed.
+              You'll receive this code via SMS/email after your deposit is verified.
+            </p>
+            <p className="text-xs mt-1 text-[#00ECBE]">
+              <span className="font-bold">Demo:</span> For testing, enter any 6 digits.
             </p>
           </motion.div>
         )}

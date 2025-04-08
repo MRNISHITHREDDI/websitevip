@@ -1,0 +1,121 @@
+END POINT : https://api.jalwaapi.com/api/webapi/GetUserInfo  [POST]
+
+HEADERS : accept: application/json, text/plain, */*
+authorization: Bearer <your_valid_jwt_token_here>
+content-type: application/json;charset=UTF-8
+origin: https://www.jalwa.live
+referer: https://www.jalwa.live/
+user-agent: 
+
+BODY : {
+  "signature": "6F38334EB2B72A668482E12033639279",
+  "language": 0,
+  "random": "5f32fa652216408a94f387f8754a81b1",
+  "timestamp": 1744115241
+}
+
+RESPONSE WILL BE LIKE THIS : 
+
+{
+  "data": {
+    "sign": "909445877814B1D734BBDCC166FB39D2499B2C5B10D2A1FE57432948EA976E9F",
+    "userId": 189091,
+    "userPhoto": "1",
+    "userName": "917974412871",
+    "nickName": "MemberNNGWS0VJ",
+    "amount": 20567.72,
+    "amountofCode": 500.00,
+    "isWithdraw": null,
+    "message": null,
+    "withdrawCount": 0,
+    "addTime": "2025-03-23 13:09:47",
+    "userLoginDate": "2025-04-08 17:49:21",
+    "startTime": null,
+    "endTime": null,
+    "fee": 0.0,
+    "unRead": 23,
+    "facebookAppID": "",
+    "googleAppID": null,
+    "twitterAppID": null,
+    "keyCode": null,
+    "uRate": 94.0,
+    "trxRate": 9.50,
+    "uGold": 218.81,
+    "googleVerify": 0,
+    "isvalidator": 0,
+    "isRePwd": "1",
+    "integral": 0,
+    "isOpenPointMall": "0",
+    "isOpenAmountOfCode": "1",
+    "isOpenOfficialRechargeInputDialog": "1",
+    "isAllowUserAddUSDT": "1",
+    "isShowWalletTotalCT": "1",
+    "isShowRechargeBankList": "1",
+    "isPopupCommissionSwitch": "1",
+    "groupDataShowAuth": [
+      {
+        "id": 11,
+        "isShow": true
+      },
+      {
+        "id": 12,
+        "isShow": true
+      },
+      {
+        "id": 15,
+        "isShow": true
+      },
+      {
+        "id": 16,
+        "isShow": true
+      },
+      {
+        "id": 17,
+        "isShow": true
+      },
+      {
+        "id": 18,
+        "isShow": true
+      },
+      {
+        "id": 19,
+        "isShow": false
+      },
+      {
+        "id": 20,
+        "isShow": true
+      }
+    ],
+    "verifyMethods": {
+      "mobile": "917974412871",
+      "email": "",
+      "google": "0"
+    },
+    "regType": 1,
+    "userGroupAuth": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "bindReward": 0.0,
+    "isGoogle": "0",
+    "isOpenChampion": "0",
+    "isAllowWithdraw": 1,
+    "userRechargeTimes": 2,
+    "allowNoRechargeGame": "1",
+    "isPartnerReward": "1",
+    "canDirectToGame": true,
+    "isOpenNewSafe": "0"
+  },
+  "code": 0,
+  "msg": "Succeed",
+  "msgCode": 0,
+  "serviceNowTime": "2025-04-08 18:03:41"
+}
