@@ -5,6 +5,7 @@ import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
 import { getPrediction as getAdvancedPrediction } from '@/lib/prediction-algorithm';
+import SEO from '@/components/SEO';
 
 // Real API endpoints for TRX predictions - using the exact URLs provided by the user
 const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
@@ -608,15 +609,31 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   };
   
   return (
-    <PredictionLayout
-      gameType="trx"
-      timeOption={timeOption}
-      periodResults={periodResults}
-      currentPrediction={currentPrediction}
-      isLoading={isLoading}
-      onRefresh={fetchData}
-      previousPredictions={previousPredictions}
-    >
+    <>
+      <SEO 
+        title={`TRX Hash ${timeOption} Predictions | JALWA VIP Color Predictions`}
+        description={`Exclusive TRX Hash ${timeOption} blockchain predictions with 99% accuracy. Get real-time Big/Small signals for optimal results.`}
+        keywords={`TRX Hash ${timeOption}, blockchain prediction, cryptocurrency prediction, Big Small prediction, online earning, VIP signals, TRX game`}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": `TRX Hash ${timeOption} Predictions | JALWA`,
+          "description": `Real-time TRX Hash ${timeOption} blockchain predictions with advanced algorithm technology.`,
+          "mainContentOfPage": {
+            "@type": "WebPageElement",
+            "cssSelector": ".prediction-content"
+          }
+        }}
+      />
+      <PredictionLayout
+        gameType="trx"
+        timeOption={timeOption}
+        periodResults={periodResults}
+        currentPrediction={currentPrediction}
+        isLoading={isLoading}
+        onRefresh={fetchData}
+        previousPredictions={previousPredictions}
+      >
       {/* TRX specific prediction display */}
       {currentPrediction && (
         <div className="mt-4">
@@ -845,6 +862,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         </div>
       )}
     </PredictionLayout>
+    </>
   );
 };
 

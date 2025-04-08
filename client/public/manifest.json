@@ -1,0 +1,22 @@
+{
+  "name": "JALWA Prediction Platform",
+  "short_name": "JALWA",
+  "description": "Advanced prediction platform for WinGo and TRX Hash color games with 99% accuracy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05012B",
+  "theme_color": "#00ECBE",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/generated-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/generated-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import ParticleBackground from '@/components/ParticleBackground';
+import SEO from '@/components/SEO';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -46,6 +47,22 @@ const Home = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      <SEO 
+        title="JALWA - #1 Color Prediction Platform | WinGo & TRX Hash VIP Signals"
+        description="Get 99% accurate WinGo & TRX Hash color predictions with JALWA's advanced algorithm. Earn big with real-time predictions across multiple time intervals."
+        keywords="color prediction, WinGo prediction, TRX Hash prediction, winning strategy, online earning, VIP prediction signals, betting tips, gambling strategy, color forecast"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "JALWA Prediction Platform",
+          "url": "https://jalwaprediction.com",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://jalwaprediction.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }}
+      />
       <ParticleBackground />
       <Navbar />
       <HeroSection />
