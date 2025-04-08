@@ -94,12 +94,14 @@ const Home = () => {
         </Button>
       </div>
 
-      {/* Registration modal for testing */}
-      <RegistrationModal 
-        isOpen={showTestRegistration}
-        onClose={() => setShowTestRegistration(false)}
-        onContinue={handleContinue}
-      />
+      {/* Registration modal for testing - only shows when button is clicked */}
+      {showTestRegistration && (
+        <RegistrationModal 
+          isOpen={true}
+          onClose={() => setShowTestRegistration(false)}
+          onContinue={handleContinue}
+        />
+      )}
     </motion.div>
   );
 };

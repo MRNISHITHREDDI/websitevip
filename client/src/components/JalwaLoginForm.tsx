@@ -165,17 +165,17 @@ const JalwaLoginForm = ({ onLoginSuccess, onClose }: JalwaLoginFormProps) => {
               <span className="w-full border-t border-gray-600" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-[#070b27] px-2 text-gray-400">Or for development</span>
+              <span className="bg-[#070b27] px-2 text-gray-400">Test Option</span>
             </div>
           </div>
           
           <Button 
             type="button" 
             variant="outline" 
-            className="border-gray-600 text-gray-400 hover:bg-gray-800"
+            className="border-[#00ECBE] text-[#00ECBE] hover:bg-[#00ECBE]/10"
             onClick={handleDemoLogin}
           >
-            Use Demo Token
+            Use Demo Token (For Testing)
           </Button>
         </div>
       </form>
