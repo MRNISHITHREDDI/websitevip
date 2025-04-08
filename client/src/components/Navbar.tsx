@@ -135,12 +135,18 @@ const Navbar = () => {
               <a 
                 href="/"
                 className="block text-[#00ECBE] py-2"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                }}
               >
                 Home
               </a>
               <a 
                 href="/#prediction"
                 className="block text-[#00ECBE] py-2"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                }}
               >
                 Prediction
               </a>
