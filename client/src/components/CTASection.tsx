@@ -74,14 +74,14 @@ const CTASection = () => {
                 Start Playing Now
               </motion.button>
               <motion.button 
-                onClick={() => window.open('https://t.me/ManagerChetanaOfficial', '_blank')}
+                onClick={() => setInfoModalOpen(true)}
                 className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center"
                 whileHover={{ 
                   boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
                   y: -2 
                 }}
               >
-                Join Our Community
+                Learn More
               </motion.button>
             </motion.div>
           </div>

@@ -147,17 +147,17 @@ const Navbar = () => {
                 Home
               </a>
               <a 
-                href="#features" 
+                href="#prediction" 
                 className="block text-[#00ECBE] py-2"
                 onClick={(e) => {
                   e.preventDefault();
                   // Close mobile menu first
                   setMobileMenuOpen(false);
                   
-                  // Go to features section (section 2)
-                  const featuresSection = document.getElementById('features');
-                  if (featuresSection) {
-                    featuresSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  // Go to prediction section
+                  const predictionSection = document.getElementById('prediction');
+                  if (predictionSection) {
+                    predictionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 }}
               >
