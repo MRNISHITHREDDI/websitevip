@@ -8,8 +8,9 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, HelpCircle, Rocket, AlertTriangle, CheckCircle, Zap, Target, Loader2 } from 'lucide-react';
+import { ExternalLink, HelpCircle, Rocket, AlertTriangle, CheckCircle, Zap, Target, Loader2, LogIn } from 'lucide-react';
 import { motion } from "framer-motion";
+import JalwaLoginForm from "./JalwaLoginForm";
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -20,6 +21,8 @@ interface RegistrationModalProps {
 const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalProps) => {
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
   const [hasStartedRegistration, setHasStartedRegistration] = useState<boolean>(false);
+  const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
+  const [isCheckingDeposit, setIsCheckingDeposit] = useState<boolean>(false);
   
   // Effect to check registration status on component mount
   useEffect(() => {
@@ -32,17 +35,21 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     
     // If we have a token, check user balance
     if (storedToken) {
-      // In a real implementation, we would verify the token and check user balance
       checkUserDepositStatus(storedToken);
     }
   }, [isOpen]);
   
   // Function to check user's deposit status with Jalwa API
   const checkUserDepositStatus = (token: string) => {
-    // For demo purposes, we'll set as registered
-    // In production, uncomment and use the API call below
-    setIsRegistered(true);
-    localStorage.setItem('userRegistered', 'true');
+    setIsCheckingDeposit(true);
+    
+    // For demo purposes, we'll set as registered after a short delay
+    // In production, use the real API call instead
+    setTimeout(() => {
+      setIsRegistered(true);
+      localStorage.setItem('userRegistered', 'true');
+      setIsCheckingDeposit(false);
+    }, 1500);
     
     /* REAL API INTEGRATION: 
     // Example API payload from attached_assets/Pasted-END-POINT-https-api-jalwaapi-com-api-webapi-GetUserInfo-POST-HEADERS-accept-application-1744115882290.txt
@@ -57,7 +64,10 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': window.navigator.userAgent,
+        'Referer': 'https://www.jalwa.live/',
+        'Origin': 'https://www.jalwa.live'
       },
       body: JSON.stringify({
         signature: signature, 
@@ -69,6 +79,7 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     .then(res => res.json())
     .then(data => {
       console.log("User data:", data);
+      setIsCheckingDeposit(false);
       
       // If user has deposited at least 500 Rs
       if (data.code === 0 && data.data && data.data.amount >= 500) {
@@ -80,6 +91,7 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     })
     .catch(err => {
       console.error("Error checking user status:", err);
+      setIsCheckingDeposit(false);
     });
     */
   };
@@ -90,12 +102,15 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
     
     // Mark that user has started registration process
     setHasStartedRegistration(true);
-    
-    // For demo: Auto-set user as registered after a delay
-    setTimeout(() => {
-      localStorage.setItem('userRegistered', 'true');
-      setIsRegistered(true);
-    }, 2000);
+  };
+  
+  const handleLoginClick = () => {
+    setShowLoginForm(true);
+  };
+  
+  const handleLoginSuccess = (token: string) => {
+    setShowLoginForm(false);
+    checkUserDepositStatus(token);
   };
   
   const handleHelpClick = () => {
@@ -179,8 +194,16 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
         
         <div className="w-full h-px bg-gradient-to-r from-transparent via-[#00ECBE]/20 to-transparent my-2"></div>
         
+        {/* Show login form */}
+        {showLoginForm && !isRegistered && (
+          <JalwaLoginForm 
+            onLoginSuccess={handleLoginSuccess}
+            onClose={() => setShowLoginForm(false)}
+          />
+        )}
+        
         {/* Show loading state while verifying */}
-        {hasStartedRegistration && !isRegistered && (
+        {isCheckingDeposit && !isRegistered && (
           <motion.div 
             className="mb-4 py-2 px-4 bg-blue-500/20 border border-blue-500/30 rounded-lg"
             initial={{ opacity: 0, y: 10 }}
@@ -190,12 +213,33 @@ const RegistrationModal = ({ isOpen, onClose, onContinue }: RegistrationModalPro
             <div className="flex items-center justify-center py-2">
               <Loader2 className="h-5 w-5 text-[#00ECBE] animate-spin mr-2" />
               <p className="text-sm text-[#00ECBE]">
-                Verifying your registration and deposit...
+                Verifying your deposit status...
               </p>
             </div>
             <p className="text-xs mt-1 text-gray-400 text-center">
-              Please wait while we connect to the Jalwa API
+              Checking if your account has 500+ Rs deposited
             </p>
+          </motion.div>
+        )}
+        
+        {/* Show registered status verification prompt after starting registration */}
+        {hasStartedRegistration && !isRegistered && !isCheckingDeposit && !showLoginForm && (
+          <motion.div 
+            className="mb-4 py-2 px-4 bg-blue-500/20 border border-blue-500/30 rounded-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-sm text-blue-400 mb-2">
+              After registering and depositing minimum 500 Rs, verify your account:
+            </p>
+            <Button
+              onClick={handleLoginClick}
+              className="w-full bg-[#00ECBE] text-gray-900 hover:bg-[#00ECBE]/80"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Login to verify deposit
+            </Button>
           </motion.div>
         )}
         
