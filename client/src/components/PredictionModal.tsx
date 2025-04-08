@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
-import LicenseModal from './LicenseModal';
+import RegistrationModal from './RegistrationModal';
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -78,36 +78,36 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     // Close this modal first for smoother transition
     onClose();
     
-    // Check if user already has a valid license for this game and time option
-    const storedLicenses = localStorage.getItem('validLicenses');
-    if (storedLicenses) {
-      try {
-        const licenses = JSON.parse(storedLicenses);
-        const licenseKey = licenses[`${gameType}-${selectedOption}`]?.licenseKey;
-        
-        if (licenseKey) {
-          // User already has a license for this game and time option
-          // We'll redirect directly to the prediction page
-          if (gameType === 'wingo') {
-            window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
-          } else {
-            window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
-          }
-          return;
-        }
-      } catch (error) {
-        console.error('Error parsing stored licenses:', error);
+    // Check if user is already registered (for demo purposes, in production this would verify with backend)
+    const userRegistered = localStorage.getItem('userRegistered') === 'true';
+    
+    if (userRegistered) {
+      // User is registered and has deposited, redirect to prediction page
+      if (gameType === 'wingo') {
+        window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
+      } else {
+        window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
       }
+      return;
     }
     
-    // If no valid license found, open the license modal after a short delay
+    // If user not registered, show registration modal after a short delay
     setTimeout(() => {
       setShowLicenseModal(true);
     }, 50);
   };
   
-  const handleLicenseModalClose = () => {
+  const handleModalClose = () => {
     setShowLicenseModal(false);
+  };
+  
+  const handleContinue = () => {
+    // User has completed registration and deposited, redirect to prediction page
+    if (gameType === 'wingo') {
+      window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
+    } else {
+      window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
+    }
   };
 
   return (
@@ -185,12 +185,11 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         )}
       </AnimatePresence>
       
-      {/* License verification modal */}
-      <LicenseModal 
+      {/* Registration modal */}
+      <RegistrationModal 
         isOpen={showLicenseModal} 
-        onClose={handleLicenseModalClose}
-        gameType={gameType}
-        timeOption={selectedOption}
+        onClose={handleModalClose}
+        onContinue={handleContinue}
       />
     </>
   );
