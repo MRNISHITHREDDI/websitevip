@@ -140,8 +140,17 @@ const Navbar = () => {
                   // Close mobile menu first
                   setMobileMenuOpen(false);
                   
-                  // Always scroll to top for Home link on mobile
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  if (window.location.pathname === '/') {
+                    // If already on home page, just scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else {
+                    // Navigate to home page
+                    setLocation('/');
+                    // Scroll to top after navigation
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                  }
                 }}
               >
                 Home
@@ -154,10 +163,16 @@ const Navbar = () => {
                   // Close mobile menu first
                   setMobileMenuOpen(false);
                   
-                  // Go to prediction section
-                  const predictionSection = document.getElementById('prediction');
-                  if (predictionSection) {
-                    predictionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  // If we're on the home page, scroll to the prediction section
+                  if (window.location.pathname === '/') {
+                    document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    // If we're on another page, go to home page and then scroll
+                    setLocation('/');
+                    // Timeout needed to let the page load before scrolling
+                    setTimeout(() => {
+                      document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
                   }
                 }}
               >
