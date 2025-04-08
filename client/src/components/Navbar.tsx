@@ -132,40 +132,24 @@ const Navbar = () => {
                   : "bg-gradient-to-b from-[#001c54] to-[#000c33]"
               }`}
             >
-              <div 
-                className="block text-[#00ECBE] py-2 cursor-pointer"
+              <Link 
+                href="/"
+                className="block text-[#00ECBE] py-2"
                 onClick={() => {
-                  // Close mobile menu first
                   setMobileMenuOpen(false);
-                  
-                  // Navigate to home page
-                  window.location.href = '/';
                 }}
               >
                 Home
-              </div>
-              <div 
-                className="block text-[#00ECBE] py-2 cursor-pointer"
+              </Link>
+              <Link 
+                href="/#prediction"
+                className="block text-[#00ECBE] py-2"
                 onClick={() => {
-                  // Close mobile menu first
                   setMobileMenuOpen(false);
-                  
-                  // If on homepage, scroll to prediction
-                  if (window.location.pathname === '/') {
-                    setTimeout(() => {
-                      const element = document.getElementById('prediction');
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }, 100);
-                  } else {
-                    // Navigate to prediction section
-                    window.location.href = '/#prediction';
-                  }
                 }}
               >
                 Prediction
-              </div>
+              </Link>
               <button 
                 onClick={() => {
                   setMobileMenuOpen(false);
