@@ -114,18 +114,6 @@ const Navbar = () => {
                 <span className="relative font-medium">Join Pro</span>
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#00ECBE] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
               </motion.button>
-              
-              {/* Mobile version of Join Pro button */}
-              <motion.button 
-                onClick={openJoinProModal}
-                className="md:hidden bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-2 rounded-full transition duration-300"
-                whileHover={{ 
-                  boxShadow: '0 0 20px 0 rgba(0, 236, 190, 0.6)',
-                  y: -2,
-                }}
-              >
-                Join Pro
-              </motion.button>
             </div>
           </div>
         </div>
@@ -149,39 +137,28 @@ const Navbar = () => {
                 className="block text-[#00ECBE] py-2"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (window.location.pathname === '/') {
-                    // If already on home page, just scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  } else {
-                    // Navigate to home page
-                    setLocation('/');
-                    // Scroll to top after navigation
-                    setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 100);
-                  }
+                  // Close mobile menu first
                   setMobileMenuOpen(false);
+                  
+                  // Always scroll to top for Home link on mobile
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               >
                 Home
               </a>
               <a 
-                href="#prediction" 
+                href="#features" 
                 className="block text-[#00ECBE] py-2"
                 onClick={(e) => {
                   e.preventDefault();
-                  // If we're on the home page, scroll to the prediction section
-                  if (window.location.pathname === '/') {
-                    document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    // If we're on another page, go to home page and then scroll
-                    setLocation('/');
-                    // Timeout needed to let the page load before scrolling
-                    setTimeout(() => {
-                      document.getElementById('prediction')?.scrollIntoView({ behavior: 'smooth' });
-                    }, 100);
-                  }
+                  // Close mobile menu first
                   setMobileMenuOpen(false);
+                  
+                  // Go to features section (section 2)
+                  const featuresSection = document.getElementById('features');
+                  if (featuresSection) {
+                    featuresSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
                 }}
               >
                 Prediction
