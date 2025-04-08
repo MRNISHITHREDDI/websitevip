@@ -609,16 +609,16 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   };
   
   return (
-    <>
+    <React.Fragment>
       <SEO 
-        title={`TRX Hash ${timeOption} Predictions | JALWA VIP Color Predictions`}
-        description={`Exclusive TRX Hash ${timeOption} blockchain predictions with 99% accuracy. Get real-time Big/Small signals for optimal results.`}
-        keywords={`TRX Hash ${timeOption}, blockchain prediction, cryptocurrency prediction, Big Small prediction, online earning, VIP signals, TRX game`}
+        title={`TRX Hash ${timeOption} AI Predictions | JALWA VIP TRX Win Strategy`}
+        description={`Exclusive TRX Hash ${timeOption} AI blockchain predictions with 99% accuracy. Get real-time TRX win signals for maximum earning.`}
+        keywords={`trx hash, trx win, trx prediction, earning, color prediction, wingo ai, blockchain prediction, AI Prediction, VIP signals`}
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebPage",
-          "name": `TRX Hash ${timeOption} Predictions | JALWA`,
-          "description": `Real-time TRX Hash ${timeOption} blockchain predictions with advanced algorithm technology.`,
+          "name": `TRX Hash ${timeOption} AI Predictions | JALWA`,
+          "description": `Real-time TRX Hash ${timeOption} blockchain predictions with advanced AI algorithm technology. TRX win strategy for optimal earnings.`,
           "mainContentOfPage": {
             "@type": "WebPageElement",
             "cssSelector": ".prediction-content"
@@ -862,7 +862,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         </div>
       )}
     </PredictionLayout>
-    </>
+    </React.Fragment>
   );
 };
 

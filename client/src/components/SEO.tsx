@@ -12,8 +12,8 @@ interface SEOProps {
 
 const SEO: React.FC<SEOProps> = ({ 
   title = 'JALWA - #1 Color Prediction Platform | WinGo & TRX Hash VIP Signals',
-  description = 'Get 99% accurate WinGo & TRX Hash color predictions with JALWA\'s advanced algorithm. Earn big with real-time predictions across multiple time intervals.',
-  keywords = 'color prediction, WinGo prediction, TRX Hash prediction, winning strategy, online earning, VIP prediction signals',
+  description = 'Get 99% accurate WinGo & TRX Hash color predictions with JALWA\'s advanced AI algorithm. Earn big with real-time predictions across multiple time intervals.',
+  keywords = 'wingo, wingo ai, wingo hack, color prediction, earning, trx hash, trx win, wingo prediction, Ai Prediction, VIP signals',
   ogImage = '/generated-icon.png',
   ogUrl = 'https://jalwaprediction.com/',
   structuredData

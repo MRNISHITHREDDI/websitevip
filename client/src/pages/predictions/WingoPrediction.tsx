@@ -416,17 +416,32 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     return () => clearInterval(interval);
   }, [timeOption]);
   
+  // Helper to convert color names to CSS color codes
+  const getColorCode = (color: string): string => {
+    switch (color.toLowerCase()) {
+      case 'red':
+        return '#FF4D4F';
+      case 'green':
+        return '#52C41A';
+      // If violet is ever received, we'll convert it to green for display
+      case 'violet':
+        return '#52C41A'; // Same as green
+      default:
+        return '#52C41A'; // Default to green instead of gray
+    }
+  };
+  
   return (
-    <>
+    <React.Fragment>
       <SEO 
-        title={`WinGo ${timeOption} Predictions | JALWA VIP Color Predictions`}
-        description={`Exclusive WinGo ${timeOption} color predictions with 99% accuracy. Get real-time Big/Small signals for optimal results.`}
-        keywords={`WinGo ${timeOption}, color prediction, Big Small prediction, online earning, VIP signals, Win Go game`}
+        title={`WinGo ${timeOption} AI Predictions | JALWA VIP Wingo Hack`}
+        description={`Exclusive WinGo ${timeOption} AI color predictions with 99% accuracy. Get real-time Wingo hack and winning signals.`}
+        keywords={`wingo, wingo ai, wingo hack, wingo ${timeOption.toLowerCase()}, color prediction, earning, wingo prediction, Ai Prediction, VIP signals`}
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebPage",
-          "name": `WinGo ${timeOption} Predictions | JALWA`,
-          "description": `Real-time WinGo ${timeOption} color predictions with advanced algorithm technology.`,
+          "name": `WinGo ${timeOption} AI Predictions | JALWA`,
+          "description": `Real-time WinGo ${timeOption} color predictions with advanced AI algorithm technology. Wingo hack for optimal results.`,
           "mainContentOfPage": {
             "@type": "WebPageElement",
             "cssSelector": ".prediction-content"
@@ -597,23 +612,9 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
           </motion.div>
         </div>
       )}
-    </PredictionLayout>
+      </PredictionLayout>
+    </React.Fragment>
   );
-};
-
-// Helper to convert color names to CSS color codes
-const getColorCode = (color: string): string => {
-  switch (color.toLowerCase()) {
-    case 'red':
-      return '#FF4D4F';
-    case 'green':
-      return '#52C41A';
-    // If violet is ever received, we'll convert it to green for display
-    case 'violet':
-      return '#52C41A'; // Same as green
-    default:
-      return '#52C41A'; // Default to green instead of gray
-  }
 };
 
 export default WingoPrediction;

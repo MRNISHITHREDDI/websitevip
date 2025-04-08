@@ -48,14 +48,16 @@ const Home = () => {
       transition={{ duration: 0.5 }}
     >
       <SEO 
-        title="JALWA - #1 Color Prediction Platform | WinGo & TRX Hash VIP Signals"
-        description="Get 99% accurate WinGo & TRX Hash color predictions with JALWA's advanced algorithm. Earn big with real-time predictions across multiple time intervals."
-        keywords="color prediction, WinGo prediction, TRX Hash prediction, winning strategy, online earning, VIP prediction signals, betting tips, gambling strategy, color forecast"
+        title="JALWA - #1 AI Color Prediction Platform | WinGo & TRX Hash VIP Signals"
+        description="Get 99% accurate WinGo & TRX Hash color predictions with JALWA's advanced AI algorithm. Earn big with wingo hack and TRX win prediction techniques."
+        keywords="wingo, wingo ai, wingo hack, color prediction, earning, trx hash, trx win, wingo prediction, Ai Prediction, VIP signals"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
-          "name": "JALWA Prediction Platform",
+          "name": "JALWA AI Prediction Platform",
           "url": "https://jalwaprediction.com",
+          "description": "Advanced AI prediction platform for WinGo and TRX Hash offering wingo hack and earning opportunities",
+          "keywords": "wingo, wingo ai, wingo hack, color prediction, earning, trx hash, trx win, wingo prediction, Ai Prediction",
           "potentialAction": {
             "@type": "SearchAction",
             "target": "https://jalwaprediction.com/search?q={search_term_string}",
