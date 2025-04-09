@@ -4,7 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
-import { getPrediction as getAdvancedPrediction } from '@/lib/prediction-algorithm';
+import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
 
 // Real API endpoints for TRX predictions - using the exact URLs provided by the user

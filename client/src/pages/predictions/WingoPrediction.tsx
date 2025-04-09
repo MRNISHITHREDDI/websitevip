@@ -4,7 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, wingoColorMap, getBigOrSmall, getOddOrEven } from './types';
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Brain, Trophy } from 'lucide-react';
-import { getPrediction as getAdvancedPrediction } from '@/lib/prediction-algorithm';
+import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
 
 // Real API endpoints for Wingo predictions
