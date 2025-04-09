@@ -30,8 +30,8 @@ export class MemStorage implements IStorage {
   // Some demo license keys for testing
   private demoLicenseKeys: Record<string, { gameType: 'wingo' | 'trx', timeOptions: string[] }> = {
     'USER2025': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-    'USERPRO': { gameType: 'trx', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
-    'USERVIP': { gameType: 'wingo', timeOptions: ['1 MIN', '3 MIN', '5 MIN'] }
+    'USERVIP': { gameType: 'trx', timeOptions: ['1 MIN'] },
+    'USERPRO': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN', '5 MIN'] }
   };
 
   constructor() {
@@ -141,8 +141,12 @@ export class MemStorage implements IStorage {
       };
     }
     
-    // Check if game type matches
-    if (license.gameType !== gameType) {
+    // Special case: USERPRO works for both WinGo and TRX Hash
+    if (license.licenseKey === 'USERPRO') {
+      // USERPRO works for both game types, no need to check game type
+    } 
+    // For other licenses, check if game type matches
+    else if (license.gameType !== gameType) {
       return { 
         valid: false, 
         message: `This license is for ${license.gameType.toUpperCase()} game, not for ${gameType.toUpperCase()}` 
@@ -151,7 +155,20 @@ export class MemStorage implements IStorage {
     
     // Check if time option is valid for this license
     const timeOptions = license.timeOption.split(',');
-    if (!timeOptions.includes(timeOption)) {
+    
+    // Special case for USERPRO - additional support for TRX time options
+    if (license.licenseKey === 'USERPRO') {
+      // For USERPRO, allow all time options in both game types
+      const allTimeOptions = ['30 SEC', '1 MIN', '3 MIN', '5 MIN'];
+      if (!allTimeOptions.includes(timeOption)) {
+        return { 
+          valid: false, 
+          message: `This license doesn't support the ${timeOption} time option` 
+        };
+      }
+    }
+    // For other licenses, check normally
+    else if (!timeOptions.includes(timeOption)) {
       return { 
         valid: false, 
         message: `This license doesn't support the ${timeOption} time option` 
