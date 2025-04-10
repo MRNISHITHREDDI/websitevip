@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import the attached assets
 import predictionImage from "@assets/Screenshot 2025-04-10 233433.png";
@@ -14,6 +15,7 @@ interface DemoVipPredictionModalProps {
 
 const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps) => {
   const [currentTab, setCurrentTab] = useState("current");
+  const isMobile = useIsMobile();
   
   // Add overflow hidden to body when modal is open
   useEffect(() => {
@@ -29,9 +31,9 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
   
   // Define all available tabs
   const tabs = [
-    { id: "current", label: "Current Prediction", image: predictionImage },
-    { id: "history", label: "Prediction History", image: predictionHistoryImage },
-    { id: "results", label: "Results History", image: resultsHistoryImage }
+    { id: "current", label: isMobile ? "Current" : "Current Prediction", image: predictionImage },
+    { id: "history", label: isMobile ? "History" : "Prediction History", image: predictionHistoryImage },
+    { id: "results", label: isMobile ? "Results" : "Results History", image: resultsHistoryImage }
   ];
   
   // Find current tab index
@@ -65,7 +67,7 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
           
           {/* Modal */}
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -79,20 +81,20 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="relative p-5 border-b border-[#00ECBE]/20 bg-[#001c54]/80">
+              <div className="relative p-3 md:p-5 border-b border-[#00ECBE]/20 bg-[#001c54]/80">
                 <button 
                   onClick={onClose}
-                  className="absolute top-4 right-4 text-white/60 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-1.5 transition-all"
+                  className="absolute top-3 right-3 md:top-4 md:right-4 text-white/60 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-1.5 transition-all"
                 >
-                  <X size={18} />
+                  <X size={isMobile ? 16 : 18} />
                 </button>
                 
-                <h2 className="text-center text-2xl font-bold">
+                <h2 className="text-center text-xl md:text-2xl font-bold mt-1">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/80">
                     DEMO VIP PREDICTION
                   </span>
                 </h2>
-                <p className="text-center text-gray-300 mt-1">
+                <p className="text-center text-gray-300 mt-1 text-sm md:text-base">
                   Experience our premium VIP predictions with these demo examples
                 </p>
               </div>
@@ -104,7 +106,7 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
                     <button 
                       key={tab.id}
                       onClick={() => setCurrentTab(tab.id)}
-                      className={`py-2 rounded-lg transition-all ${
+                      className={`py-1.5 md:py-2 rounded-lg transition-all text-sm md:text-base ${
                         currentTab === tab.id 
                           ? 'bg-[#00ECBE] text-[#05012B] font-medium' 
                           : 'text-white/80 hover:bg-white/10'
@@ -116,19 +118,19 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
                 </div>
                 
                 <div className="relative">
-                  {/* Navigation arrows */}
+                  {/* Navigation arrows - Mobile optimized */}
                   <button 
                     onClick={goToPrevTab}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 rounded-full p-2 text-white/70 hover:text-white transition-all"
+                    className="absolute left-1 md:left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 rounded-full p-1.5 md:p-2 text-white/70 hover:text-white transition-all"
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={isMobile ? 16 : 20} />
                   </button>
                   
                   <button 
                     onClick={goToNextTab}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 rounded-full p-2 text-white/70 hover:text-white transition-all"
+                    className="absolute right-1 md:right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 rounded-full p-1.5 md:p-2 text-white/70 hover:text-white transition-all"
                   >
-                    <ChevronRight size={20} />
+                    <ChevronRight size={isMobile ? 16 : 20} />
                   </button>
                   
                   {/* Tab content with animated transitions */}
@@ -141,7 +143,7 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="p-6 flex justify-center items-center min-h-[350px]"
+                          className="p-3 md:p-6 flex justify-center items-center min-h-[250px] md:min-h-[350px]"
                         >
                           <motion.div
                             initial={{ scale: 0.95 }}
@@ -163,10 +165,10 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
               </div>
               
               {/* Footer */}
-              <div className="px-6 py-4 flex justify-center border-t border-[#00ECBE]/20 bg-[#001232]">
+              <div className="px-3 py-3 md:px-6 md:py-4 flex justify-center border-t border-[#00ECBE]/20 bg-[#001232]">
                 <motion.button 
                   onClick={onClose}
-                  className="bg-gradient-to-r from-[#00ECBE] to-[#00D9AD] text-[#05012B] font-semibold px-8 py-2.5 rounded-lg transition-all shadow-[0_0_10px_rgba(0,220,180,0.3)]"
+                  className="bg-gradient-to-r from-[#00ECBE] to-[#00D9AD] text-[#05012B] font-semibold px-6 md:px-8 py-2 md:py-2.5 rounded-lg transition-all shadow-[0_0_10px_rgba(0,220,180,0.3)] text-sm md:text-base"
                   whileHover={{ 
                     scale: 1.03,
                     boxShadow: "0 0 15px rgba(0, 220, 180, 0.5)",
