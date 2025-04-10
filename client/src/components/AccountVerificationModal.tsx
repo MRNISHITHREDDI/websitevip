@@ -100,51 +100,65 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
               </div>
               
               <div className="p-6 pt-2 space-y-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
+                  <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
+                    <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
+                  </div>
                   <p id="verification-description" className="text-gray-200 text-sm">
                     Create a new account via the "Start" button for server connection. Our app checks the server to ensure accurate predictions.
                   </p>
                 </div>
                 
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
+                  <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
+                    <AlertTriangle className="h-4 w-4 text-[#00ECBE]" />
+                  </div>
                   <p className="text-gray-200 text-sm">
                     Warning: Accounts not created through our link will give incorrect predictions due to server mismatch.
                   </p>
                 </div>
                 
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
+                  <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
+                    <AlertTriangle className="h-4 w-4 text-[#00ECBE]" />
+                  </div>
                   <p className="text-gray-200 text-sm">
                     Old accounts will also provide incorrect predictions due to server mismatch.
                   </p>
                 </div>
                 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
+                  <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
+                    <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
+                  </div>
                   <p className="text-gray-200 text-sm">
                     For 100% accurate predictions, use the account created via our URL.
                   </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3 pb-1">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-5 pb-2 mt-3">
                   <Button
                     onClick={handleStartClick}
-                    className="w-full sm:w-auto transition-all bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium"
+                    className="w-full sm:w-auto transition-all bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-3 rounded-lg"
                   >
+                    <Rocket className="h-4 w-4 mr-2" />
                     Start
                   </Button>
                   
                   <Button
                     onClick={handleContinueClick}
-                    className={`w-full sm:w-auto transition-all ${
+                    className={`w-full sm:w-auto transition-all py-3 rounded-lg ${
                       isVerified 
                         ? "bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B]" 
                         : "bg-gray-700 hover:bg-gray-600 opacity-80 text-white"
                     }`}
                   >
-                    {isVerified ? "Continue" : (
+                    {isVerified ? (
+                      <>
+                        Continue
+                        <ArrowRightCircle className="h-4 w-4 ml-2" />
+                      </>
+                    ) : (
                       <div className="flex items-center">
                         <Lock className="h-4 w-4 mr-2" />
                         <span>Continue</span>
@@ -155,7 +169,7 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
                   <Button
                     onClick={handleHelpClick}
                     variant="outline"
-                    className="w-full sm:w-auto border-[#00ECBE]/50 text-[#00ECBE] hover:text-[#00ECBE]/80 hover:bg-[#00ECBE]/10"
+                    className="w-full sm:w-auto border-[#00ECBE]/50 text-[#00ECBE] hover:text-[#00ECBE]/80 hover:bg-[#00ECBE]/10 py-3 rounded-lg"
                   >
                     <HelpCircle className="h-4 w-4 mr-2" />
                     Help

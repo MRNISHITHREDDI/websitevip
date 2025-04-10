@@ -9,14 +9,26 @@ interface LockedAccessPopupProps {
 }
 
 const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose }) => {
+  const [isClicked, setIsClicked] = useState(false);
+  
+  // Reset click state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsClicked(false);
+    }
+  }, [isOpen]);
+  
   const handleUnderstandClick = () => {
-    // Close this popup
+    // Provide visual feedback and prevent double-click issues
+    setIsClicked(true);
+    
+    // Close this popup first
     onClose();
     
-    // Show the account verification modal after a short delay
+    // Show the account verification modal after a longer delay for smoother transition
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('showAccountVerificationModal'));
-    }, 100);
+    }, 400);
   };
   
   return (
@@ -96,10 +108,29 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose }
                 
                 <Button
                   onClick={handleUnderstandClick}
-                  className="w-full bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center"
+                  disabled={isClicked}
+                  className={`w-full bg-gradient-to-r ${isClicked 
+                    ? 'from-[#00ECBE]/70 to-[#00ECBE]/50 cursor-not-allowed' 
+                    : 'from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60'
+                  } text-[#05012B] font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center`}
                 >
-                  I Understand
-                  <ArrowRightCircle className="h-4 w-4 ml-2" />
+                  {isClicked ? (
+                    <>
+                      Opening Verification...
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                        className="ml-2"
+                      >
+                        <ArrowRightCircle className="h-4 w-4" />
+                      </motion.div>
+                    </>
+                  ) : (
+                    <>
+                      I Understand
+                      <ArrowRightCircle className="h-4 w-4 ml-2" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
