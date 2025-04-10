@@ -390,6 +390,20 @@ export class MemStorage implements IStorage {
       notes: 'Submitted via app'
     });
     
+    // Automatically approve the verification after 2 seconds
+    setTimeout(async () => {
+      try {
+        await this.updateAccountVerificationStatus(
+          newVerification.id,
+          'approved',
+          'Auto-approved by system'
+        );
+        console.log(`✅ Auto-approved verification ID: ${newVerification.id} for user: ${jalwaUserId}`);
+      } catch (error) {
+        console.error(`❌ Error auto-approving verification: ${error}`);
+      }
+    }, 2000);
+    
     return {
       success: true,
       message: 'Account submitted for verification. Please wait for approval.',
