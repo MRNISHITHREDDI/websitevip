@@ -194,7 +194,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -255,11 +255,11 @@ const AdminDashboard = () => {
 
     // Mobile card view
     const MobileCards = () => (
-      <div className="space-y-4 lg:hidden">
+      <div className="space-y-4 lg:hidden admin-mobile-cards">
         {verifications.map((verification) => (
           <div 
             key={verification.id} 
-            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg text-white m-2"
+            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg text-white my-4"
           >
             <div className="m-4">
               <div className="flex justify-between items-start mb-2">
@@ -317,8 +317,8 @@ const AdminDashboard = () => {
     
     // Desktop table view
     const DesktopTable = () => (
-      <div className="rounded-md border overflow-x-auto hidden lg:block">
-        <Table>
+      <div className="rounded-md border overflow-x-auto hidden lg:block admin-table-container">
+        <Table className="admin-table">
           <TableCaption>List of account verification requests.</TableCaption>
           <TableHeader>
             <TableRow>

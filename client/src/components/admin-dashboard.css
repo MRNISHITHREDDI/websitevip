@@ -1,1 +1,21 @@
 /* Admin Dashboard styles */
+
+/* Desktop table styles */
+.admin-table-container {
+  margin: 0;
+  padding: 12px;
+}
+
+.admin-table thead th {
+  padding: 16px 12px !important;
+}
+
+.admin-table tbody td {
+  padding: 12px !important;
+}
+
+/* Mobile card styles */
+.admin-mobile-cards {
+  margin: 0;
+  padding: 8px;
+}
