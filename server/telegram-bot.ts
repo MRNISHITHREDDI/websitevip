@@ -440,8 +440,24 @@ export function getBot(): TelegramBot | null {
 
 // Send notification to admins about a new verification
 export function notifyNewVerification(verification: any): void {
-  if (!bot) return;
+  if (!bot) {
+    console.error('Cannot send notification: Telegram bot is not initialized');
+    return;
+  }
   
-  // Emit a custom event that our handler will pick up
-  (bot as any).emit('new_verification', verification);
+  console.log('Sending notification for new verification ID:', verification.id);
+  
+  // Send notification directly to all authorized admins
+  for (const chatId of AUTHORIZED_CHAT_IDS) {
+    try {
+      bot.sendMessage(
+        chatId,
+        `🔔 *New Verification Request*\n\n${formatVerification(verification)}\n\nUse /approve ${verification.id} to approve or /reject ${verification.id} to reject.`,
+        { parse_mode: 'Markdown' }
+      );
+      console.log(`Notification sent to admin ${chatId}`);
+    } catch (error) {
+      console.error(`Failed to send notification to admin ${chatId}:`, error);
+    }
+  }
 }
