@@ -112,6 +112,99 @@ export function initBot(): void {
 function setupCommandHandlers(): void {
   if (!bot) return;
   
+  // Handle callback queries from inline buttons
+  bot.on('callback_query', async (callbackQuery) => {
+    const chatId = callbackQuery.message?.chat.id;
+    
+    if (!chatId || !isAuthorized(chatId)) {
+      return;
+    }
+    
+    const callbackData = callbackQuery.data;
+    
+    if (!callbackData) {
+      return;
+    }
+    
+    // The callback data is in the format: action_id (e.g., approve_123, reject_456)
+    const [action, idStr] = callbackData.split('_');
+    const id = parseInt(idStr, 10);
+    
+    if (isNaN(id)) {
+      bot.answerCallbackQuery(callbackQuery.id, { text: '❌ Invalid verification ID' });
+      return;
+    }
+    
+    try {
+      // Get the verification first to check if it exists
+      const verification = await storage.getAccountVerification(id);
+      
+      if (!verification) {
+        bot.answerCallbackQuery(callbackQuery.id, { text: `❌ Verification ID ${id} not found` });
+        return;
+      }
+      
+      let status: string;
+      let notes: string;
+      let responseText: string;
+      
+      if (action === 'approve') {
+        status = 'approved';
+        notes = 'Approved via Telegram bot inline button';
+        responseText = `✅ Approved User ${verification.jalwaUserId}`;
+      } else if (action === 'reject') {
+        status = 'rejected';
+        notes = 'Rejected via Telegram bot inline button';
+        responseText = `❌ Rejected User ${verification.jalwaUserId}`;
+      } else {
+        bot.answerCallbackQuery(callbackQuery.id, { text: '❌ Invalid action' });
+        return;
+      }
+      
+      // Update the verification status
+      const updated = await storage.updateAccountVerificationStatus(id, status, notes);
+      
+      if (!updated) {
+        bot.answerCallbackQuery(callbackQuery.id, { 
+          text: `❌ Failed to ${action} verification ID ${id}`,
+          show_alert: true
+        });
+        return;
+      }
+      
+      // Answer the callback query
+      bot.answerCallbackQuery(callbackQuery.id, {
+        text: `✅ Successfully ${status} verification ID ${id}`,
+        show_alert: true
+      });
+      
+      // Update original message to show it's been processed
+      const messageId = callbackQuery.message?.message_id;
+      if (messageId) {
+        const originalText = callbackQuery.message?.text || '';
+        const newText = `${originalText}\n\n✅ PROCESSED: ${status.toUpperCase()} by ${callbackQuery.from.first_name || 'Admin'}`;
+        
+        bot.editMessageText(newText, {
+          chat_id: chatId,
+          message_id: messageId
+        });
+      }
+      
+      // Send a confirmation message
+      safeSendMessage(
+        chatId,
+        `${responseText}\n\nUser ID: ${updated.jalwaUserId}\nStatus: ${updated.status.toUpperCase()}\nProcessed by: ${callbackQuery.from.first_name || 'Admin'}`
+      );
+      
+    } catch (error) {
+      console.error('Error handling callback query:', error);
+      bot.answerCallbackQuery(callbackQuery.id, {
+        text: 'An error occurred while processing your request.',
+        show_alert: true
+      });
+    }
+  });
+  
   // Start command - introduction and authorization check
   bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
@@ -485,7 +578,7 @@ export function getBot(): TelegramBot | null {
   return bot;
 }
 
-// Send notification to admins about a new verification using direct HTTP requests with fetch
+// Send notification to admins about a new verification with inline buttons for approve/reject
 export function notifyNewVerification(verification: any): void {
   console.log('🚨 NEW VERIFICATION ALERT: Received ID:', verification.id);
   
@@ -515,23 +608,37 @@ export function notifyNewVerification(verification: any): void {
   
   console.log('📨 SENDING NOTIFICATIONS: Admin IDs:', adminChatIds.join(', '));
   
-  // Format in very simple plain text (no special formatting that could cause issues)
-  const message = `ALERT! New verification request:
+  // Format in plain text (no special formatting that could cause issues)
+  const message = `🚨 NEW VERIFICATION REQUEST 🚨
 ID: ${verification.id}
 User: ${verification.jalwaUserId}
 Status: ${verification.status}
-Created: ${new Date().toISOString()}`;
+Created: ${new Date().toLocaleString()}`;
 
-  // Use BOTH fetch API and library for maximum reliability
-  
-  // 1. Use fetch API for direct Telegram API access
+  // 1. Use fetch API with inline keyboard buttons for direct Telegram API access
   const sendDirectNotifications = async () => {
     for (const chatId of adminChatIds) {
       try {
-        // Construct the Telegram API URL with parameters
+        // Construct the Telegram API URL
         const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
         
-        // Use fetch to make the HTTP request
+        // Create inline keyboard with approve/reject buttons
+        const inlineKeyboard = {
+          inline_keyboard: [
+            [
+              {
+                text: "✅ Approve",
+                callback_data: `approve_${verification.id}`
+              },
+              {
+                text: "❌ Reject",
+                callback_data: `reject_${verification.id}`
+              }
+            ]
+          ]
+        };
+        
+        // Use fetch to make the HTTP request with inline keyboard
         const response = await fetch(telegramApiUrl, {
           method: 'POST',
           headers: {
@@ -540,6 +647,7 @@ Created: ${new Date().toISOString()}`;
           body: JSON.stringify({
             chat_id: chatId,
             text: message,
+            reply_markup: inlineKeyboard,
             disable_notification: false
           }),
         });
@@ -547,7 +655,7 @@ Created: ${new Date().toISOString()}`;
         const data = await response.json();
         
         if (data.ok) {
-          console.log(`✅ DIRECT API: Message sent to ${chatId}`);
+          console.log(`✅ DIRECT API: Message with buttons sent to ${chatId}`);
         } else {
           console.error(`❌ DIRECT API ERROR: ${data.description}`);
         }
@@ -562,21 +670,43 @@ Created: ${new Date().toISOString()}`;
     .then(() => console.log('✅ DIRECT NOTIFICATIONS COMPLETED'))
     .catch(err => console.error('❌ DIRECT NOTIFICATION FAILED:', err));
   
-  // 2. Also try library approach as backup
+  // 2. Also try library approach with inline keyboard as backup
   try {
     // Create a non-polling bot instance just for this message
     const notificationBot = new TelegramBot(botToken, { polling: false });
     
-    // Send to each admin with different format to distinguish sources
+    // Create options with inline keyboard markup
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "✅ Approve",
+              callback_data: `approve_${verification.id}`
+            },
+            {
+              text: "❌ Reject", 
+              callback_data: `reject_${verification.id}`
+            }
+          ]
+        ]
+      }
+    };
+    
+    // Send to each admin with inline keyboard buttons
     for (const adminId of adminChatIds) {
       setTimeout(() => {
-        notificationBot.sendMessage(adminId, `🔔 NEW VERIFICATION: ID:${verification.id}, USER:${verification.jalwaUserId}`)
-          .then(() => {
-            console.log(`✅ LIBRARY: Message sent to ${adminId}`);
-          })
-          .catch(error => {
-            console.error(`❌ LIBRARY ERROR for ${adminId}:`, error.message);
-          });
+        notificationBot.sendMessage(
+          adminId, 
+          `🔔 NEW VERIFICATION: ID:${verification.id}, USER:${verification.jalwaUserId}`,
+          options
+        )
+        .then(() => {
+          console.log(`✅ LIBRARY: Message with buttons sent to ${adminId}`);
+        })
+        .catch(error => {
+          console.error(`❌ LIBRARY ERROR for ${adminId}:`, error.message);
+        });
       }, 1000); // Longer delay for library calls
     }
   } catch (error) {
