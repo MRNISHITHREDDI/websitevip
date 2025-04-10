@@ -60,6 +60,28 @@ ${verification.notes ? `*Notes:* ${verification.notes}` : ''}
 
 // Initialize the bot with commands
 export function initBot(): void {
+  // First, stop any existing bot to prevent multiple polling instances
+  if (bot && bot.isPolling()) {
+    console.log('Stopping existing bot before reinitialization...');
+    try {
+      bot.stopPolling();
+    } catch (error) {
+      console.error('Error stopping existing bot:', error);
+    }
+    // Small delay to ensure the connection is properly closed
+    setTimeout(() => {
+      bot = null;
+      initBotInternal();
+    }, 1000);
+    return;
+  }
+  
+  // If no existing bot, initialize immediately
+  initBotInternal();
+}
+
+// Internal function for bot initialization
+function initBotInternal(): void {
   // Reload token and chat IDs from environment variables (important for deployment)
   token = process.env.TELEGRAM_BOT_TOKEN;
   
@@ -82,11 +104,31 @@ export function initBot(): void {
   console.log('ADMIN_CHAT_IDS env value:', process.env.ADMIN_CHAT_IDS);
   
   try {
-    // Create a bot instance
-    bot = new TelegramBot(token, { polling: true });
+    // Create a bot instance with clean session
+    bot = new TelegramBot(token, { 
+      polling: true,
+      // Add these options to avoid conflicts with other instances
+      filepath: false, // Disable file storage to prevent file locks
+      baseApiUrl: "https://api.telegram.org", // Use direct API URL
+      onlyFirstMatch: true, // Only handle first match to reduce processing
+      request: { // Add request timeout
+        timeout: 30000
+      }
+    });
     
     // Register error event handler
     bot.on('polling_error', (error) => {
+      // Handle conflict errors specially (409 errors)
+      if (error.message && error.message.includes('409')) {
+        console.error('Telegram conflict error (409). Stopping and reinitializing bot...');
+        stopBot();
+        // Wait a moment and try to restart with new session
+        setTimeout(() => {
+          initBotInternal();
+        }, 2000);
+        return;
+      }
+      
       console.error('Telegram polling error:', error);
     });
     

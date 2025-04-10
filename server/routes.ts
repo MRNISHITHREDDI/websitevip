@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { accountVerificationResponseSchema } from "@shared/schema";
-import { notifyNewVerification, checkBotStatus, initBot } from "./telegram-bot";
+import { notifyNewVerification, getBotStatus, initBot } from "./telegram-bot-new";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Validate Jalwa User ID endpoint
@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to check Telegram bot status (useful for deployment troubleshooting)
   app.get('/api/bot-status', (_req: Request, res: Response) => {
     try {
-      const status = checkBotStatus();
+      const status = getBotStatus();
       
       return res.status(200).json({
         success: true,
@@ -196,7 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/restart-bot', (_req: Request, res: Response) => {
     try {
       // Check current status
-      const beforeStatus = checkBotStatus();
+      const beforeStatus = getBotStatus();
       
       // Only try to restart if there's a configuration
       if (!beforeStatus.isConfigured) {
@@ -208,19 +208,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Attempt to restart the bot
-      initBot();
+      const botInstance = initBot();
       
-      // Check new status
-      const afterStatus = checkBotStatus();
+      // Check new status after restart
+      const afterStatus = getBotStatus();
       
       return res.status(200).json({
-        success: afterStatus.isPolling,
-        message: afterStatus.isPolling 
+        success: !!botInstance,
+        message: botInstance 
           ? 'Bot successfully restarted' 
-          : 'Bot restart attempted but not polling',
+          : 'Bot restart attempted but failed',
         data: {
           before: beforeStatus,
           after: afterStatus,
+          botInitialized: !!botInstance,
           timestamp: new Date().toISOString()
         }
       });

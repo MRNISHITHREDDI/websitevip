@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { initBot, stopBot } from "./telegram-bot";
+import { initBot } from "./telegram-bot-new";
 
 const app = express();
 app.use(express.json());
@@ -74,7 +74,6 @@ app.use((req, res, next) => {
     // Set up graceful shutdown
     process.on('SIGINT', () => {
       log('Shutting down server...');
-      stopBot();
       server.close();
       process.exit(0);
     });
