@@ -112,18 +112,25 @@ export function initBot(): TelegramBot | null {
             show_alert: true
           });
           
-          // Update the message to show it's been processed
+          // Update the message to show it's been processed or send a new one if editing fails
           const emoji = action === 'approve' ? '✅' : '❌';
           const statusText = action === 'approve' ? 'APPROVED' : 'REJECTED';
+          const responseText = `🔔 *VERIFICATION #${verificationId} ${statusText}* ${emoji}\n\nUser: ${result.jalwaUserId}\nTime: ${new Date().toLocaleString()}`;
           
-          await botInstance?.editMessageText(
-            `🔔 *VERIFICATION #${verificationId} ${statusText}* ${emoji}\n\nUser: ${result.jalwaUserId}\nTime: ${new Date().toLocaleString()}`,
-            {
+          try {
+            // Try to edit the message first
+            await botInstance?.editMessageText(responseText, {
               chat_id: chatId,
               message_id: message.message_id,
               parse_mode: 'Markdown'
-            }
-          );
+            });
+          } catch (err) {
+            // If editing fails, send a new message
+            console.log('Unable to edit original message, sending new confirmation');
+            await botInstance?.sendMessage(chatId, responseText, {
+              parse_mode: 'Markdown'
+            });
+          }
           
           console.log(`✅ Verification #${verificationId} ${newStatus} via Telegram by admin ${chatId}`);
         } else {
