@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCircle, Image as ImageIcon } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { jalwaAccountVerifySVG } from '../assets';
 
 interface AccountVerificationModalProps {
   isOpen: boolean;
@@ -68,7 +67,6 @@ const AccountVerificationModal = ({
     return "";
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showImage, setShowImage] = useState(false);
   const { toast } = useToast();
 
   // Prevent clicks inside the modal from closing it
@@ -144,10 +142,6 @@ const AccountVerificationModal = ({
     window.open('https://t.me/Bongjayanta2', '_blank');
   };
   
-  const toggleImageContent = () => {
-    setShowImage(prev => !prev);
-  };
-  
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
@@ -157,11 +151,11 @@ const AccountVerificationModal = ({
           onClick={onClose}
         >
           <motion.div
-            className={`bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] ${showImage ? 'max-h-[85vh]' : ''} overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]`}
+            className="bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]"
             {...modalAnimation}
             onClick={handleModalClick}
           >
-            <div className={`relative ${showImage ? 'max-h-[85vh] overflow-y-auto' : ''}`}>
+            <div className="relative">
               <button 
                 className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
                 onClick={onClose}
@@ -182,29 +176,6 @@ const AccountVerificationModal = ({
               </div>
               
               <div className="p-6 pt-2 space-y-4">
-                <div className="flex justify-end mb-2">
-                  <Button
-                    onClick={toggleImageContent}
-                    variant="outline"
-                    size="sm"
-                    className="border-[#00ECBE]/30 text-[#00ECBE] hover:bg-[#00ECBE]/10"
-                  >
-                    <ImageIcon className="h-4 w-4 mr-2" />
-                    {showImage ? "Hide Example" : "Show Example"}
-                  </Button>
-                </div>
-                
-                {showImage && (
-                  <div className="bg-[#081042]/50 p-3 rounded-lg border border-[#00ECBE]/20 mb-4">
-                    <div className="flex justify-center">
-                      <div 
-                        className="w-full max-w-[500px]"
-                        dangerouslySetInnerHTML={{ __html: jalwaAccountVerifySVG }}
-                      />
-                    </div>
-                  </div>
-                )}
-                
                 <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
