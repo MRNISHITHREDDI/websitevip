@@ -1,12 +1,10 @@
 import { motion } from "framer-motion";
-import { ChevronDown, Check, UserPlus, Play, Info, Eye } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronDown, UserPlus, Play, Info } from "lucide-react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
-import DemoVipPredictionModal from "./DemoVipPredictionModal";
 
 const HeroSection = () => {
   const [, setLocation] = useLocation();
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   // Add scroll event listener to hide/show the scroll indicator
   useEffect(() => {
@@ -42,6 +40,7 @@ const HeroSection = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+  
   return (
     <section className="relative pt-20 mt-14 lg:pt-24 lg:mt-14 pb-16 lg:pb-24 overflow-hidden">
       {/* Video background with color overlay */}
@@ -101,78 +100,61 @@ const HeroSection = () => {
               successful players today.
             </p>
 
-            {/* Four buttons: Register, Start Playing, How It Works, Demo */}
-            <div className="flex flex-col gap-4 justify-center mb-5">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.a
-                  href="https://www.jalwa.vip/#/register?invitationCode=327361287589"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
-                  whileHover={{
-                    boxShadow: "0 0 20px 0 rgba(123, 66, 246, 0.6)",
-                    y: -2,
-                  }}
-                >
-                  <UserPlus size={18} />
-                  <span>Register</span>
-                </motion.a>
-                <motion.button
-                  onClick={() => {
-                    // Scroll to the prediction section (Section 2)
-                    document.getElementById("prediction")?.scrollIntoView({
+            {/* Three buttons: Register, Start Playing, How It Works */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5">
+              <motion.a
+                href="https://www.jalwa.vip/#/register?invitationCode=327361287589"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
+                whileHover={{
+                  boxShadow: "0 0 20px 0 rgba(123, 66, 246, 0.6)",
+                  y: -2,
+                }}
+              >
+                <UserPlus size={18} />
+                <span>Register</span>
+              </motion.a>
+              <motion.button
+                onClick={() => {
+                  // Scroll to the prediction section (Section 2)
+                  document.getElementById("prediction")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+                className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
+                whileHover={{
+                  boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                  y: -2,
+                }}
+              >
+                <Play size={18} />
+                <span>Start Playing</span>
+              </motion.button>
+              <motion.button
+                onClick={() => {
+                  // Find the HowItWorksSection and scroll to it (Section 4)
+                  const howItWorksSection =
+                    document.getElementById("how-it-works");
+
+                  if (howItWorksSection) {
+                    howItWorksSection.scrollIntoView({
                       behavior: "smooth",
                       block: "start",
                     });
-                  }}
-                  className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
-                  whileHover={{
-                    boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                    y: -2,
-                  }}
-                >
-                  <Play size={18} />
-                  <span>Start Playing</span>
-                </motion.button>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.button
-                  onClick={() => {
-                    // Find the HowItWorksSection and scroll to it (Section 4)
-                    const howItWorksSection =
-                      document.getElementById("how-it-works");
-
-                    if (howItWorksSection) {
-                      howItWorksSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }
-                  }}
-                  className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
-                  whileHover={{
-                    boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                    y: -2,
-                  }}
-                >
-                  <Info size={18} />
-                  <span>How It Works</span>
-                </motion.button>
-                <motion.button 
-                  onClick={() => setDemoModalOpen(true)}
-                  className="bg-[#8000FF] border border-[#A64DFF] text-white px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
-                  whileHover={{ 
-                    boxShadow: "0 0 20px 0 rgba(128, 0, 255, 0.6)",
-                    y: -2 
-                  }}
-                >
-                  <Eye size={18} />
-                  <span>Demo</span>
-                </motion.button>
-              </div>
+                  }
+                }}
+                className="hidden sm:flex bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 items-center justify-center gap-2"
+                whileHover={{
+                  boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                  y: -2,
+                }}
+              >
+                <Info size={18} />
+                <span>How It Works</span>
+              </motion.button>
             </div>
-
-            {/* Removed money animation elements as requested */}
 
             {/* Scroll indicator directly below buttons with 10px gap */}
             <motion.div
@@ -192,12 +174,6 @@ const HeroSection = () => {
           </motion.div>
         </div>
       </div>
-      
-      {/* Demo VIP Prediction Modal */}
-      <DemoVipPredictionModal 
-        isOpen={demoModalOpen} 
-        onClose={() => setDemoModalOpen(false)} 
-      />
     </section>
   );
 };
