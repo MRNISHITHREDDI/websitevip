@@ -131,14 +131,14 @@ const AdminDashboard = () => {
       
       toast({
         title: 'Success',
-        description: 'User removed successfully',
+        description: 'User status updated successfully',
         variant: 'default',
       });
     },
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to remove user',
+        description: error.message || 'Failed to update user',
         variant: 'destructive',
       });
     },
@@ -223,8 +223,6 @@ const AdminDashboard = () => {
         <TabsContent value="all" className="mt-4">
           {renderVerificationsTable(getVerificationsToDisplay())}
         </TabsContent>
-        
-
         
         <TabsContent value="approved" className="mt-4">
           {renderVerificationsTable(
