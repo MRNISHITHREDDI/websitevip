@@ -64,7 +64,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-2 sm:px-4">
       <SEO title="Admin Dashboard | Jalwa Admin Panel" />
       <div className="py-4 flex justify-end">
         <Button variant="outline" onClick={handleLogout}>Logout</Button>

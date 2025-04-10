@@ -193,21 +193,21 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="container mx-auto py-4 px-3">
+      <h1 className="text-xl sm:text-3xl font-bold mb-4">Admin Dashboard</h1>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex justify-between items-center mb-4">
-          <TabsList>
-            <TabsTrigger value="all">All Verifications</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+          <TabsList className="w-full sm:w-auto">
+            <TabsTrigger value="all" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">All</TabsTrigger>
+            <TabsTrigger value="approved" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">Approved</TabsTrigger>
+            <TabsTrigger value="rejected" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">Rejected</TabsTrigger>
           </TabsList>
           
-          <div className="flex items-center gap-2">
-            <Label htmlFor="status-filter">Filter:</Label>
+          <div className="flex items-center gap-1 w-full sm:w-auto mt-2 sm:mt-0">
+            <Label htmlFor="status-filter" className="whitespace-nowrap text-sm">Filter:</Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger id="status-filter" className="w-[180px]">
+              <SelectTrigger id="status-filter" className="w-full">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -252,56 +252,125 @@ const AdminDashboard = () => {
       );
     }
 
-    return (
-      <div className="rounded-md border">
-        <Table>
-          <TableCaption>List of account verification requests.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {verifications.map((verification) => (
-              <TableRow key={verification.id}>
-                <TableCell className="font-medium">{verification.id}</TableCell>
-                <TableCell>{verification.jalwaUserId}</TableCell>
-                <TableCell>
-                  <StatusBadge status={verification.status} />
-                </TableCell>
-                <TableCell>{formatDate(verification.createdAt)}</TableCell>
-                <TableCell>{formatDate(verification.updatedAt)}</TableCell>
-                <TableCell className="text-right">
-                  {verification.status === 'rejected' ? (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="bg-green-600 hover:bg-green-700"
-                      onClick={() => handleApprove(verification.id)}
-                      disabled={isLoading}
-                    >
-                      Approve
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleRemove(verification.id)}
-                      disabled={isLoading}
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </TableCell>
+    // For mobile view - card-style display
+    const renderMobileCards = () => {
+      return (
+        <div className="space-y-4 lg:hidden">
+          {verifications.map((verification) => (
+            <div key={verification.id} className="bg-white rounded-lg border shadow-sm p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <span className="text-sm text-gray-500">ID: </span>
+                  <span className="font-medium">{verification.id}</span>
+                </div>
+                <StatusBadge status={verification.status} />
+              </div>
+              
+              <div className="mb-2">
+                <span className="text-sm text-gray-500">User ID: </span>
+                <span className="font-medium">{verification.jalwaUserId}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                <div>
+                  <span className="text-gray-500">Created: </span>
+                  <span>{formatDate(verification.createdAt)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Updated: </span>
+                  <span>{formatDate(verification.updatedAt)}</span>
+                </div>
+              </div>
+              
+              <div className="flex justify-end pt-2 border-t">
+                {verification.status === 'rejected' ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700 w-full"
+                    onClick={() => handleApprove(verification.id)}
+                    disabled={isLoading}
+                  >
+                    Approve
+                  </Button>
+                ) : (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => handleRemove(verification.id)}
+                    disabled={isLoading}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+    
+    // For desktop view - regular table
+    const renderDesktopTable = () => {
+      return (
+        <div className="rounded-md border hidden lg:block">
+          <Table>
+            <TableCaption>List of account verification requests.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[80px]">ID</TableHead>
+                <TableHead>User ID</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {verifications.map((verification) => (
+                <TableRow key={verification.id}>
+                  <TableCell className="font-medium">{verification.id}</TableCell>
+                  <TableCell>{verification.jalwaUserId}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={verification.status} />
+                  </TableCell>
+                  <TableCell>{formatDate(verification.createdAt)}</TableCell>
+                  <TableCell>{formatDate(verification.updatedAt)}</TableCell>
+                  <TableCell className="text-right">
+                    {verification.status === 'rejected' ? (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => handleApprove(verification.id)}
+                        disabled={isLoading}
+                      >
+                        Approve
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleRemove(verification.id)}
+                        disabled={isLoading}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      );
+    };
+    
+    return (
+      <div>
+        {renderMobileCards()}
+        {renderDesktopTable()}
       </div>
     );
   }
