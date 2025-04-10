@@ -256,37 +256,40 @@ const AdminDashboard = () => {
     const MobileCards = () => (
       <div className="space-y-4 lg:hidden">
         {verifications.map((verification) => (
-          <div key={verification.id} className="bg-white rounded-lg border shadow-sm p-4">
+          <div 
+            key={verification.id} 
+            className="bg-black bg-opacity-80 border border-[hsl(165,100%,46%)] border-opacity-30 rounded-lg shadow-lg p-4 text-white"
+          >
             <div className="flex justify-between items-start mb-2">
               <div>
-                <span className="text-sm text-gray-500">ID: </span>
+                <span className="text-sm text-[hsl(165,100%,46%)]">ID: </span>
                 <span className="font-medium">{verification.id}</span>
               </div>
               <StatusBadge status={verification.status} />
             </div>
             
             <div className="mb-2">
-              <span className="text-sm text-gray-500">User ID: </span>
+              <span className="text-sm text-[hsl(165,100%,46%)]">User ID: </span>
               <span className="font-medium">{verification.jalwaUserId}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
               <div>
-                <span className="text-gray-500">Created: </span>
-                <span>{formatDate(verification.createdAt)}</span>
+                <span className="text-[hsl(165,100%,46%)]">Created: </span>
+                <span className="text-gray-300">{formatDate(verification.createdAt)}</span>
               </div>
               <div>
-                <span className="text-gray-500">Updated: </span>
-                <span>{formatDate(verification.updatedAt)}</span>
+                <span className="text-[hsl(165,100%,46%)]">Updated: </span>
+                <span className="text-gray-300">{formatDate(verification.updatedAt)}</span>
               </div>
             </div>
             
-            <div className="flex justify-end pt-2 border-t">
+            <div className="flex justify-end pt-2 border-t border-[hsl(165,100%,46%)] border-opacity-20">
               {verification.status === 'rejected' ? (
                 <Button
                   variant="default"
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 w-full"
+                  className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black w-full"
                   onClick={() => handleApprove(verification.id)}
                   disabled={isLoading}
                 >
@@ -339,7 +342,7 @@ const AdminDashboard = () => {
                     <Button
                       variant="default"
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black"
                       onClick={() => handleApprove(verification.id)}
                       disabled={isLoading}
                     >
