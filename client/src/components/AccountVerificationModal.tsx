@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { jalwaAccountVerifySVG } from '../assets';
 
 interface AccountVerificationModalProps {
   isOpen: boolean;
@@ -67,6 +68,7 @@ const AccountVerificationModal = ({
     return "";
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const { toast } = useToast();
 
   // Prevent clicks inside the modal from closing it
@@ -142,6 +144,10 @@ const AccountVerificationModal = ({
     window.open('https://t.me/Bongjayanta2', '_blank');
   };
   
+  const toggleImageContent = () => {
+    setShowImage(prev => !prev);
+  };
+  
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
@@ -151,11 +157,11 @@ const AccountVerificationModal = ({
           onClick={onClose}
         >
           <motion.div
-            className="bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]"
+            className={`bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] ${showImage ? 'max-h-[85vh]' : ''} overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]`}
             {...modalAnimation}
             onClick={handleModalClick}
           >
-            <div className="relative">
+            <div className={`relative ${showImage ? 'max-h-[85vh] overflow-y-auto' : ''}`}>
               <button 
                 className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
                 onClick={onClose}
