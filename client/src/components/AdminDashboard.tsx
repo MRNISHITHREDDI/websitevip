@@ -318,34 +318,34 @@ const AdminDashboard = () => {
     // Desktop table view
     const DesktopTable = () => (
       <div className="rounded-md border overflow-x-auto hidden lg:block">
-        <Table className="admin-dashboard-table">
+        <Table>
           <TableCaption>List of account verification requests.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] my-2">ID</TableHead>
-              <TableHead className="my-2">User ID</TableHead>
-              <TableHead className="my-2">Status</TableHead>
-              <TableHead className="my-2">Created</TableHead>
-              <TableHead className="my-2">Updated</TableHead>
-              <TableHead className="text-right my-2">Actions</TableHead>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>User ID</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {verifications.map((verification) => (
               <TableRow key={verification.id}>
-                <TableCell className="font-medium my-2">{verification.id}</TableCell>
-                <TableCell className="my-2">{verification.jalwaUserId}</TableCell>
-                <TableCell className="my-2">
+                <TableCell className="font-medium">{verification.id}</TableCell>
+                <TableCell>{verification.jalwaUserId}</TableCell>
+                <TableCell>
                   <StatusBadge status={verification.status} />
                 </TableCell>
-                <TableCell className="my-2">{formatDate(verification.createdAt)}</TableCell>
-                <TableCell className="my-2">{formatDate(verification.updatedAt)}</TableCell>
-                <TableCell className="text-right my-2">
+                <TableCell>{formatDate(verification.createdAt)}</TableCell>
+                <TableCell>{formatDate(verification.updatedAt)}</TableCell>
+                <TableCell className="text-right">
                   {verification.status === 'rejected' ? (
                     <Button
                       variant="default"
                       size="sm"
-                      className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black m-2"
+                      className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black"
                       onClick={() => handleApprove(verification.id)}
                       disabled={isLoading}
                     >
@@ -355,7 +355,6 @@ const AdminDashboard = () => {
                     <Button
                       variant="destructive"
                       size="sm"
-                      className="m-2"
                       onClick={() => handleRemove(verification.id)}
                       disabled={isLoading}
                     >

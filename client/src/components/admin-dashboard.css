@@ -1,17 +1,1 @@
-/* Overrides for Admin Dashboard */
-
-/* Table cell padding reduction */
-.admin-dashboard-table th,
-.admin-dashboard-table td {
-  padding: 0 !important;
-}
-
-/* Mobile card content styles */
-.admin-card-content {
-  margin: 8px !important;
-}
-
-/* Button adjustments */
-.admin-action-button {
-  margin: 4px !important;
-}
+/* Admin Dashboard styles */
