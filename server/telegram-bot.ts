@@ -10,7 +10,7 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 let bot: TelegramBot | null = null;
 
 // List of authorized admin chat IDs (for security)
-const AUTHORIZED_CHAT_IDS = process.env.ADMIN_CHAT_IDS 
+let AUTHORIZED_CHAT_IDS = process.env.ADMIN_CHAT_IDS 
   ? process.env.ADMIN_CHAT_IDS.split(',').map(id => parseInt(id.trim(), 10))
   : [];
 
@@ -86,7 +86,7 @@ function setupCommandHandlers(): void {
     
     bot?.sendMessage(
       chatId,
-      '👋 *Welcome to the Jalwa Account Admin Bot!*\n\nUse this bot to manage user verifications.\n\n*Available commands:*\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] - Reject a verification\n/info [id] - Show details about a verification\n/help - Show this help message',
+      '👋 *Welcome to the Jalwa Account Admin Bot!*\n\nUse this bot to manage user verifications.\n\n*Available commands:*\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] - Reject a verification\n/info [id] - Show details about a verification\n/stats - Show verification statistics\n/addadmin [chat_id] - Add a new admin chat ID\n/admins - List all admin chat IDs\n/help - Show this help message',
       { parse_mode: 'Markdown' }
     );
   });
@@ -97,9 +97,9 @@ function setupCommandHandlers(): void {
     
     if (!isAuthorized(chatId)) return;
     
-    bot.sendMessage(
+    bot?.sendMessage(
       chatId,
-      '*Available commands:*\n\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] [reason] - Reject a verification\n/info [id] - Show details about a verification\n/stats - Show verification statistics\n/help - Show this help message',
+      '*Available commands:*\n\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] [reason] - Reject a verification\n/info [id] - Show details about a verification\n/stats - Show verification statistics\n/addadmin [chat_id] - Add a new admin chat ID\n/admins - List all admin chat IDs\n/help - Show this help message',
       { parse_mode: 'Markdown' }
     );
   });
@@ -336,7 +336,7 @@ function setupCommandHandlers(): void {
       const approved = await storage.getAccountVerificationsByStatus('approved');
       const rejected = await storage.getAccountVerificationsByStatus('rejected');
       
-      bot.sendMessage(
+      bot?.sendMessage(
         chatId,
         `📊 *Verification Statistics*\n\n` +
         `Total: ${all.length}\n` +
@@ -345,6 +345,65 @@ function setupCommandHandlers(): void {
         `❌ Rejected: ${rejected.length}`,
         { parse_mode: 'Markdown' }
       );
+    } catch (error) {
+      handleError(chatId, error);
+    }
+  });
+  
+  // Add a new admin chat ID
+  bot.onText(/\/addadmin\s+(\d+)/, (msg, match) => {
+    const chatId = msg.chat.id;
+    
+    if (!isAuthorized(chatId)) return;
+    
+    if (!match || !match[1]) {
+      bot?.sendMessage(chatId, 'Please provide a chat ID: /addadmin [chat_id]');
+      return;
+    }
+    
+    try {
+      const newAdminChatId = parseInt(match[1], 10);
+      
+      // Check if the chat ID is already an admin
+      if (AUTHORIZED_CHAT_IDS.includes(newAdminChatId)) {
+        bot?.sendMessage(chatId, `❌ Chat ID ${newAdminChatId} is already an admin.`);
+        return;
+      }
+      
+      // Add the new admin chat ID to the list
+      AUTHORIZED_CHAT_IDS.push(newAdminChatId);
+      
+      // Notify the current admin
+      bot?.sendMessage(
+        chatId,
+        `✅ Successfully added Chat ID ${newAdminChatId} as an admin.`,
+        { parse_mode: 'Markdown' }
+      );
+      
+      // Notify the new admin
+      bot?.sendMessage(
+        newAdminChatId,
+        `🔔 *Welcome Admin!*\n\nYou have been added as an admin by Chat ID ${chatId}. Use /help to see available commands.`,
+        { parse_mode: 'Markdown' }
+      );
+      
+      console.log(`Added new admin with chat ID: ${newAdminChatId}`);
+    } catch (error) {
+      handleError(chatId, error);
+    }
+  });
+  
+  // List all admin chat IDs
+  bot.onText(/\/admins/, (msg) => {
+    const chatId = msg.chat.id;
+    
+    if (!isAuthorized(chatId)) return;
+    
+    try {
+      const message = `👑 *Admin Chat IDs (${AUTHORIZED_CHAT_IDS.length})*\n\n` +
+        AUTHORIZED_CHAT_IDS.map((id, index) => `${index + 1}. ${id}`).join('\n');
+      
+      bot?.sendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
