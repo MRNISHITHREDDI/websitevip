@@ -254,11 +254,11 @@ const AdminDashboard = () => {
 
     // Mobile card view
     const MobileCards = () => (
-      <div className="space-y-4 lg:hidden bg-[hsl(240,80%,12%)] p-4 rounded-lg">
+      <div className="space-y-4 lg:hidden">
         {verifications.map((verification) => (
           <div 
             key={verification.id} 
-            className="bg-[hsl(240,82%,9%)] border border-[hsl(165,100%,46%)] border-opacity-30 rounded-lg shadow-lg p-4 text-white"
+            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg p-4 text-white"
           >
             <div className="flex justify-between items-start mb-2">
               <div>
