@@ -95,7 +95,7 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-gradient-to-br from-indigo-950 to-slate-900 text-white border-none">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-[#05012B] text-white border-none" aria-describedby="verification-description">
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-center mb-2">
             <Rocket className="h-6 w-6 mr-2 text-amber-400" />
@@ -109,7 +109,7 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
         <div className="p-6 pt-2 space-y-4">
           <div className="flex items-start space-x-3">
             <CheckCircle className="h-5 w-5 mt-0.5 text-green-400 flex-shrink-0" />
-            <p className="text-gray-200 text-sm">
+            <p id="verification-description" className="text-gray-200 text-sm">
               Create a new account via the "Start" button for server connection. Our app checks the server to ensure accurate predictions.
             </p>
           </div>
