@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { accountVerificationResponseSchema } from "@shared/schema";
-import { notifyNewVerification } from "./telegram-bot";
+import { notifyNewVerification, checkBotStatus, initBot } from "./telegram-bot";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Validate Jalwa User ID endpoint
@@ -165,6 +165,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({
         success: false,
         message: 'Failed to update account verification'
+      });
+    }
+  });
+  
+  // API endpoint to check Telegram bot status (useful for deployment troubleshooting)
+  app.get('/api/bot-status', (_req: Request, res: Response) => {
+    try {
+      const status = checkBotStatus();
+      
+      return res.status(200).json({
+        success: true,
+        data: {
+          ...status,
+          timestamp: new Date().toISOString(),
+          environment: process.env.NODE_ENV || 'development'
+        }
+      });
+    } catch (error) {
+      console.error('Failed to check bot status:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to check bot status',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // API endpoint to restart the bot (useful for recovery in deployed environments)
+  app.post('/api/restart-bot', (_req: Request, res: Response) => {
+    try {
+      // Check current status
+      const beforeStatus = checkBotStatus();
+      
+      // Only try to restart if there's a configuration
+      if (!beforeStatus.isConfigured) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot restart bot: missing configuration',
+          data: beforeStatus
+        });
+      }
+      
+      // Attempt to restart the bot
+      initBot();
+      
+      // Check new status
+      const afterStatus = checkBotStatus();
+      
+      return res.status(200).json({
+        success: afterStatus.isPolling,
+        message: afterStatus.isPolling 
+          ? 'Bot successfully restarted' 
+          : 'Bot restart attempted but not polling',
+        data: {
+          before: beforeStatus,
+          after: afterStatus,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Failed to restart bot:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to restart bot',
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });

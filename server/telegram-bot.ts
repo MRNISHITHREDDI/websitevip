@@ -593,31 +593,85 @@ export function getBot(): TelegramBot | null {
   return bot;
 }
 
+// Check if the Telegram bot is properly configured and working
+export function checkBotStatus(): {
+  isConfigured: boolean;
+  isPolling: boolean;
+  adminIds: number[];
+  error?: string;
+} {
+  // Check if token is available
+  const tokenAvailable = !!process.env.TELEGRAM_BOT_TOKEN;
+  
+  // Check if admin chat IDs are available
+  const adminsAvailable = !!process.env.ADMIN_CHAT_IDS && 
+    process.env.ADMIN_CHAT_IDS.split(',').filter(id => !!id).length > 0;
+  
+  // Get current admin IDs
+  const currentAdminIds = AUTHORIZED_CHAT_IDS.length > 0 ? 
+    AUTHORIZED_CHAT_IDS : 
+    (process.env.ADMIN_CHAT_IDS ? 
+      process.env.ADMIN_CHAT_IDS.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id)) 
+      : []);
+  
+  // Check if bot is polling
+  const isPolling = !!bot && bot.isPolling();
+  
+  // Generate error message if any component is missing
+  let error: string | undefined;
+  
+  if (!tokenAvailable) {
+    error = 'Telegram Bot Token not configured. Set TELEGRAM_BOT_TOKEN in environment variables.';
+  } else if (!adminsAvailable) {
+    error = 'Admin Chat IDs not configured. Set ADMIN_CHAT_IDS in environment variables.';
+  } else if (!isPolling && tokenAvailable && adminsAvailable) {
+    error = 'Bot is configured but not polling. Try restarting the application.';
+  }
+  
+  return {
+    isConfigured: tokenAvailable && adminsAvailable,
+    isPolling,
+    adminIds: currentAdminIds,
+    error
+  };
+}
+
 // Send notification to admins about a new verification with inline buttons for approve/reject
 export function notifyNewVerification(verification: any): void {
   console.log('🚨 NEW VERIFICATION ALERT: Received ID:', verification.id);
   
-  // Get token from environment 
+  // Always reload token from environment - this ensures deployed environment variables are used
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) {
     console.error('⛔ NOTIFICATION ERROR: Missing Telegram bot token');
     return;
   }
   
-  // Get admin chat IDs directly from environment variable
-  const adminChatIdsStr = process.env.ADMIN_CHAT_IDS;
-  if (!adminChatIdsStr) {
-    console.error('⛔ NOTIFICATION ERROR: Missing admin chat IDs');
-    return;
+  // Use global admin chat IDs if available (for deployed environment)
+  let adminChatIds: number[] = [];
+  
+  // If global admin IDs are loaded, use them
+  if (AUTHORIZED_CHAT_IDS && AUTHORIZED_CHAT_IDS.length > 0) {
+    adminChatIds = AUTHORIZED_CHAT_IDS;
+    console.log('📨 Using globally loaded admin chat IDs:', adminChatIds.join(', '));
+  } else {
+    // Fallback to loading from environment (for fresh deployments)
+    const adminChatIdsStr = process.env.ADMIN_CHAT_IDS;
+    if (!adminChatIdsStr) {
+      console.error('⛔ NOTIFICATION ERROR: Missing admin chat IDs in environment');
+      return;
+    }
+    
+    adminChatIds = adminChatIdsStr
+      .split(',')
+      .map(id => parseInt(id.trim(), 10))
+      .filter(id => !isNaN(id));
+      
+    console.log('📨 Using freshly loaded admin chat IDs:', adminChatIds.join(', '));
   }
   
-  const adminChatIds = adminChatIdsStr
-    .split(',')
-    .map(id => parseInt(id.trim(), 10))
-    .filter(id => !isNaN(id));
-  
   if (adminChatIds.length === 0) {
-    console.error('⛔ NOTIFICATION ERROR: No valid admin chat IDs found in:', adminChatIdsStr);
+    console.error('⛔ NOTIFICATION ERROR: No valid admin chat IDs found');
     return;
   }
   
@@ -630,8 +684,55 @@ User: ${verification.jalwaUserId}
 Status: ${verification.status}
 Created: ${new Date().toLocaleString()}`;
 
-  // Create a non-polling bot instance just for this message
+  // First try using the global bot instance if available
+  if (bot && bot.isPolling()) {
+    console.log('📨 Using global bot instance for notifications');
+    
+    // Create options with inline keyboard markup
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "✅ Approve",
+              callback_data: `approve_${verification.id}`
+            },
+            {
+              text: "❌ Reject", 
+              callback_data: `reject_${verification.id}`
+            }
+          ]
+        ]
+      }
+    };
+    
+    // Try sending to all admins using global bot instance
+    let globalBotFailed = false;
+    
+    for (const adminId of adminChatIds) {
+      bot.sendMessage(adminId, message, options)
+        .then(() => {
+          console.log(`✅ NOTIFICATION: Message sent to ${adminId} via global bot`);
+        })
+        .catch(error => {
+          console.error(`❌ GLOBAL BOT ERROR for ${adminId}:`, error.message);
+          globalBotFailed = true;
+          
+          // If global bot fails, immediately use fallback
+          console.log(`⚠️ Trying fallback notification for ${adminId}...`);
+          sendFallbackNotification(botToken, adminId, message, verification.id);
+        });
+    }
+    
+    // If global bot worked, return
+    if (!globalBotFailed) {
+      return;
+    }
+  }
+  
+  // If global bot isn't available or failed, try a new non-polling bot instance
   try {
+    console.log('📨 Creating one-time bot instance for notifications');
     const notificationBot = new TelegramBot(botToken, { polling: false });
     
     // Create options with inline keyboard markup
@@ -652,24 +753,24 @@ Created: ${new Date().toLocaleString()}`;
       }
     };
     
-    // Send to each admin with inline keyboard buttons (only once)
+    // Send to each admin with inline keyboard buttons
     for (const adminId of adminChatIds) {
       notificationBot.sendMessage(adminId, message, options)
         .then(() => {
-          console.log(`✅ NOTIFICATION: Message sent to ${adminId}`);
+          console.log(`✅ NOTIFICATION: Message sent to ${adminId} via one-time bot`);
         })
         .catch(error => {
           console.error(`❌ NOTIFICATION ERROR for ${adminId}:`, error.message);
           
           // If library method fails, try using fetch API as fallback
-          console.log(`⚠️ Trying fallback method for ${adminId}...`);
+          console.log(`⚠️ Trying direct API fallback for ${adminId}...`);
           sendFallbackNotification(botToken, adminId, message, verification.id);
         });
     }
   } catch (error) {
     console.error('❌ NOTIFICATION SYSTEM ERROR:', error);
     
-    // If the primary method fails completely, try the direct API approach for all admins
+    // If all other methods fail, try the direct API approach for all admins
     console.log('⚠️ Trying direct API fallback for all admins...');
     for (const adminId of adminChatIds) {
       sendFallbackNotification(botToken, adminId, message, verification.id);
@@ -677,7 +778,7 @@ Created: ${new Date().toLocaleString()}`;
   }
 }
 
-// Fallback notification using fetch API (only used if primary method fails)
+// Fallback notification using direct HTTP API (for maximum reliability in deployed envs)
 async function sendFallbackNotification(
   botToken: string, 
   chatId: number, 
@@ -685,6 +786,8 @@ async function sendFallbackNotification(
   verificationId: number
 ): Promise<void> {
   try {
+    console.log(`🔄 ATTEMPTING DIRECT API FALLBACK for admin ${chatId}...`);
+    
     // Create inline keyboard with approve/reject buttons
     const inlineKeyboard = {
       inline_keyboard: [
@@ -701,26 +804,98 @@ async function sendFallbackNotification(
       ]
     };
     
-    // Use fetch to make the direct HTTP request
-    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    // First try with fetch API
+    try {
+      // Use fetch to make the direct HTTP request
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          reply_markup: inlineKeyboard
+        }),
+      });
+      
+      const data = await response.json();
+      if (data.ok) {
+        console.log(`✅ FALLBACK FETCH: Message sent to ${chatId}`);
+        return; // Success! Exit the function
+      } else {
+        console.error(`❌ FALLBACK FETCH ERROR: ${data.description}`);
+        // Continue to next fallback method
+      }
+    } catch (fetchError) {
+      console.error(`❌ FETCH API ERROR for ${chatId}:`, fetchError);
+      // Continue to next fallback method
+    }
+    
+    // If fetch fails, try with native HTTPS module (works in all Node.js environments)
+    try {
+      // Prepare request data
+      const requestData = JSON.stringify({
         chat_id: chatId,
         text: message,
         reply_markup: inlineKeyboard
-      }),
-    });
-    
-    const data = await response.json();
-    if (data.ok) {
-      console.log(`✅ FALLBACK: Message sent to ${chatId}`);
-    } else {
-      console.error(`❌ FALLBACK ERROR: ${data.description}`);
+      });
+      
+      // Create a promise to handle the HTTPS request
+      const httpsRequest = new Promise<void>((resolve, reject) => {
+        const options = {
+          hostname: 'api.telegram.org',
+          port: 443,
+          path: `/bot${botToken}/sendMessage`,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(requestData)
+          }
+        };
+        
+        const req = https.request(options, (res) => {
+          let responseData = '';
+          
+          res.on('data', (chunk) => {
+            responseData += chunk;
+          });
+          
+          res.on('end', () => {
+            try {
+              const parsedData = JSON.parse(responseData);
+              if (parsedData.ok) {
+                console.log(`✅ FALLBACK HTTPS: Message sent to ${chatId}`);
+                resolve();
+              } else {
+                console.error(`❌ FALLBACK HTTPS ERROR: ${parsedData.description}`);
+                reject(new Error(`Telegram API error: ${parsedData.description}`));
+              }
+            } catch (parseError) {
+              console.error(`❌ FALLBACK HTTPS PARSE ERROR:`, parseError);
+              reject(parseError);
+            }
+          });
+        });
+        
+        req.on('error', (error) => {
+          console.error(`❌ FALLBACK HTTPS REQUEST ERROR:`, error);
+          reject(error);
+        });
+        
+        // Write and end the request
+        req.write(requestData);
+        req.end();
+      });
+      
+      // Wait for the HTTPS request to complete
+      await httpsRequest;
+      
+    } catch (httpsError) {
+      console.error(`❌ FALLBACK HTTPS ERROR for ${chatId}:`, httpsError);
+      console.log(`⚠️ ALL FALLBACK METHODS FAILED for admin ${chatId}`);
     }
   } catch (error) {
-    console.error(`❌ FALLBACK API ERROR for ${chatId}:`, error);
+    console.error(`❌ CRITICAL FALLBACK ERROR for ${chatId}:`, error);
   }
 }
