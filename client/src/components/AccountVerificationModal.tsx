@@ -128,9 +128,11 @@ const AccountVerificationModal = ({
                   <Rocket className="h-6 w-6 mr-2 text-[#00ECBE]" />
                   <h2 className="text-2xl font-bold text-center text-white">JALWA VIP PREDICTION</h2>
                 </div>
-                <Badge variant="outline" className="mx-auto w-auto p-1 px-3 bg-[#081042] text-[#00ECBE] mb-3">
-                  🚀 Important Instructions
-                </Badge>
+                <div className="flex justify-center">
+                  <Badge variant="outline" className="w-auto p-1 px-3 bg-[#081042] text-[#00ECBE] mb-3 text-center">
+                    🚀 Important Instructions
+                  </Badge>
+                </div>
               </div>
               
               <div className="p-6 pt-2 space-y-4">
