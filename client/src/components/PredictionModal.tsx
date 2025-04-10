@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Eye } from 'lucide-react';
 import React, { useState } from 'react';
 import AccountVerificationModal from './AccountVerificationModal';
 import LockedAccessPopup from './LockedAccessPopup';
+import DemoVipPredictionModal from './DemoVipPredictionModal';
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -43,6 +44,7 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showLockedPopup, setShowLockedPopup] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
   
   // Prevent clicks inside the modal from closing it
   const handleModalClick = (e: React.MouseEvent) => {
@@ -187,24 +189,45 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
                   ))}
                 </div>
                 
-                <motion.button
-                  className="mt-5 w-full bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all"
-                  whileHover={{ 
-                    boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
-                    y: -2 
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ 
-                    type: "spring", 
-                    damping: 12, 
-                    stiffness: 500, 
-                    duration: 0.1 
-                  }}
-                  onClick={handleGetPrediction}
-                  disabled={!selectedOption}
-                >
-                  Get VIP Prediction
-                </motion.button>
+                <div className="mt-5 flex items-center gap-3">
+                  <motion.button
+                    className="flex-1 bg-[#00ECBE] text-[#05012B] font-semibold py-3 rounded-xl transition-all"
+                    whileHover={{ 
+                      boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)",
+                      y: -2 
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ 
+                      type: "spring", 
+                      damping: 12, 
+                      stiffness: 500, 
+                      duration: 0.1 
+                    }}
+                    onClick={handleGetPrediction}
+                    disabled={!selectedOption}
+                  >
+                    Get VIP Prediction
+                  </motion.button>
+                  
+                  <motion.button
+                    className="bg-[#8000FF] border border-[#A64DFF] text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center"
+                    whileHover={{ 
+                      boxShadow: "0 0 15px 0 rgba(128, 0, 255, 0.5)",
+                      y: -2 
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ 
+                      type: "spring", 
+                      damping: 12, 
+                      stiffness: 500, 
+                      duration: 0.1 
+                    }}
+                    onClick={() => setDemoModalOpen(true)}
+                  >
+                    <Eye size={16} className="mr-1.5" />
+                    Demo
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -239,6 +262,12 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
             setShowVerificationModal(true);
           }, 300);
         }}
+      />
+      
+      {/* Demo VIP Prediction Modal */}
+      <DemoVipPredictionModal 
+        isOpen={demoModalOpen} 
+        onClose={() => setDemoModalOpen(false)} 
       />
     </>
   );
