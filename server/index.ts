@@ -67,5 +67,16 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Initialize the Telegram bot
+    initBot();
+    
+    // Set up graceful shutdown
+    process.on('SIGINT', () => {
+      log('Shutting down server...');
+      stopBot();
+      server.close();
+      process.exit(0);
+    });
   });
 })();

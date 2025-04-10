@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 interface AccountVerificationModalProps {
   isOpen: boolean;
@@ -88,7 +89,7 @@ const AccountVerificationModal = ({
     });
   };
   
-  const handleVerifyUserID = () => {
+  const handleVerifyUserID = async () => {
     if (!userId || userId.trim() === "") {
       toast({
         title: "❌ Verification Failed",
@@ -102,21 +103,71 @@ const AccountVerificationModal = ({
     // Show loading state
     setIsSubmitting(true);
     
-    // Simulate verification process (in a real app, we might do additional validation)
-    setTimeout(() => {
-      setIsVerified(true);
-      setIsSubmitting(false);
-      
-      // Store the verified status and ID in localStorage
-      localStorage.setItem('jalwaAccountVerified', 'true');
-      localStorage.setItem('jalwaUserID', userId);
-      
-      toast({
-        title: "✅ Verification Complete",
-        description: "Your account has been verified. You can now access premium predictions!",
-        duration: 5000,
+    try {
+      // Call our API to verify the user ID
+      const response = await apiRequest<{
+        success: boolean;
+        message: string;
+        isVerified: boolean;
+        status?: string;
+        userId?: string;
+      }>('/api/verify-account', {
+        method: 'POST',
+        body: JSON.stringify({ jalwaUserId: userId.trim() }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-    }, 1500);
+      
+      // Handle response based on verification result
+      if (response.success && response.isVerified) {
+        // User is verified, update state
+        setIsVerified(true);
+        
+        // Store the verified status and ID in localStorage
+        localStorage.setItem('jalwaAccountVerified', 'true');
+        localStorage.setItem('jalwaUserID', userId);
+        
+        toast({
+          title: "✅ Verification Complete",
+          description: "Your account has been verified. You can now access premium predictions!",
+          duration: 5000,
+        });
+      } else if (response.success && !response.isVerified && response.status === 'pending') {
+        // User ID is pending approval
+        toast({
+          title: "⏳ Verification Pending",
+          description: "Your account has been submitted for verification. Please check back later or contact support.",
+          duration: 5000,
+        });
+      } else if (response.success && !response.isVerified && response.status === 'rejected') {
+        // User ID was rejected
+        toast({
+          title: "❌ Verification Rejected",
+          description: response.message || "Your account verification was rejected. Please contact support for assistance.",
+          variant: "destructive",
+          duration: 5000,
+        });
+      } else {
+        // General verification failure
+        toast({
+          title: "❌ Verification Failed",
+          description: response.message || "Unable to verify your account at this time. Please try again later.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Account verification error:', error);
+      toast({
+        title: "❌ Verification Error",
+        description: "An error occurred during verification. Please try again later.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const handleContinueClick = () => {

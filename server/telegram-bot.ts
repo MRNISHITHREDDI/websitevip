@@ -32,11 +32,12 @@ function handleError(chatId: number, error: any): void {
 
 // Format an account verification for display
 function formatVerification(verification: any): string {
-  const statusEmoji = {
+  const statusEmojiMap: Record<string, string> = {
     pending: '⏳',
     approved: '✅',
     rejected: '❌'
-  }[verification.status] || '❓';
+  };
+  const statusEmoji = statusEmojiMap[verification.status] || '❓';
   
   const createdDate = new Date(verification.createdAt).toLocaleString();
   const updatedDate = new Date(verification.updatedAt).toLocaleString();

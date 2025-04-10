@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { accountVerificationResponseSchema } from "@shared/schema";
+import { notifyNewVerification } from "./telegram-bot";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Validate Jalwa User ID endpoint
@@ -18,6 +19,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if the user ID is verified
       const result = await storage.verifyJalwaAccount(jalwaUserId);
+      
+      // If this is a new pending verification, notify admins via Telegram
+      if (result.success && !result.isVerified && result.status === 'pending') {
+        try {
+          // Get the verification record to send with the notification
+          const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
+          if (verification) {
+            // Send notification to Telegram admins
+            notifyNewVerification(verification);
+          }
+        } catch (error) {
+          console.error('Failed to send Telegram notification:', error);
+          // Continue with the response even if notification fails
+        }
+      }
       
       // Return the verification result
       return res.status(result.success ? 200 : 400).json(result);
