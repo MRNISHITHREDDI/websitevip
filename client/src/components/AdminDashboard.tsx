@@ -259,9 +259,9 @@ const AdminDashboard = () => {
         {verifications.map((verification) => (
           <div 
             key={verification.id} 
-            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg p-0 text-white"
+            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg text-white m-2"
           >
-            <div className="p-2 admin-card-content">
+            <div className="m-4">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <span className="text-sm text-[hsl(165,100%,46%)]">ID: </span>
@@ -287,12 +287,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             
-            <div className="flex justify-end p-1 border-t border-[hsl(165,100%,46%)] border-opacity-20">
+            <div className="flex justify-end border-t border-[hsl(165,100%,46%)] border-opacity-20 m-2">
               {verification.status === 'rejected' ? (
                 <Button
                   variant="default"
                   size="sm"
-                  className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black w-full admin-action-button"
+                  className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black w-full m-2"
                   onClick={() => handleApprove(verification.id)}
                   disabled={isLoading}
                 >
@@ -302,7 +302,7 @@ const AdminDashboard = () => {
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="w-full admin-action-button"
+                  className="w-full m-2"
                   onClick={() => handleRemove(verification.id)}
                   disabled={isLoading}
                 >
@@ -322,30 +322,30 @@ const AdminDashboard = () => {
           <TableCaption>List of account verification requests.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] py-2">ID</TableHead>
-              <TableHead className="py-2">User ID</TableHead>
-              <TableHead className="py-2">Status</TableHead>
-              <TableHead className="py-2">Created</TableHead>
-              <TableHead className="py-2">Updated</TableHead>
-              <TableHead className="text-right py-2">Actions</TableHead>
+              <TableHead className="w-[100px] my-2">ID</TableHead>
+              <TableHead className="my-2">User ID</TableHead>
+              <TableHead className="my-2">Status</TableHead>
+              <TableHead className="my-2">Created</TableHead>
+              <TableHead className="my-2">Updated</TableHead>
+              <TableHead className="text-right my-2">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {verifications.map((verification) => (
               <TableRow key={verification.id}>
-                <TableCell className="font-medium py-2">{verification.id}</TableCell>
-                <TableCell className="py-2">{verification.jalwaUserId}</TableCell>
-                <TableCell className="py-2">
+                <TableCell className="font-medium my-2">{verification.id}</TableCell>
+                <TableCell className="my-2">{verification.jalwaUserId}</TableCell>
+                <TableCell className="my-2">
                   <StatusBadge status={verification.status} />
                 </TableCell>
-                <TableCell className="py-2">{formatDate(verification.createdAt)}</TableCell>
-                <TableCell className="py-2">{formatDate(verification.updatedAt)}</TableCell>
-                <TableCell className="text-right py-2">
+                <TableCell className="my-2">{formatDate(verification.createdAt)}</TableCell>
+                <TableCell className="my-2">{formatDate(verification.updatedAt)}</TableCell>
+                <TableCell className="text-right my-2">
                   {verification.status === 'rejected' ? (
                     <Button
                       variant="default"
                       size="sm"
-                      className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black"
+                      className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black m-2"
                       onClick={() => handleApprove(verification.id)}
                       disabled={isLoading}
                     >
@@ -355,6 +355,7 @@ const AdminDashboard = () => {
                     <Button
                       variant="destructive"
                       size="sm"
+                      className="m-2"
                       onClick={() => handleRemove(verification.id)}
                       disabled={isLoading}
                     >
