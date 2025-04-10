@@ -182,6 +182,29 @@ const AccountVerificationModal = ({
               </div>
               
               <div className="p-6 pt-2 space-y-4">
+                <div className="flex justify-end mb-2">
+                  <Button
+                    onClick={toggleImageContent}
+                    variant="outline"
+                    size="sm"
+                    className="border-[#00ECBE]/30 text-[#00ECBE] hover:bg-[#00ECBE]/10"
+                  >
+                    <ImageIcon className="h-4 w-4 mr-2" />
+                    {showImage ? "Hide Example" : "Show Example"}
+                  </Button>
+                </div>
+                
+                {showImage && (
+                  <div className="bg-[#081042]/50 p-3 rounded-lg border border-[#00ECBE]/20 mb-4">
+                    <div className="flex justify-center">
+                      <div 
+                        className="w-full max-w-[500px]"
+                        dangerouslySetInnerHTML={{ __html: jalwaAccountVerifySVG }}
+                      />
+                    </div>
+                  </div>
+                )}
+                
                 <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
