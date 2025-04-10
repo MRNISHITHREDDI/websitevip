@@ -19,12 +19,21 @@ function isAuthorized(chatId: number): boolean {
   return AUTHORIZED_CHAT_IDS.includes(chatId);
 }
 
+// Safe wrapper for bot.sendMessage that checks if bot exists
+function safeSendMessage(chatId: number, message: string, options?: any): void {
+  if (!bot) {
+    console.error('Cannot send message: bot is null');
+    return;
+  }
+  
+  bot.sendMessage(chatId, message, options)
+    .catch(err => console.error(`Error sending message to ${chatId}:`, err));
+}
+
 // Handle errors in a friendly way
 function handleError(chatId: number, error: any): void {
-  if (!bot) return;
-  
   console.error('Telegram bot error:', error);
-  bot.sendMessage(
+  safeSendMessage(
     chatId,
     '❌ An error occurred while processing your request. Please try again later.'
   );
@@ -140,12 +149,13 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     try {
       const verifications = await storage.getAllAccountVerifications();
       
       if (verifications.length === 0) {
-        bot?.sendMessage(chatId, 'No account verifications found.');
+        safeSendMessage(chatId, 'No account verifications found.');
         return;
       }
       
@@ -160,7 +170,7 @@ function setupCommandHandlers(): void {
           return `${statusEmoji} ID ${v.id}: ${v.jalwaUserId} (${v.status})`;
         }).join('\n');
       
-      bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+      safeSendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
@@ -171,6 +181,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     try {
       const verifications = await storage.getAccountVerificationsByStatus('pending');
@@ -194,6 +205,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     try {
       const verifications = await storage.getAccountVerificationsByStatus('approved');
@@ -217,6 +229,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     try {
       const verifications = await storage.getAccountVerificationsByStatus('rejected');
@@ -240,6 +253,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     if (!match || !match[1]) {
       bot.sendMessage(chatId, 'Please provide a verification ID: /approve [id]');
@@ -284,6 +298,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     if (!match || !match[1]) {
       bot.sendMessage(chatId, 'Please provide a verification ID: /reject [id] [reason]');
@@ -329,6 +344,7 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) return;
+    if (!bot) return;
     
     if (!match || !match[1]) {
       bot.sendMessage(chatId, 'Please provide a verification ID: /info [id]');

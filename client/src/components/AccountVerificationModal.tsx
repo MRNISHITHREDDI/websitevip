@@ -140,7 +140,7 @@ const AccountVerificationModal = ({
         // User ID is pending approval
         toast({
           title: "⏳ Verification Pending",
-          description: "Your account has been submitted for verification. Please check back later or contact support.",
+          description: "Your account has been submitted for verification. Admin has been notified. Please check back later.",
           duration: 5000,
         });
       } else if (response.success && !response.isVerified && response.status === 'rejected') {
@@ -162,9 +162,11 @@ const AccountVerificationModal = ({
       }
     } catch (error) {
       console.error('Account verification error:', error);
+      
+      // More user-friendly error message
       toast({
         title: "❌ Verification Error",
-        description: "An error occurred during verification. Please try again later.",
+        description: "Unable to connect to verification service. Please check your connection and try again in a moment.",
         variant: "destructive",
         duration: 3000,
       });

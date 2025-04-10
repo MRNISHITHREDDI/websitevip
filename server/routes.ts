@@ -31,8 +31,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (verification) {
             console.log('✅ Retrieved verification record with ID:', verification.id);
             
-            // Send notification to Telegram admins on a separate thread
-            // to avoid blocking the API response
+            // Send notification to Telegram admins on a separate thread with immediate execution
+            // to avoid blocking the API response while ensuring notification is sent
             setTimeout(() => {
               try {
                 console.log('🚀 Sending Telegram notification for verification ID:', verification.id);
@@ -40,11 +40,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
               } catch (notifyError) {
                 console.error('❌ Error in notification thread:', notifyError);
               }
-            }, 100);
+            }, 0);
             
             console.log('✅ Notification process initiated for verification ID:', verification.id);
           } else {
             console.error('❌ Could not find verification record for user ID:', jalwaUserId);
+            
+            // Attempt to re-fetch the verification after a short delay
+            // This handles race conditions where the record might not be immediately available
+            setTimeout(async () => {
+              try {
+                const delayedVerification = await storage.getAccountVerificationByUserId(jalwaUserId);
+                if (delayedVerification) {
+                  console.log('✅ Retrieved verification record after delay for ID:', delayedVerification.id);
+                  notifyNewVerification(delayedVerification);
+                } else {
+                  console.error('❌ Still could not find verification record for user ID:', jalwaUserId);
+                }
+              } catch (delayedError) {
+                console.error('❌ Error in delayed verification fetch:', delayedError);
+              }
+            }, 500);
           }
         } catch (error) {
           console.error('❌ Failed to process Telegram notification:', error);
