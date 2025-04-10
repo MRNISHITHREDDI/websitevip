@@ -6,6 +6,7 @@ import { PredictionPageProps, PeriodResult, PredictionData, wingoColorMap, getBi
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Brain, Trophy } from 'lucide-react';
 import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
+import AccountVerificationModal from '@/components/AccountVerificationModal';
 
 // Real API endpoints for Wingo predictions
 const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
@@ -317,26 +318,19 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
   const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
   
-  // License verification check
+  // Account verification modal state
+  const [showVerificationModal, setShowVerificationModal] = useState<boolean>(false);
+  
+  // Account verification check
   useEffect(() => {
-    // Check if user has a valid license for this game type and time option
-    const storedLicenses = localStorage.getItem('validLicenses');
-    const licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
-    const hasValidLicense = licenses[`wingo-${timeOption}`];
+    // Check if user has a verified account
+    const isAccountVerified = localStorage.getItem('jalwaAccountVerified') === 'true';
     
-    if (!hasValidLicense) {
-      // No valid license, redirect to home
-      toast({
-        title: "License Required",
-        description: "You need a valid license to access this prediction.",
-        variant: "destructive",
-      });
-      
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
+    if (!isAccountVerified) {
+      // No verified account, show the verification modal
+      setShowVerificationModal(true);
     }
-  }, [timeOption, toast]);
+  }, [timeOption]);
   
   const fetchData = async () => {
     setIsLoading(true);
@@ -452,8 +446,22 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     }
   };
   
+  // Handle account verification completion
+  const handleVerificationComplete = () => {
+    setShowVerificationModal(false);
+  };
+  
   return (
     <React.Fragment>
+      {/* Account verification modal */}
+      <AccountVerificationModal 
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onContinue={handleVerificationComplete}
+        gameType="wingo"
+        timeOption={timeOption}
+      />
+    
       <SEO 
         title={`WinGo ${timeOption} AI Predictions | JALWA VIP Wingo Hack`}
         description={`Exclusive WinGo ${timeOption} AI color predictions with 99% accuracy. Get real-time Wingo hack and winning signals.`}
