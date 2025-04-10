@@ -3,15 +3,15 @@
 /* Desktop table styles */
 .admin-table-container {
   margin: 0;
-  padding: 12px;
+  padding: 30px;
 }
 
 .admin-table thead th {
-  padding: 16px 12px !important;
+  padding: 20px 16px !important;
 }
 
 .admin-table tbody td {
-  padding: 12px !important;
+  padding: 16px !important;
 }
 
 /* Mobile card styles */
