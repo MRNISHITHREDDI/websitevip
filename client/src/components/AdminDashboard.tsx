@@ -252,8 +252,66 @@ const AdminDashboard = () => {
       );
     }
 
-    return (
-      <div className="rounded-md border overflow-x-auto">
+    // Mobile card view
+    const MobileCards = () => (
+      <div className="space-y-4 lg:hidden">
+        {verifications.map((verification) => (
+          <div key={verification.id} className="bg-white rounded-lg border shadow-sm p-4">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <span className="text-sm text-gray-500">ID: </span>
+                <span className="font-medium">{verification.id}</span>
+              </div>
+              <StatusBadge status={verification.status} />
+            </div>
+            
+            <div className="mb-2">
+              <span className="text-sm text-gray-500">User ID: </span>
+              <span className="font-medium">{verification.jalwaUserId}</span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+              <div>
+                <span className="text-gray-500">Created: </span>
+                <span>{formatDate(verification.createdAt)}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Updated: </span>
+                <span>{formatDate(verification.updatedAt)}</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-end pt-2 border-t">
+              {verification.status === 'rejected' ? (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 w-full"
+                  onClick={() => handleApprove(verification.id)}
+                  disabled={isLoading}
+                >
+                  Approve
+                </Button>
+              ) : (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handleRemove(verification.id)}
+                  disabled={isLoading}
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+    
+    // Desktop table view
+    const DesktopTable = () => (
+      <div className="rounded-md border overflow-x-auto hidden lg:block">
         <Table>
           <TableCaption>List of account verification requests.</TableCaption>
           <TableHeader>
@@ -303,6 +361,13 @@ const AdminDashboard = () => {
           </TableBody>
         </Table>
       </div>
+    );
+    
+    return (
+      <>
+        <MobileCards />
+        <DesktopTable />
+      </>
     );
   }
 };
