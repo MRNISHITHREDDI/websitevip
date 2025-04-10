@@ -47,12 +47,36 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
   
   const handleContinueClick = () => {
     if (!isVerified) {
-      // Show error message when trying to click continue without verification
+      // Show detailed access locked message when trying to click continue without verification
       toast({
         title: "🔒 Access Locked",
         description: "Please create an account first by clicking the 'Start' button.",
         variant: "destructive",
         duration: 3000,
+      });
+      
+      // Show more detailed instructions in a modal-like toast
+      toast({
+        title: "🔒 Access Locked",
+        description: (
+          <div className="mt-2 text-sm space-y-2">
+            <p>Follow these steps to unlock premium predictions:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Click "Start" to create a new account</li>
+              <li>Wait for system verification (usually instant)</li>
+              <li>After verification, the "Continue" button will unlock, granting you access to premium features.</li>
+            </ul>
+            <div className="mt-3 pt-2 border-t border-gray-700">
+              <p className="font-bold text-amber-400">IMPORTANT:</p>
+              <ul className="list-disc pl-5 space-y-1 text-xs mt-1">
+                <li>Only accounts created through this app receive winning predictions</li>
+                <li>Existing accounts will have limited functionality</li>
+                <li>For best results, create a new account and follow the steps above</li>
+              </ul>
+            </div>
+          </div>
+        ),
+        duration: 8000,
       });
       return;
     }
