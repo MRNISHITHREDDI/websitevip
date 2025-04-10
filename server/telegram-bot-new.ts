@@ -217,28 +217,8 @@ export async function notifyNewVerification(verification: any): Promise<void> {
   const baseUrl = process.env.BASE_URL || process.env.REPLIT_URL || process.env.VERCEL_URL || process.env.PUBLIC_URL;
   const isDev = !baseUrl && process.env.NODE_ENV !== 'production';
   
-  // Format message based on environment
-  let message: string;
-  if (isDev) {
-    // In development, provide instructions for admin panel since links won't work
-    message = `🚨 *NEW VERIFICATION REQUEST* 🚨
-    
-ID: ${verification.id}
-User: ${verification.jalwaUserId}
-Status: ${verification.status}
-Time: ${new Date().toLocaleString()}
-
-*Development Environment*
-For development testing, use these API endpoints:
-- To approve: POST /api/admin/account-verifications/${verification.id}
-  with body: {"status":"approved"}
-- To reject: POST /api/admin/account-verifications/${verification.id}
-  with body: {"status":"rejected"}
-
-In production, clickable approve/reject buttons will appear here.`;
-  } else {
-    // Normal production message with clickable links
-    message = `🚨 *NEW VERIFICATION REQUEST* 🚨
+  // Format message - same for both development and production
+  const message = `🚨 *NEW VERIFICATION REQUEST* 🚨
     
 ID: ${verification.id}
 User: ${verification.jalwaUserId}
@@ -247,8 +227,7 @@ Time: ${new Date().toLocaleString()}
 
 *Instructions:*
 - Review the user ID
-- Use the approve or reject link below`;
-  }
+- Use the approve or reject buttons below`;
 
   // Format base URL for Telegram buttons
   let formattedBaseUrl: string;
