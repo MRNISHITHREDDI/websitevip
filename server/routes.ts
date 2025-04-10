@@ -122,8 +122,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update account verification status (admin only) - supports both POST and GET (for Telegram links)
-  app.post('/api/admin/account-verifications/:id', async (req: Request, res: Response) => {
+  // Common handler function for both GET and POST requests
+  const handleVerificationUpdate = async (req: Request, res: Response) => {
     try {
       // Handle both JSON body and query parameters (for Telegram links)
       // Check if this is a Telegram link click
@@ -227,7 +227,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Failed to update account verification'
       });
     }
-  });
+  };
+  
+  // Register the handler for both POST and GET requests to support Telegram link clicks
+  app.post('/api/admin/account-verifications/:id', handleVerificationUpdate);
+  app.get('/api/admin/account-verifications/:id', handleVerificationUpdate);
   
   // API endpoint to check Telegram bot status (useful for deployment troubleshooting)
   app.get('/api/bot-status', (_req: Request, res: Response) => {

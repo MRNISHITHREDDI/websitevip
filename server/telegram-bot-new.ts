@@ -59,10 +59,12 @@ export function initBot(): TelegramBot | null {
   // Create a new bot instance with optimized options
   try {
     // Use a simple non-polling bot for maximum reliability
-    botInstance = new TelegramBot(token, { 
+    const options = {
       polling: false,
-      filepath: false, // Don't store files locally
-    });
+      filepath: false // Don't store files locally
+    };
+    
+    botInstance = new TelegramBot(token, options);
     
     console.log('✅ Bot instance created successfully');
     
