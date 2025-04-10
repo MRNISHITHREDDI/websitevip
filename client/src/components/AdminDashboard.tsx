@@ -194,7 +194,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-7 sm:px-8">
+    <div className="container mx-auto py-8 px-5 sm:px-8">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
