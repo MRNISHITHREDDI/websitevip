@@ -1,6 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { storage } from './storage';
 import dotenv from 'dotenv';
+import * as https from 'https';
 
 // Load environment variables
 dotenv.config();
@@ -484,15 +485,15 @@ export function getBot(): TelegramBot | null {
   return bot;
 }
 
-// Send notification to admins about a new verification
+// Use https module for direct API calls
+
+// Send notification to admins about a new verification using direct HTTP requests
 export function notifyNewVerification(verification: any): void {
-  console.log('🔴 NOTIFICATION SYSTEM: New verification received:', verification.id);
+  console.log('🔴 DIRECT HTTP NOTIFICATION: New verification received:', verification.id);
   
-  // ALWAYS create a fresh non-polling bot for notifications
-  // This avoids any conflicts with existing instances
-  const notificationToken = process.env.TELEGRAM_BOT_TOKEN;
-  
-  if (!notificationToken) {
+  // Get token from environment 
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) {
     console.error('🔴 NOTIFICATION ERROR: Missing Telegram bot token');
     return;
   }
@@ -516,35 +517,28 @@ export function notifyNewVerification(verification: any): void {
   
   console.log('🔵 NOTIFICATION INFO: Sending to admin IDs:', adminChatIds.join(', '));
   
+  // Prepare a simple message - avoid any special formatting
+  const message = `🚨 VERIFICATION ALERT! ID:${verification.id} USER:${verification.jalwaUserId} STATUS:${verification.status.toUpperCase()} CREATED:${new Date(verification.createdAt).toLocaleString()}`;
+
+  // Use library approach for notifications
   try {
-    // Create a brand new bot instance specifically for this notification
-    // Using the non-polling option to avoid conflicts
-    const notificationBot = new TelegramBot(notificationToken, { polling: false });
-    
-    // Prepare a simple plain text message (avoid formatting issues)
-    const plainTextMessage = `🔔 NEW VERIFICATION REQUEST
-
-User ID: ${verification.jalwaUserId}
-Status: ${verification.status.toUpperCase()}
-Created: ${new Date(verification.createdAt).toLocaleString()}
-ID: ${verification.id}
-
-▶️ Use /approve ${verification.id} to approve
-❌ Use /reject ${verification.id} to reject`;
+    // Create a non-polling bot instance just for this message
+    const notificationBot = new TelegramBot(botToken, { polling: false });
     
     // Send to each admin
     for (const adminId of adminChatIds) {
-      // Send without parse_mode for maximum compatibility
-      notificationBot.sendMessage(adminId, plainTextMessage)
-        .then(() => {
-          console.log(`🟢 NOTIFICATION SUCCESS: Sent to admin ${adminId}`);
-        })
-        .catch(error => {
-          console.error(`🔴 NOTIFICATION ERROR: Failed to send to admin ${adminId}:`, error.message);
-        });
+      setTimeout(() => {
+        notificationBot.sendMessage(adminId, message)
+          .then(() => {
+            console.log(`🟢 LIBRARY SUCCESS: Sent to admin ${adminId}`);
+          })
+          .catch(error => {
+            console.error(`🔴 LIBRARY ERROR: Failed to send to admin ${adminId}:`, error.message);
+          });
+      }, 500); // Slight delay for rate limiting
     }
   } catch (error) {
-    console.error('🔴 NOTIFICATION SYSTEM ERROR:', error);
+    console.error('🔴 LIBRARY SYSTEM ERROR:', error);
   }
   
   console.log('🔵 NOTIFICATION ATTEMPT COMPLETED');
