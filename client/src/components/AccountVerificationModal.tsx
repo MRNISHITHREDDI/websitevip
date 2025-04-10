@@ -169,32 +169,6 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
             </Button>
           </div>
         </div>
-        
-        {!isVerified && (
-          <div className="mt-2 p-4 bg-slate-900/90 border-t border-indigo-900/50">
-            <div className="flex items-center mb-1">
-              <Lock className="h-5 w-5 mr-2 text-amber-400" />
-              <h3 className="font-bold text-amber-300">Access Locked</h3>
-            </div>
-            <p className="text-gray-300 text-sm pl-7">
-              Follow these steps to unlock premium predictions:
-            </p>
-            <ul className="text-sm text-gray-300 mt-2 space-y-1 pl-7">
-              <li>• Click "Start" to create a new account</li>
-              <li>• Wait for system verification (usually instant)</li>
-              <li>• After verification, the "Continue" button will unlock, granting you access to premium features.</li>
-            </ul>
-            
-            <div className="mt-3 pt-3 border-t border-indigo-900/30">
-              <h4 className="font-bold text-amber-300 text-sm mb-2">⚠️ IMPORTANT:</h4>
-              <ul className="text-xs text-gray-300 space-y-1">
-                <li>• Only accounts created through this app receive winning predictions</li>
-                <li>• Existing accounts will have limited functionality</li>
-                <li>• For best results, create a new account and follow the steps above</li>
-              </ul>
-            </div>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );
