@@ -32,7 +32,7 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose }
           />
           
           <motion.div
-            className="bg-[#05012B] border border-[#00ECBE]/50 rounded-xl shadow-[0_0_35px_rgba(0,236,190,0.25)] max-w-md w-full z-[101] overflow-hidden"
+            className="bg-[#05012B] border border-[#00ECBE]/50 rounded-xl max-w-md w-full z-[101] overflow-hidden"
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -96,7 +96,7 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose }
                 
                 <Button
                   onClick={handleUnderstandClick}
-                  className="w-full bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-2.5 rounded-lg shadow-lg hover:shadow-[#00ECBE]/30 transition-all duration-300 flex items-center justify-center"
+                  className="w-full bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center"
                 >
                   I Understand
                   <ArrowRightCircle className="h-4 w-4 ml-2" />
