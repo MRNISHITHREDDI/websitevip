@@ -211,19 +211,26 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         )}
       </AnimatePresence>
       
-      {/* Account verification modal */}
+      {/* Account verification modal with direct function references */}
       <AccountVerificationModal 
         isOpen={showVerificationModal} 
         onClose={handleModalClose}
         onContinue={handleVerificationComplete}
+        onShowLockedPopup={() => setShowLockedPopup(true)}
         gameType={gameType}
         timeOption={selectedOption}
       />
       
-      {/* Locked access popup */}
+      {/* Locked access popup with direct reference for "I Understand" */}
       <LockedAccessPopup 
         isOpen={showLockedPopup}
         onClose={handleLockedPopupClose}
+        onUnderstand={() => {
+          setShowLockedPopup(false);
+          setTimeout(() => {
+            setShowVerificationModal(true);
+          }, 200);
+        }}
       />
     </>
   );
