@@ -104,7 +104,7 @@ const LockedAccessPopup = ({ isOpen, onClose, onUnderstand }: LockedAccessPopupP
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 mr-3 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
                   </div>
-                  <span className="text-sm text-gray-200">Wait for system verification (usually instant)</span>
+                  <span className="text-sm text-gray-200">Enter your Jalwa User ID to verify your account</span>
                 </li>
                 <li className="flex items-start bg-[#081042] p-3 rounded-lg">
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 mr-3 flex-shrink-0 mt-0.5">
@@ -149,7 +149,7 @@ const LockedAccessPopup = ({ isOpen, onClose, onUnderstand }: LockedAccessPopupP
                     </>
                   ) : (
                     <>
-                      I Understand
+                      Return to Verification
                       <ArrowRightCircle className="h-4 w-4 ml-2" />
                     </>
                   )}
