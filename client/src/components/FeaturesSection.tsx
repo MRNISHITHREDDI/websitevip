@@ -3,6 +3,7 @@ import { useState } from 'react';
 import wingoImage from "../assets/wingo-image.png";
 import trxWinImage from "../assets/trx-win-image.png";
 import PredictionModal from './PredictionModal';
+import DemoVipPredictionModal from './DemoVipPredictionModal';
 
 const cardVariants = {
   initial: { y: 50, opacity: 0 },
@@ -26,6 +27,7 @@ const cardVariants = {
 const FeaturesSection = () => {
   const [isWinGoModalOpen, setIsWinGoModalOpen] = useState(false);
   const [isTRXModalOpen, setIsTRXModalOpen] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
   
   return (
     <section id="prediction" data-section="features" className="py-16 lg:py-24 bg-gradient-to-b from-[#001c54] to-[#000c33]">
@@ -77,18 +79,6 @@ const FeaturesSection = () => {
                   Win Go event celebrates luck and chance by providing big prizes for little money. The lottery's simplicity and potential jackpot appeal make it popular. Every ticket has the opportunity of a life-changing win, making it a symbol of hope and excitement.
                 </p>
                 <div className="flex gap-4">
-                  <motion.a 
-                    href="https://www.jalwa.live/#/games/list"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
-                    whileHover={{ 
-                      boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                      y: -2 
-                    }}
-                  >
-                    Demo
-                  </motion.a>
                   <motion.button 
                     onClick={() => setIsWinGoModalOpen(true)}
                     className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
@@ -98,6 +88,21 @@ const FeaturesSection = () => {
                     }}
                   >
                     VIP Prediction
+                  </motion.button>
+                  
+                  <motion.button 
+                    onClick={() => setDemoModalOpen(true)}
+                    className="bg-[#8000FF] border border-[#A64DFF] text-white px-6 py-3 rounded-full transition duration-300 text-sm flex items-center"
+                    whileHover={{ 
+                      boxShadow: "0 0 20px 0 rgba(128, 0, 255, 0.6)",
+                      y: -2 
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
                   </motion.button>
                 </div>
               </div>
@@ -134,18 +139,6 @@ const FeaturesSection = () => {
                   TRX Hash feature combines technology with games. TRON's (TRX) blockchain technology ensures fair and transparent event results in these games. Every ticket has the opportunity of a life-changing win, making it a symbol of hope and excitement.
                 </p>
                 <div className="flex gap-4">
-                  <motion.a 
-                    href="https://www.jalwa.live/#/games/list"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-b from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-6 py-3 rounded-full transition duration-300 text-sm"
-                    whileHover={{ 
-                      boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                      y: -2 
-                    }}
-                  >
-                    Demo
-                  </motion.a>
                   <motion.button 
                     onClick={() => setIsTRXModalOpen(true)}
                     className="bg-[#00ECBE] text-[#05012B] px-6 py-3 rounded-full transition duration-300 text-sm"
@@ -155,6 +148,21 @@ const FeaturesSection = () => {
                     }}
                   >
                     VIP Prediction
+                  </motion.button>
+                  
+                  <motion.button 
+                    onClick={() => setDemoModalOpen(true)}
+                    className="bg-[#8000FF] border border-[#A64DFF] text-white px-6 py-3 rounded-full transition duration-300 text-sm flex items-center"
+                    whileHover={{ 
+                      boxShadow: "0 0 20px 0 rgba(128, 0, 255, 0.6)",
+                      y: -2 
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
                   </motion.button>
                 </div>
               </div>
@@ -177,6 +185,12 @@ const FeaturesSection = () => {
         onClose={() => setIsTRXModalOpen(false)}
         title="TRX HASH VIP PREDICTION"
         gameType="trx"
+      />
+      
+      {/* Demo VIP Prediction Modal */}
+      <DemoVipPredictionModal 
+        isOpen={demoModalOpen} 
+        onClose={() => setDemoModalOpen(false)} 
       />
     </section>
   );
