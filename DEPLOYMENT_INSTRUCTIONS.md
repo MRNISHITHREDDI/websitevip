@@ -1,108 +1,86 @@
-# Deployment Instructions for Jalwa Verification System
+# Deployment Instructions
 
-## Telegram Bot Configuration
+This document contains instructions for deploying and configuring the Jalwa Admin system with Telegram bot integration.
 
-The Jalwa Verification System uses a Telegram bot for admin notifications and user verification management. Follow these steps to ensure the bot works properly in a deployed environment.
+## Required Environment Variables
 
-### Environment Variables
+The following environment variables must be set for the system to function properly:
 
-When deploying, make sure to configure the following environment variables:
+- `TELEGRAM_BOT_TOKEN`: The token for your Telegram bot, obtained from BotFather
+- `ADMIN_CHAT_IDS`: Comma-separated list of Telegram chat IDs for admins who should receive notifications and have access to admin commands
+- `BASE_URL`: The base URL of your deployed application (e.g., https://yourapp.replit.app)
 
-1. `TELEGRAM_BOT_TOKEN` - Your Telegram bot token obtained from BotFather
-2. `ADMIN_CHAT_IDS` - Comma-separated list of Telegram chat IDs for administrators 
+### Optional Environment Variables
 
-Example:
-```
-TELEGRAM_BOT_TOKEN=1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789
-ADMIN_CHAT_IDS=123456789,987654321
-```
+- `USE_TELEGRAM_WEBHOOKS`: Set to "true" to use webhook mode instead of polling (recommended for production deployments)
+- `TELEGRAM_WEBHOOK_URL`: URL where Telegram should send webhook updates (use `https://[your-domain]/api/telegram-webhook`)
+- `PORT`: Server port to use (defaults to 5000)
 
-### Bot Setup
+## Setting Up the Telegram Bot
 
-1. Create a new bot using [BotFather](https://t.me/botfather) on Telegram
-2. Get the bot token and set it as the `TELEGRAM_BOT_TOKEN` environment variable
-3. Get your Telegram user ID (you can use the [@userinfobot](https://t.me/userinfobot)) and add it to `ADMIN_CHAT_IDS`
-4. Start a conversation with your bot by sending the `/start` command
+1. Create a new bot through the [BotFather](https://t.me/BotFather) on Telegram
+2. Copy the bot token and set it as the `TELEGRAM_BOT_TOKEN` environment variable
+3. Start a conversation with your bot by searching for it in Telegram and clicking the "Start" button
+4. Determine your Telegram chat ID by using the `/start` command with [@userinfobot](https://t.me/userinfobot) or other similar bots
+5. Add your chat ID to the `ADMIN_CHAT_IDS` environment variable
 
-### Verifying Bot Status After Deployment
+## Callback Buttons in Telegram
 
-After deploying, verify the bot is working properly:
+This system uses Telegram's callback buttons for one-click approval and rejection of user verifications. When a new verification is submitted, the admin will receive a notification with buttons directly in Telegram:
 
-1. Access the bot status endpoint: `/api/bot-status`
-2. Check that `isConfigured` is `true` and the bot status is operational
-3. Confirm your admin chat ID appears in the `adminIds` array
+- ✅ Approve button: Automatically approves the user ID
+- ❌ Reject button: Automatically rejects the user ID
 
-Example successful response:
-```json
-{
-  "success": true,
-  "data": {
-    "isConfigured": true,
-    "adminIds": [123456789],
-    "timestamp": "2025-04-10T16:00:00.000Z",
-    "environment": "production"
-  }
-}
-```
+This eliminates the need to open a web browser or visit any external pages to process verifications.
 
-### Troubleshooting
+## Choosing Between Webhook and Polling Mode
 
-If the bot is not working after deployment:
+### Polling Mode (Default)
 
-1. Check the bot status using `/api/bot-status` to see detailed information
-2. If the bot shows configuration issues, verify your environment variables are correctly set
-3. Try restarting the bot integration using:
-   ```
-   POST /api/restart-bot
-   ```
-4. Verify the API response and check if any errors are reported
-5. The new implementation uses direct HTTPS calls to Telegram's API for maximum reliability
-6. Check your deployment platform for any logs related to the Telegram API
-7. Test notification delivery with a verification request
+Polling mode is enabled by default and works in most environments. The bot continuously polls Telegram's servers for updates.
 
-## Testing User Verification
+### Webhook Mode (Recommended for Production)
 
-To test the verification system:
+For production deployments with public HTTPS URLs, webhook mode is recommended for better performance:
 
-1. Submit a verification request:
-   ```
-   POST /api/verify-account
-   Content-Type: application/json
-   
-   {
-     "jalwaUserId": "test_user_123"
-   }
-   ```
+1. Set `USE_TELEGRAM_WEBHOOKS` to "true"
+2. Set `TELEGRAM_WEBHOOK_URL` to `https://[your-domain]/api/telegram-webhook`
+3. Make sure your server has a valid SSL certificate
 
-2. Check that a notification is sent to the configured admin in Telegram
-3. Try approving/rejecting the verification using the inline buttons in Telegram
+## Testing Your Configuration
 
-## Security Notes
-
-- Keep your Telegram bot token secure as it provides full access to your bot
-- Only add trusted admins to the `ADMIN_CHAT_IDS` list
-- The new simplified implementation eliminates polling for improved reliability
-- Each notification attempts multiple delivery methods with built-in fallbacks:
-  - Direct HTTPS calls to Telegram API (most reliable in production)
-  - Standard bot instance method (backup)
-- In-Telegram approval/rejection buttons that work directly within the chat
-- All verification changes are logged for accountability
-
-## New Implementation Benefits
-
-- Non-polling design eliminates webhook issues and bot conflicts
-- No file-based storage means better performance in serverless environments
-- Direct HTTPS requests bypass network/library issues in certain deployment environments
-- Simplified code reduces potential points of failure
-- Built-in multiple fallback mechanisms ensure notification delivery
-
-## Standalone Verification Tool
-
-A standalone direct Telegram test script is included to verify your bot token and chat IDs:
+Once deployed, you can test your configuration using the provided test script:
 
 ```bash
-# Run this on your local machine or server to test Telegram connectivity
-node direct-telegram-test.cjs YOUR_BOT_TOKEN ADMIN_CHAT_ID
+node deployment-telegram-test.js
 ```
 
-This script uses direct HTTPS calls without any dependencies, making it useful for verifying your Telegram configuration in any environment, even if other aspects of the application aren't working properly.
+This script will:
+1. Verify your environment variables
+2. Send test messages to your admin chat IDs
+3. Test the callback button functionality
+
+Alternatively, you can manually test by:
+
+1. Submitting a test verification from the app
+2. Checking if you receive a notification in Telegram with approval/rejection buttons
+3. Clicking the buttons to see if the verification status updates correctly
+
+## Troubleshooting
+
+If you encounter issues with the Telegram bot:
+
+- Check that your bot token is correct
+- Ensure you've started a conversation with the bot
+- Verify your chat ID is correctly added to the admin list
+- Check the application logs for any error messages
+- Try restarting the bot using the `/api/restart-bot` endpoint
+
+### Common Issues
+
+1. **Buttons not working:** Make sure polling mode is enabled correctly or webhooks are set up properly
+2. **No notifications received:** Verify your admin chat ID is correct and you've started a conversation with the bot
+3. **"Forbidden" errors:** The bot may not have permission to send messages; restart the conversation with the bot
+4. **"Not Found" errors for webhook URLs:** Ensure the URL is publicly accessible and has a valid SSL certificate
+
+For additional assistance, please contact support.

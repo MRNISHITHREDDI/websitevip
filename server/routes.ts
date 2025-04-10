@@ -257,7 +257,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // API endpoint to restart the bot (useful for recovery in deployed environments)
-  app.post('/api/restart-bot', (_req: Request, res: Response) => {
+  // API endpoint for Telegram webhook
+  app.post('/api/telegram-webhook', (req: Request, res: Response) => {
+    try {
+      // Just respond OK to Telegram
+      console.log('📩 Webhook received from Telegram:', JSON.stringify(req.body).substring(0, 200) + '...');
+      return res.status(200).send('OK');
+    } catch (error) {
+      console.error('❌ Error processing webhook:', error);
+      return res.status(200).send('Error processed');
+    }
+  });
+
+  app.post('/api/restart-bot', async (_req: Request, res: Response) => {
     try {
       // Check current status
       const beforeStatus = getBotStatus();
@@ -272,7 +284,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Attempt to restart the bot
-      const botInstance = initBot();
+      const botInstance = await initBot();
       
       // Check new status after restart
       const afterStatus = getBotStatus();

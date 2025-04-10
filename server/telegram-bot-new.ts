@@ -16,7 +16,7 @@ let adminChatIds: number[] = [];
  * Initialize the Telegram bot
  * @returns The bot instance or null if initialization failed
  */
-export function initBot(): TelegramBot | null {
+export async function initBot(): Promise<TelegramBot | null> {
   console.log('🤖 Starting Telegram bot...');
   
   // Always load fresh environment variables
@@ -59,12 +59,41 @@ export function initBot(): TelegramBot | null {
   // Create a new bot instance with polling for callback processing
   try {
     // We need polling to handle button callbacks
-    const options = {
-      polling: true,
+    // Determine if we should use webhooks or polling
+    const useWebhooks = process.env.USE_TELEGRAM_WEBHOOKS === 'true';
+    const webhookUrl = process.env.TELEGRAM_WEBHOOK_URL;
+    
+    let options: any = {
       filepath: false // Don't store files locally
     };
     
+    if (useWebhooks && webhookUrl) {
+      console.log(`🌐 Using webhook mode with URL: ${webhookUrl}`);
+      options.webHook = { 
+        port: process.env.PORT ? parseInt(process.env.PORT, 10) : 5000 
+      };
+    } else {
+      console.log('🔄 Using polling mode for callback processing');
+      options.polling = {
+        interval: 300,
+        autoStart: true,
+        params: {
+          timeout: 10
+        }
+      };
+    }
+    
     botInstance = new TelegramBot(token, options);
+    
+    // Set up webhook if in webhook mode
+    if (useWebhooks && webhookUrl) {
+      try {
+        await botInstance.setWebHook(webhookUrl);
+        console.log(`✅ Webhook set to ${webhookUrl}`);
+      } catch (error) {
+        console.error('❌ Failed to set webhook:', error);
+      }
+    }
     
     // Set up callback query handler for approve/reject buttons
     botInstance.on('callback_query', async (callbackQuery) => {
