@@ -1,4 +1,12 @@
-import { users, licenses, type User, type InsertUser, type License, type InsertLicense, type LicenseVerifyRequest } from "@shared/schema";
+import { 
+  users, licenses, accountVerifications, 
+  type User, type InsertUser, 
+  type License, type InsertLicense, 
+  type LicenseVerifyRequest,
+  type AccountVerification,
+  type InsertAccountVerification,
+  type AccountVerificationResponse
+} from "@shared/schema";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -19,13 +27,24 @@ export interface IStorage {
     licenseData?: License;
   }>;
   getAllActiveLicenses(): Promise<License[]>;
+  
+  // Account verification methods
+  createAccountVerification(data: InsertAccountVerification): Promise<AccountVerification>;
+  getAccountVerification(id: number): Promise<AccountVerification | undefined>;
+  getAccountVerificationByUserId(jalwaUserId: string): Promise<AccountVerification | undefined>;
+  updateAccountVerificationStatus(id: number, status: string, notes?: string): Promise<AccountVerification | undefined>;
+  getAllAccountVerifications(): Promise<AccountVerification[]>;
+  getAccountVerificationsByStatus(status: string): Promise<AccountVerification[]>;
+  verifyJalwaAccount(jalwaUserId: string): Promise<AccountVerificationResponse>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private licenses: Map<number, License>;
+  private accountVerifications: Map<number, AccountVerification>;
   userCurrentId: number;
   licenseCurrentId: number;
+  accountVerificationCurrentId: number;
   
   // Some demo license keys for testing
   private demoLicenseKeys: Record<string, { gameType: 'wingo' | 'trx', timeOptions: string[] }> = {
@@ -33,12 +52,17 @@ export class MemStorage implements IStorage {
     'USERVIP': { gameType: 'trx', timeOptions: ['1 MIN'] },
     'USERPRO': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN', '5 MIN'] }
   };
+  
+  // Approved Jalwa user IDs (these would be manually approved via Telegram bot)
+  private approvedUserIds: string[] = ['12345', '56789', 'admin123'];
 
   constructor() {
     this.users = new Map();
     this.licenses = new Map();
+    this.accountVerifications = new Map();
     this.userCurrentId = 1;
     this.licenseCurrentId = 1;
+    this.accountVerificationCurrentId = 1;
     
     // Initialize with some demo licenses
     const now = new Date();
@@ -59,6 +83,20 @@ export class MemStorage implements IStorage {
       };
       
       this.licenses.set(license.id, license);
+    });
+    
+    // Initialize with some demo account verifications
+    this.approvedUserIds.forEach(userId => {
+      const verification: AccountVerification = {
+        id: this.accountVerificationCurrentId++,
+        jalwaUserId: userId,
+        status: 'approved',
+        createdAt: now,
+        updatedAt: now,
+        notes: 'Pre-approved user'
+      };
+      
+      this.accountVerifications.set(verification.id, verification);
     });
   }
 
@@ -188,6 +226,111 @@ export class MemStorage implements IStorage {
     return Array.from(this.licenses.values()).filter(
       (license) => license.isActive && license.expiresAt > now
     );
+  }
+  
+  // Account verification methods implementation
+  async createAccountVerification(data: InsertAccountVerification): Promise<AccountVerification> {
+    const id = this.accountVerificationCurrentId++;
+    const now = new Date();
+    
+    const verification: AccountVerification = {
+      id,
+      jalwaUserId: data.jalwaUserId,
+      status: data.status || 'pending',
+      createdAt: now,
+      updatedAt: now,
+      notes: data.notes || null
+    };
+    
+    this.accountVerifications.set(id, verification);
+    return verification;
+  }
+  
+  async getAccountVerification(id: number): Promise<AccountVerification | undefined> {
+    return this.accountVerifications.get(id);
+  }
+  
+  async getAccountVerificationByUserId(jalwaUserId: string): Promise<AccountVerification | undefined> {
+    return Array.from(this.accountVerifications.values()).find(
+      (verification) => verification.jalwaUserId === jalwaUserId
+    );
+  }
+  
+  async updateAccountVerificationStatus(id: number, status: string, notes?: string): Promise<AccountVerification | undefined> {
+    const verification = await this.getAccountVerification(id);
+    
+    if (!verification) {
+      return undefined;
+    }
+    
+    const updatedVerification: AccountVerification = {
+      ...verification,
+      status,
+      updatedAt: new Date(),
+      notes: notes !== undefined ? notes : verification.notes
+    };
+    
+    this.accountVerifications.set(id, updatedVerification);
+    return updatedVerification;
+  }
+  
+  async getAllAccountVerifications(): Promise<AccountVerification[]> {
+    return Array.from(this.accountVerifications.values());
+  }
+  
+  async getAccountVerificationsByStatus(status: string): Promise<AccountVerification[]> {
+    return Array.from(this.accountVerifications.values()).filter(
+      (verification) => verification.status === status
+    );
+  }
+  
+  async verifyJalwaAccount(jalwaUserId: string): Promise<AccountVerificationResponse> {
+    // First check if this user ID is already in our system
+    const existingVerification = await this.getAccountVerificationByUserId(jalwaUserId);
+    
+    if (existingVerification) {
+      // Return status based on the existing verification
+      if (existingVerification.status === 'approved') {
+        return {
+          success: true,
+          message: 'Account verified successfully',
+          isVerified: true,
+          userId: jalwaUserId,
+          status: 'approved'
+        };
+      } else if (existingVerification.status === 'rejected') {
+        return {
+          success: false,
+          message: 'This account has been rejected. Please contact support.',
+          isVerified: false,
+          userId: jalwaUserId,
+          status: 'rejected'
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Your account is pending verification. Please try again later.',
+          isVerified: false,
+          userId: jalwaUserId,
+          status: 'pending'
+        };
+      }
+    }
+    
+    // If this is a new verification, create it with pending status
+    const newVerification = await this.createAccountVerification({
+      jalwaUserId,
+      status: 'pending',
+      notes: 'Submitted via app'
+    });
+    
+    return {
+      success: true,
+      message: 'Account submitted for verification. Please wait for approval.',
+      isVerified: false,
+      userId: jalwaUserId,
+      status: 'pending'
+    };
   }
 }
 
