@@ -463,16 +463,24 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   // Account verification modal state
   const [showVerificationModal, setShowVerificationModal] = useState<boolean>(false);
   
-  // Account verification check
+  // Account verification check with improved persistence
   useEffect(() => {
-    // Check if user has a verified account
+    // Check if user has a verified account - also check jalwaUserID to ensure it's a complete verification
     const isAccountVerified = localStorage.getItem('jalwaAccountVerified') === 'true';
+    const jalwaUserID = localStorage.getItem('jalwaUserID');
     
-    if (!isAccountVerified) {
-      // No verified account, show the verification modal
+    // Only show verification if neither verified flag nor user ID are present
+    const isFullyVerified = isAccountVerified && jalwaUserID && jalwaUserID.trim() !== '';
+    
+    if (!isFullyVerified) {
+      console.log('TRX: Account not fully verified, showing verification modal');
       setShowVerificationModal(true);
+    } else {
+      console.log('TRX: Account already verified, skipping verification modal');
+      // Make sure it's hidden if user was already verified
+      setShowVerificationModal(false);
     }
-  }, [timeOption]);
+  }, []);
   const [predictionHash, setPredictionHash] = useState<string>('');
   const [verificationComplete, setVerificationComplete] = useState<boolean>(false);
   
