@@ -273,18 +273,18 @@ const AccountVerificationModal = ({
                     <p className="text-gray-200 text-sm mb-3">
                       Enter your Jalwa User ID to verify your account registration:
                     </p>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-2">
                       <input
                         type="text"
                         value={userId}
                         onChange={(e) => setUserId(e.target.value)}
                         placeholder="Enter Jalwa User ID"
-                        className="flex-1 bg-[#05012B] border border-[#00ECBE]/30 rounded px-3 py-2 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00ECBE]/50"
+                        className="w-full bg-[#05012B] border border-[#00ECBE]/30 rounded px-3 py-2 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00ECBE]/50"
                       />
                       <Button
                         onClick={handleVerifyUserID}
                         disabled={isSubmitting}
-                        className="bg-[#00ECBE] text-[#05012B] font-medium hover:bg-[#00ECBE]/90"
+                        className="w-full sm:w-auto bg-[#00ECBE] text-[#05012B] font-medium hover:bg-[#00ECBE]/90 mt-2 sm:mt-0"
                       >
                         {isSubmitting ? (
                           <>
