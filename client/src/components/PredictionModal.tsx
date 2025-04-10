@@ -125,16 +125,22 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     setShowLockedPopup(false);
   };
   
-  // Listen for custom event to show locked access popup
+  // Listen for custom events to show popups
   React.useEffect(() => {
     const handleShowLockedPopup = () => {
       setShowLockedPopup(true);
     };
     
+    const handleShowVerificationModal = () => {
+      setShowVerificationModal(true);
+    };
+    
     window.addEventListener('showLockedAccessPopup', handleShowLockedPopup);
+    window.addEventListener('showAccountVerificationModal', handleShowVerificationModal);
     
     return () => {
       window.removeEventListener('showLockedAccessPopup', handleShowLockedPopup);
+      window.removeEventListener('showAccountVerificationModal', handleShowVerificationModal);
     };
   }, []);
 
