@@ -7,8 +7,8 @@
  * Run with: node deployment-telegram-test.js
  */
 
-require('dotenv').config();
-const https = require('https');
+import 'dotenv/config';
+import https from 'https';
 
 // Get environment variables
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -203,16 +203,116 @@ Instructions:
   }
 }
 
-// Run all tests
+// Test 5: Check webhook configuration
+async function testWebhookConfiguration() {
+  console.log('\n🧪 TEST 5: Check Webhook Configuration');
+  
+  const webhookUrl = process.env.TELEGRAM_WEBHOOK_URL;
+  const useWebhooks = process.env.USE_TELEGRAM_WEBHOOKS === 'true';
+  
+  console.log(`📋 Webhook Configuration:`);
+  console.log(`USE_TELEGRAM_WEBHOOKS: ${useWebhooks ? 'true' : 'false'}`);
+  console.log(`TELEGRAM_WEBHOOK_URL: ${webhookUrl || 'Not set'}`);
+  
+  if (!useWebhooks) {
+    console.log('ℹ️ Webhook mode is disabled. Skipping webhook tests.');
+    return;
+  }
+  
+  if (!webhookUrl) {
+    console.log('⚠️ Webhook URL is not set, but webhook mode is enabled!');
+    return;
+  }
+  
+  // Make a direct HTTPS request to the Telegram API to get webhook info
+  console.log(`\n📡 Checking current webhook status...`);
+  
+  return new Promise((resolve) => {
+    try {
+      // Set up the request options
+      const requestOptions = {
+        hostname: 'api.telegram.org',
+        port: 443,
+        path: `/bot${token}/getWebhookInfo`,
+        method: 'GET',
+      };
+      
+      // Make the request
+      const req = https.request(requestOptions, (res) => {
+        console.log(`📊 Response Status: ${res.statusCode}`);
+        let data = '';
+        
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        res.on('end', () => {
+          try {
+            const response = JSON.parse(data);
+            if (response.ok) {
+              console.log('✅ Webhook info retrieved successfully!');
+              console.log(`📋 Current webhook status:`);
+              console.log(JSON.stringify(response.result, null, 2));
+              
+              if (response.result.url === webhookUrl) {
+                console.log('✅ Webhook is correctly configured to your specified URL!');
+              } else if (response.result.url) {
+                console.log(`⚠️ Webhook is set to ${response.result.url}, but you specified ${webhookUrl}`);
+              } else {
+                console.log('⚠️ No webhook is currently set, but you have webhook mode enabled!');
+              }
+              
+              resolve(true);
+            } else {
+              console.error(`❌ Telegram API error: ${response.description}`);
+              resolve(false);
+            }
+          } catch (error) {
+            console.error('❌ Error parsing Telegram response:', error);
+            resolve(false);
+          }
+        });
+      });
+      
+      req.on('error', (error) => {
+        console.error('❌ HTTPS request error:', error);
+        resolve(false);
+      });
+      
+      req.end();
+    } catch (error) {
+      console.error('❌ Exception in webhook check:', error);
+      resolve(false);
+    }
+  });
+}
+
 async function runAllTests() {
   console.log('🚀 Starting Telegram API Tests...');
   
+  // Check environment
+  const baseUrl = process.env.BASE_URL || '';
+  console.log(`📋 BASE_URL: ${baseUrl || 'Not set'}`);
+  
+  if (!baseUrl) {
+    console.log('⚠️ BASE_URL is not set. This may cause issues with Telegram webhooks and callback buttons.');
+  }
+  
+  // Check webhook configuration
+  await testWebhookConfiguration();
+  
+  // Run message tests
   await testPlainMessage();
   await testMarkdownMessage();
   await testInlineKeyboard();
   await testVerificationNotification();
   
   console.log('\n✅ All tests completed! Check your Telegram for messages.');
+  console.log('\n📋 Next steps:');
+  console.log('1. Verify you received all test messages in Telegram');
+  console.log('2. Try clicking the buttons in the test messages');
+  console.log('3. If webhook mode is enabled, ensure your server is reachable from the internet');
+  console.log('4. Try submitting a verification through the app interface');
 }
 
 // Start the tests

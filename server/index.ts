@@ -68,8 +68,10 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
     
-    // Initialize the Telegram bot
-    initBot();
+    // Initialize the Telegram bot (async)
+    initBot().catch(error => {
+      console.error('❌ Error initializing Telegram bot:', error);
+    });
     
     // Set up graceful shutdown
     process.on('SIGINT', () => {
