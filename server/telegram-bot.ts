@@ -110,10 +110,7 @@ function initBotInternal(): void {
       // Add these options to avoid conflicts with other instances
       filepath: false, // Disable file storage to prevent file locks
       baseApiUrl: "https://api.telegram.org", // Use direct API URL
-      onlyFirstMatch: true, // Only handle first match to reduce processing
-      request: { // Add request timeout
-        timeout: 30000
-      }
+      onlyFirstMatch: true // Only handle first match to reduce processing
     });
     
     // Register error event handler

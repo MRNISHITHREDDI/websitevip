@@ -46,6 +46,9 @@ export class MemStorage implements IStorage {
   licenseCurrentId: number;
   accountVerificationCurrentId: number;
   
+  // Store last seen verification state to ensure we can recover after restarts
+  private static persistedVerifications: AccountVerification[] = [];
+  
   // Some demo license keys for testing
   private demoLicenseKeys: Record<string, { gameType: 'wingo' | 'trx', timeOptions: string[] }> = {
     'USER2025': { gameType: 'wingo', timeOptions: ['30 SEC', '1 MIN', '3 MIN'] },
@@ -97,7 +100,24 @@ export class MemStorage implements IStorage {
       };
       
       this.accountVerifications.set(verification.id, verification);
+      MemStorage.persistedVerifications.push(verification);
     });
+    
+    // Restore any persisted verifications from previous sessions
+    if (MemStorage.persistedVerifications.length > 0) {
+      console.log(`Restoring ${MemStorage.persistedVerifications.length} persisted verifications from previous session`);
+      MemStorage.persistedVerifications.forEach(verification => {
+        // Skip if already in our collection (from demo data)
+        if (!this.accountVerifications.has(verification.id)) {
+          this.accountVerifications.set(verification.id, verification);
+          
+          // Update current ID counter if needed
+          if (verification.id >= this.accountVerificationCurrentId) {
+            this.accountVerificationCurrentId = verification.id + 1;
+          }
+        }
+      });
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -243,11 +263,34 @@ export class MemStorage implements IStorage {
     };
     
     this.accountVerifications.set(id, verification);
+    
+    // Save to persisted storage for restarts
+    MemStorage.persistedVerifications.push(verification);
+    
     return verification;
   }
   
   async getAccountVerification(id: number): Promise<AccountVerification | undefined> {
-    return this.accountVerifications.get(id);
+    // First check our in-memory collection
+    const verification = this.accountVerifications.get(id);
+    
+    // If not found, check persisted storage
+    if (!verification) {
+      const persisted = MemStorage.persistedVerifications.find(v => v.id === id);
+      if (persisted) {
+        // Restore from persisted storage
+        this.accountVerifications.set(id, persisted);
+        
+        // Update current ID if needed
+        if (id >= this.accountVerificationCurrentId) {
+          this.accountVerificationCurrentId = id + 1;
+        }
+        
+        return persisted;
+      }
+    }
+    
+    return verification;
   }
   
   async getAccountVerificationByUserId(jalwaUserId: string): Promise<AccountVerification | undefined> {
@@ -257,10 +300,24 @@ export class MemStorage implements IStorage {
   }
   
   async updateAccountVerificationStatus(id: number, status: string, notes?: string): Promise<AccountVerification | undefined> {
-    const verification = await this.getAccountVerification(id);
+    // First check in our in-memory collection
+    let verification = await this.getAccountVerification(id);
     
+    // If not found in primary storage, try to find in persisted storage
     if (!verification) {
-      return undefined;
+      const persisted = MemStorage.persistedVerifications.find(v => v.id === id);
+      if (persisted) {
+        // Restore from persisted storage
+        verification = persisted;
+        this.accountVerifications.set(id, persisted);
+        
+        // Update the current ID if needed
+        if (id >= this.accountVerificationCurrentId) {
+          this.accountVerificationCurrentId = id + 1;
+        }
+      } else {
+        return undefined;
+      }
     }
     
     const updatedVerification: AccountVerification = {
@@ -271,6 +328,15 @@ export class MemStorage implements IStorage {
     };
     
     this.accountVerifications.set(id, updatedVerification);
+    
+    // Update in our persisted storage too
+    const index = MemStorage.persistedVerifications.findIndex(v => v.id === id);
+    if (index >= 0) {
+      MemStorage.persistedVerifications[index] = updatedVerification;
+    } else {
+      MemStorage.persistedVerifications.push(updatedVerification);
+    }
+    
     return updatedVerification;
   }
   
