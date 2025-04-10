@@ -213,8 +213,33 @@ export async function notifyNewVerification(verification: any): Promise<void> {
   
   console.log(`🔔 Sending notification for verification ID ${verification.id}...`);
   
-  const message = `🚨 *NEW VERIFICATION REQUEST* 🚨
+  // Determine if we're in development environment
+  const baseUrl = process.env.BASE_URL || process.env.REPLIT_URL || process.env.VERCEL_URL || process.env.PUBLIC_URL;
+  const isDev = !baseUrl && process.env.NODE_ENV !== 'production';
   
+  // Format message based on environment
+  let message: string;
+  if (isDev) {
+    // In development, provide instructions for admin panel since links won't work
+    message = `🚨 *NEW VERIFICATION REQUEST* 🚨
+    
+ID: ${verification.id}
+User: ${verification.jalwaUserId}
+Status: ${verification.status}
+Time: ${new Date().toLocaleString()}
+
+*Development Environment*
+For development testing, use these API endpoints:
+- To approve: POST /api/admin/account-verifications/${verification.id}
+  with body: {"status":"approved"}
+- To reject: POST /api/admin/account-verifications/${verification.id}
+  with body: {"status":"rejected"}
+
+In production, clickable approve/reject buttons will appear here.`;
+  } else {
+    // Normal production message with clickable links
+    message = `🚨 *NEW VERIFICATION REQUEST* 🚨
+    
 ID: ${verification.id}
 User: ${verification.jalwaUserId}
 Status: ${verification.status}
@@ -223,16 +248,23 @@ Time: ${new Date().toLocaleString()}
 *Instructions:*
 - Review the user ID
 - Use the approve or reject link below`;
+  }
 
-  // Create approve/reject action URLs that point to our API
-  // Determine base URL - try multiple environment variables for maximum compatibility with different hosting providers
-  const baseUrl = process.env.BASE_URL || process.env.REPLIT_URL || process.env.VERCEL_URL || process.env.PUBLIC_URL || 'http://localhost:5000';
-  
-  // Ensure proper URL formatting with protocol
-  const formattedBaseUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
+  // Format base URL for Telegram buttons
+  let formattedBaseUrl: string;
+  if (isDev) {
+    // In development, we can't use localhost URLs with Telegram, so we'll use a placeholder
+    formattedBaseUrl = 'https://example.com'; // Placeholder URL for development
+    console.log('⚠️ Development environment detected. Using example.com as placeholder URL.');
+    console.log('ℹ️ In production, set BASE_URL environment variable to your deployed domain.');
+  } else {
+    // In production with a proper URL
+    formattedBaseUrl = baseUrl ? (baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`) : 'https://example.com';
+  }
   
   console.log(`🔗 Using base URL for notifications: ${formattedBaseUrl}`);
   
+  // Create keyboard with action buttons
   const inlineKeyboard = {
     inline_keyboard: [
       [
@@ -255,7 +287,7 @@ Time: ${new Date().toLocaleString()}
     reply_markup: inlineKeyboard
   };
   
-  // Send to all admins
+  // Send notification to all admins
   for (const chatId of adminChatIds) {
     const success = await sendMessage(chatId, message, options);
     if (success) {
