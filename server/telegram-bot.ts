@@ -489,36 +489,23 @@ export function notifyNewVerification(verification: any): void {
   console.log('📧 notifyNewVerification called with verification:', JSON.stringify(verification));
   console.log('Current AUTHORIZED_CHAT_IDS:', AUTHORIZED_CHAT_IDS);
   
-  // Force re-initialization of the bot
-  if (token) {
+  // Use existing bot if available, or create a non-polling bot for just sending messages
+  if (!bot && token) {
     try {
-      // Stop the existing bot if it's running
-      if (bot) {
-        console.log('Stopping existing bot instance before reinitializing...');
-        bot.stopPolling();
-      }
-      
-      // Create new bot instance
-      console.log('Creating new Telegram bot instance for notification...');
-      bot = new TelegramBot(token, { polling: true });
-      console.log('✅ Bot initialized successfully');
-      
-      // Register necessary event handlers
-      bot.on('polling_error', (error) => {
-        console.error('Telegram polling error:', error);
-      });
-      
-      bot.on('error', (error) => {
-        console.error('Telegram general error:', error);
-      });
+      console.log('Creating non-polling Telegram bot instance for notification...');
+      // Create a bot instance without polling to avoid conflicts
+      bot = new TelegramBot(token, { polling: false });
+      console.log('✅ Bot initialized successfully (non-polling mode)');
     } catch (error) {
       console.error('❌ Failed to initialize bot for notification:', error);
       return;
     }
-  } else {
+  } else if (!token) {
     console.error('❌ Cannot initialize bot: TELEGRAM_BOT_TOKEN is missing');
     console.log('TELEGRAM_BOT_TOKEN env value exists?', !!process.env.TELEGRAM_BOT_TOKEN);
     return;
+  } else {
+    console.log('✅ Using existing bot instance for notification');
   }
   
   // Re-parse admin chat IDs directly from environment to ensure they're current
