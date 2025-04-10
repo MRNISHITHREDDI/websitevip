@@ -226,10 +226,18 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         isOpen={showLockedPopup}
         onClose={handleLockedPopupClose}
         onUnderstand={() => {
+          // First give visual cue that something is happening
+          document.body.style.transition = "opacity 0.25s ease";
+          document.body.style.opacity = "0.92";
+          
+          // Close the current modal
           setShowLockedPopup(false);
+          
+          // Show the verification modal with a smooth delay
           setTimeout(() => {
+            document.body.style.opacity = "1";
             setShowVerificationModal(true);
-          }, 200);
+          }, 300);
         }}
       />
     </>

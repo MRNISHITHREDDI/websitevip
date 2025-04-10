@@ -1,6 +1,6 @@
-import React from 'react';
-import { Lock, AlertTriangle, ArrowRightCircle, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { Lock, AlertTriangle, ArrowRightCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 
 interface LockedAccessPopupProps {
@@ -10,10 +10,26 @@ interface LockedAccessPopupProps {
 }
 
 const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose, onUnderstand }) => {
-  // Don't use local state tracking or events
+  const [isClicked, setIsClicked] = useState(false);
+  
+  // Reset click state when popup opens/closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      setIsClicked(false);
+    }
+  }, [isOpen]);
+  
   const handleClick = () => {
-    // Call the direct prop function provided by parent
-    onUnderstand();
+    // Only handle the action if not already clicked
+    if (isClicked) return;
+    
+    // Set button to clicked state to show the loading indicator
+    setIsClicked(true);
+    
+    // Call the parent's function after a very short delay
+    setTimeout(() => {
+      onUnderstand();
+    }, 50);
   };
   
   if (!isOpen) return null;
@@ -25,9 +41,12 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose, 
         onClick={onClose}
       />
       
-      <div
+      <motion.div
         className="bg-[#05012B] border border-[#00ECBE]/50 rounded-xl max-w-md w-full z-[101] overflow-hidden"
         onClick={e => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", duration: 0.4 }}
       >
         {/* Header with gradient */}
         <div className="bg-gradient-to-r from-[#00ECBE]/30 to-[#00ECBE]/10 p-5 border-b border-[#00ECBE]/30">
@@ -87,14 +106,27 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose, 
             
             <Button
               onClick={handleClick}
-              className="w-full bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center"
+              disabled={isClicked}
+              className={`w-full bg-gradient-to-r ${isClicked 
+                ? 'from-[#00ECBE]/80 to-[#00ECBE]/60 cursor-not-allowed' 
+                : 'from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60'
+              } text-[#05012B] font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center`}
             >
-              I Understand
-              <ArrowRightCircle className="h-4 w-4 ml-2" />
+              {isClicked ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Opening Verification...
+                </>
+              ) : (
+                <>
+                  I Understand
+                  <ArrowRightCircle className="h-4 w-4 ml-2" />
+                </>
+              )}
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
