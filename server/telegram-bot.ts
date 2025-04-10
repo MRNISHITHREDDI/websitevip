@@ -114,6 +114,8 @@ function setupCommandHandlers(): void {
   
   // Handle callback queries from inline buttons
   bot.on('callback_query', async (callbackQuery) => {
+    if (!bot) return; // Early return if bot is null
+    
     const chatId = callbackQuery.message?.chat.id;
     
     if (!chatId || !isAuthorized(chatId)) {
@@ -615,64 +617,8 @@ User: ${verification.jalwaUserId}
 Status: ${verification.status}
 Created: ${new Date().toLocaleString()}`;
 
-  // 1. Use fetch API with inline keyboard buttons for direct Telegram API access
-  const sendDirectNotifications = async () => {
-    for (const chatId of adminChatIds) {
-      try {
-        // Construct the Telegram API URL
-        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-        
-        // Create inline keyboard with approve/reject buttons
-        const inlineKeyboard = {
-          inline_keyboard: [
-            [
-              {
-                text: "✅ Approve",
-                callback_data: `approve_${verification.id}`
-              },
-              {
-                text: "❌ Reject",
-                callback_data: `reject_${verification.id}`
-              }
-            ]
-          ]
-        };
-        
-        // Use fetch to make the HTTP request with inline keyboard
-        const response = await fetch(telegramApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-            reply_markup: inlineKeyboard,
-            disable_notification: false
-          }),
-        });
-        
-        const data = await response.json();
-        
-        if (data.ok) {
-          console.log(`✅ DIRECT API: Message with buttons sent to ${chatId}`);
-        } else {
-          console.error(`❌ DIRECT API ERROR: ${data.description}`);
-        }
-      } catch (error) {
-        console.error(`❌ FETCH ERROR for ${chatId}:`, error);
-      }
-    }
-  };
-  
-  // Execute the direct notifications
-  sendDirectNotifications()
-    .then(() => console.log('✅ DIRECT NOTIFICATIONS COMPLETED'))
-    .catch(err => console.error('❌ DIRECT NOTIFICATION FAILED:', err));
-  
-  // 2. Also try library approach with inline keyboard as backup
+  // Create a non-polling bot instance just for this message
   try {
-    // Create a non-polling bot instance just for this message
     const notificationBot = new TelegramBot(botToken, { polling: false });
     
     // Create options with inline keyboard markup
@@ -693,25 +639,75 @@ Created: ${new Date().toLocaleString()}`;
       }
     };
     
-    // Send to each admin with inline keyboard buttons
+    // Send to each admin with inline keyboard buttons (only once)
     for (const adminId of adminChatIds) {
-      setTimeout(() => {
-        notificationBot.sendMessage(
-          adminId, 
-          `🔔 NEW VERIFICATION: ID:${verification.id}, USER:${verification.jalwaUserId}`,
-          options
-        )
+      notificationBot.sendMessage(adminId, message, options)
         .then(() => {
-          console.log(`✅ LIBRARY: Message with buttons sent to ${adminId}`);
+          console.log(`✅ NOTIFICATION: Message sent to ${adminId}`);
         })
         .catch(error => {
-          console.error(`❌ LIBRARY ERROR for ${adminId}:`, error.message);
+          console.error(`❌ NOTIFICATION ERROR for ${adminId}:`, error.message);
+          
+          // If library method fails, try using fetch API as fallback
+          console.log(`⚠️ Trying fallback method for ${adminId}...`);
+          sendFallbackNotification(botToken, adminId, message, verification.id);
         });
-      }, 1000); // Longer delay for library calls
     }
   } catch (error) {
-    console.error('❌ LIBRARY SYSTEM ERROR:', error);
+    console.error('❌ NOTIFICATION SYSTEM ERROR:', error);
+    
+    // If the primary method fails completely, try the direct API approach for all admins
+    console.log('⚠️ Trying direct API fallback for all admins...');
+    for (const adminId of adminChatIds) {
+      sendFallbackNotification(botToken, adminId, message, verification.id);
+    }
   }
-  
-  console.log('📩 ALL NOTIFICATION ATTEMPTS INITIATED');
+}
+
+// Fallback notification using fetch API (only used if primary method fails)
+async function sendFallbackNotification(
+  botToken: string, 
+  chatId: number, 
+  message: string, 
+  verificationId: number
+): Promise<void> {
+  try {
+    // Create inline keyboard with approve/reject buttons
+    const inlineKeyboard = {
+      inline_keyboard: [
+        [
+          {
+            text: "✅ Approve",
+            callback_data: `approve_${verificationId}`
+          },
+          {
+            text: "❌ Reject",
+            callback_data: `reject_${verificationId}`
+          }
+        ]
+      ]
+    };
+    
+    // Use fetch to make the direct HTTP request
+    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        reply_markup: inlineKeyboard
+      }),
+    });
+    
+    const data = await response.json();
+    if (data.ok) {
+      console.log(`✅ FALLBACK: Message sent to ${chatId}`);
+    } else {
+      console.error(`❌ FALLBACK ERROR: ${data.description}`);
+    }
+  } catch (error) {
+    console.error(`❌ FALLBACK API ERROR for ${chatId}:`, error);
+  }
 }
