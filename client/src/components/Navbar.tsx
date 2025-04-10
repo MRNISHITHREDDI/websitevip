@@ -102,6 +102,12 @@ const Navbar = () => {
               >
                 Prediction
               </a>
+              <Link 
+                href="/admin" 
+                className="text-[#00ECBE] hover:text-white transition duration-300"
+              >
+                Admin
+              </Link>
               <motion.button 
                 onClick={openJoinProModal}
                 className="hidden md:flex items-center bg-gradient-to-r from-[#001c54] to-[#000c33] border border-[#00ECBE] text-[#00ECBE] px-4 py-1.5 rounded-full transition duration-300 relative overflow-hidden group text-sm"
@@ -150,6 +156,15 @@ const Navbar = () => {
               >
                 Prediction
               </a>
+              <Link
+                href="/admin"
+                className="block text-[#00ECBE] py-2"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Admin
+              </Link>
               <button 
                 onClick={() => {
                   setMobileMenuOpen(false);
