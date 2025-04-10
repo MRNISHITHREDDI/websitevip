@@ -485,23 +485,21 @@ export function getBot(): TelegramBot | null {
   return bot;
 }
 
-// Use https module for direct API calls
-
-// Send notification to admins about a new verification using direct HTTP requests
+// Send notification to admins about a new verification using direct HTTP requests with fetch
 export function notifyNewVerification(verification: any): void {
-  console.log('🔴 DIRECT HTTP NOTIFICATION: New verification received:', verification.id);
+  console.log('🚨 NEW VERIFICATION ALERT: Received ID:', verification.id);
   
   // Get token from environment 
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) {
-    console.error('🔴 NOTIFICATION ERROR: Missing Telegram bot token');
+    console.error('⛔ NOTIFICATION ERROR: Missing Telegram bot token');
     return;
   }
   
   // Get admin chat IDs directly from environment variable
   const adminChatIdsStr = process.env.ADMIN_CHAT_IDS;
   if (!adminChatIdsStr) {
-    console.error('🔴 NOTIFICATION ERROR: Missing admin chat IDs');
+    console.error('⛔ NOTIFICATION ERROR: Missing admin chat IDs');
     return;
   }
   
@@ -511,35 +509,79 @@ export function notifyNewVerification(verification: any): void {
     .filter(id => !isNaN(id));
   
   if (adminChatIds.length === 0) {
-    console.error('🔴 NOTIFICATION ERROR: No valid admin chat IDs found in:', adminChatIdsStr);
+    console.error('⛔ NOTIFICATION ERROR: No valid admin chat IDs found in:', adminChatIdsStr);
     return;
   }
   
-  console.log('🔵 NOTIFICATION INFO: Sending to admin IDs:', adminChatIds.join(', '));
+  console.log('📨 SENDING NOTIFICATIONS: Admin IDs:', adminChatIds.join(', '));
   
-  // Prepare a simple message - avoid any special formatting
-  const message = `🚨 VERIFICATION ALERT! ID:${verification.id} USER:${verification.jalwaUserId} STATUS:${verification.status.toUpperCase()} CREATED:${new Date(verification.createdAt).toLocaleString()}`;
+  // Format in very simple plain text (no special formatting that could cause issues)
+  const message = `ALERT! New verification request:
+ID: ${verification.id}
+User: ${verification.jalwaUserId}
+Status: ${verification.status}
+Created: ${new Date().toISOString()}`;
 
-  // Use library approach for notifications
+  // Use BOTH fetch API and library for maximum reliability
+  
+  // 1. Use fetch API for direct Telegram API access
+  const sendDirectNotifications = async () => {
+    for (const chatId of adminChatIds) {
+      try {
+        // Construct the Telegram API URL with parameters
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        
+        // Use fetch to make the HTTP request
+        const response = await fetch(telegramApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            disable_notification: false
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          console.log(`✅ DIRECT API: Message sent to ${chatId}`);
+        } else {
+          console.error(`❌ DIRECT API ERROR: ${data.description}`);
+        }
+      } catch (error) {
+        console.error(`❌ FETCH ERROR for ${chatId}:`, error);
+      }
+    }
+  };
+  
+  // Execute the direct notifications
+  sendDirectNotifications()
+    .then(() => console.log('✅ DIRECT NOTIFICATIONS COMPLETED'))
+    .catch(err => console.error('❌ DIRECT NOTIFICATION FAILED:', err));
+  
+  // 2. Also try library approach as backup
   try {
     // Create a non-polling bot instance just for this message
     const notificationBot = new TelegramBot(botToken, { polling: false });
     
-    // Send to each admin
+    // Send to each admin with different format to distinguish sources
     for (const adminId of adminChatIds) {
       setTimeout(() => {
-        notificationBot.sendMessage(adminId, message)
+        notificationBot.sendMessage(adminId, `🔔 NEW VERIFICATION: ID:${verification.id}, USER:${verification.jalwaUserId}`)
           .then(() => {
-            console.log(`🟢 LIBRARY SUCCESS: Sent to admin ${adminId}`);
+            console.log(`✅ LIBRARY: Message sent to ${adminId}`);
           })
           .catch(error => {
-            console.error(`🔴 LIBRARY ERROR: Failed to send to admin ${adminId}:`, error.message);
+            console.error(`❌ LIBRARY ERROR for ${adminId}:`, error.message);
           });
-      }, 500); // Slight delay for rate limiting
+      }, 1000); // Longer delay for library calls
     }
   } catch (error) {
-    console.error('🔴 LIBRARY SYSTEM ERROR:', error);
+    console.error('❌ LIBRARY SYSTEM ERROR:', error);
   }
   
-  console.log('🔵 NOTIFICATION ATTEMPT COMPLETED');
+  console.log('📩 ALL NOTIFICATION ATTEMPTS INITIATED');
 }

@@ -24,14 +24,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (result.success && result.status === 'pending') {
         console.log('🔔 New verification request received for User ID:', jalwaUserId);
         
-        // Send notification to admins via Telegram with a short delay to ensure DB transaction is complete
+        // Send notification to admins via Telegram with a longer delay to ensure DB transaction is complete
         setTimeout(async () => {
           try {
             // Get fresh verification record
             const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
             
             if (verification) {
-              console.log('🚀 DIRECT NOTIFICATION: Sending for verification ID:', verification.id);
+              console.log('📣 SENDING NOTIFICATION: For verification ID:', verification.id);
               notifyNewVerification(verification);
             } else {
               console.error('⚠️ NOTIFICATION ERROR: Could not find verification record for:', jalwaUserId);
@@ -39,7 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } catch (error) {
             console.error('⚠️ NOTIFICATION ERROR:', error);
           }
-        }, 100); // Short delay to ensure DB transaction completes
+        }, 1000); // Longer delay (1 second) to ensure DB transaction completes
       } else {
         console.log('ℹ️ Not sending notification for status:', result.status);
       }
