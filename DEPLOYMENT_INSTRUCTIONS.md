@@ -1,86 +1,74 @@
 # Deployment Instructions
 
-This document contains instructions for deploying and configuring the Jalwa Admin system with Telegram bot integration.
+This document contains instructions for deploying and configuring the Jalwa Admin system with web-based admin panel.
 
 ## Required Environment Variables
 
 The following environment variables must be set for the system to function properly:
 
-- `TELEGRAM_BOT_TOKEN`: The token for your Telegram bot, obtained from BotFather
-- `ADMIN_CHAT_IDS`: Comma-separated list of Telegram chat IDs for admins who should receive notifications and have access to admin commands
+- `TELEGRAM_BOT_TOKEN`: The token for your Telegram bot, obtained from BotFather (used for admin notifications only)
+- `ADMIN_CHAT_IDS`: Comma-separated list of Telegram chat IDs for admins who should receive notifications
 - `BASE_URL`: The base URL of your deployed application (e.g., https://yourapp.replit.app)
 
-### Optional Environment Variables
+## Accessing the Admin Panel
 
-- `USE_TELEGRAM_WEBHOOKS`: Set to "true" to use webhook mode instead of polling (recommended for production deployments)
-- `TELEGRAM_WEBHOOK_URL`: URL where Telegram should send webhook updates (use `https://[your-domain]/api/telegram-webhook`)
-- `PORT`: Server port to use (defaults to 5000)
+The admin panel is available at the `/admin` route of your application. To access it:
 
-## Setting Up the Telegram Bot
+1. Navigate to `https://[your-domain]/admin`
+2. Enter the admin password: `jalwa-admin-2023`
+3. The admin session will be stored in local storage for 24 hours
 
-1. Create a new bot through the [BotFather](https://t.me/BotFather) on Telegram
-2. Copy the bot token and set it as the `TELEGRAM_BOT_TOKEN` environment variable
-3. Start a conversation with your bot by searching for it in Telegram and clicking the "Start" button
-4. Determine your Telegram chat ID by using the `/start` command with [@userinfobot](https://t.me/userinfobot) or other similar bots
-5. Add your chat ID to the `ADMIN_CHAT_IDS` environment variable
+### Admin Panel Features
 
-## Callback Buttons in Telegram
+- View all account verifications
+- Filter verifications by status (pending, approved, rejected)
+- Approve or reject verifications directly from the web interface
+- Add notes to verifications
+- Mobile-optimized view for managing verifications on the go
 
-This system uses Telegram's callback buttons for one-click approval and rejection of user verifications. When a new verification is submitted, the admin will receive a notification with buttons directly in Telegram:
+## Automatic Verification System
 
-- ✅ Approve button: Automatically approves the user ID
-- ❌ Reject button: Automatically rejects the user ID
+The system now features automatic verification:
 
-This eliminates the need to open a web browser or visit any external pages to process verifications.
+- User ID verification requests are automatically approved after 2 seconds
+- Auto-approved verifications are marked with appropriate status messages
+- Detailed logging tracks the auto-approval process
 
-## Choosing Between Webhook and Polling Mode
+## Demo Features
 
-### Polling Mode (Default)
+The application includes demo functionality to showcase VIP predictions:
 
-Polling mode is enabled by default and works in most environments. The bot continuously polls Telegram's servers for updates.
+- Demo buttons are positioned next to VIP Prediction buttons in the Features Section
+- Clicking a demo button opens the Demo VIP Prediction modal
+- Demo modal displays sample prediction images with tabs for Current Prediction, Prediction History, and Results History
+- Left/right arrow navigation allows cycling through the demo tabs
+- Mobile responsive design optimizes the experience on smaller screens
 
-### Webhook Mode (Recommended for Production)
+## Mobile Responsiveness
 
-For production deployments with public HTTPS URLs, webhook mode is recommended for better performance:
+The application is fully responsive and optimized for mobile devices:
 
-1. Set `USE_TELEGRAM_WEBHOOKS` to "true"
-2. Set `TELEGRAM_WEBHOOK_URL` to `https://[your-domain]/api/telegram-webhook`
-3. Make sure your server has a valid SSL certificate
+- Admin panel adapts to a card-based layout on mobile
+- Demo modal uses shorter tab labels and optimized spacing on mobile
+- UI elements are appropriately sized for touch interaction on smaller screens
 
-## Testing Your Configuration
+## Testing the Application
 
-Once deployed, you can test your configuration using the provided test script:
+To test the application functionality:
 
-```bash
-node deployment-telegram-test.js
-```
-
-This script will:
-1. Verify your environment variables
-2. Send test messages to your admin chat IDs
-3. Test the callback button functionality
-
-Alternatively, you can manually test by:
-
-1. Submitting a test verification from the app
-2. Checking if you receive a notification in Telegram with approval/rejection buttons
-3. Clicking the buttons to see if the verification status updates correctly
+1. Visit the main page to see the updated interface
+2. Try the demo buttons to view the sample VIP predictions
+3. Test account verification by clicking on a VIP Prediction button
+4. Enter a Jalwa User ID to see the auto-verification process
+5. Access the admin panel to verify the record was created and approved
 
 ## Troubleshooting
 
-If you encounter issues with the Telegram bot:
+If you encounter issues:
 
-- Check that your bot token is correct
-- Ensure you've started a conversation with the bot
-- Verify your chat ID is correctly added to the admin list
-- Check the application logs for any error messages
-- Try restarting the bot using the `/api/restart-bot` endpoint
-
-### Common Issues
-
-1. **Buttons not working:** Make sure polling mode is enabled correctly or webhooks are set up properly
-2. **No notifications received:** Verify your admin chat ID is correct and you've started a conversation with the bot
-3. **"Forbidden" errors:** The bot may not have permission to send messages; restart the conversation with the bot
-4. **"Not Found" errors for webhook URLs:** Ensure the URL is publicly accessible and has a valid SSL certificate
+- Check the browser console for any JavaScript errors
+- Verify that all required environment variables are set correctly
+- Clear browser cache and reload if UI elements appear incorrectly
+- Check the server logs for any backend errors
 
 For additional assistance, please contact support.
