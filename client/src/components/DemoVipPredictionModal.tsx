@@ -7,8 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// Removed Button import as we're using custom motion.button
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 // Import the attached assets
@@ -44,6 +43,8 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
     const prevIndex = (currentTabIndex - 1 + tabs.length) % tabs.length;
     setCurrentTab(tabs[prevIndex].id);
   };
+  
+  if (!isOpen) return null;
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
