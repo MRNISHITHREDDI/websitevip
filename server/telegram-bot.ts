@@ -94,9 +94,8 @@ export function initBot(): void {
     for (const chatId of AUTHORIZED_CHAT_IDS) {
       try {
         console.log(`Sending test message to admin ${chatId}...`);
-        bot.sendMessage(chatId, '🤖 Jalwa Admin Bot started successfully!')
-          .then(() => console.log(`Test message sent to admin ${chatId}`))
-          .catch(err => console.error(`Failed to send test message to admin ${chatId}:`, err));
+        safeSendMessage(chatId, '🤖 Jalwa Admin Bot started successfully!');
+        console.log(`Test message initiated for admin ${chatId}`);
       } catch (error) {
         console.error(`Error sending test message to admin ${chatId}:`, error);
       }
@@ -117,14 +116,14 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) {
-      bot?.sendMessage(
+      safeSendMessage(
         chatId,
         '🔒 You are not authorized to use this bot. Please contact the administrator.'
       );
       return;
     }
     
-    bot?.sendMessage(
+    safeSendMessage(
       chatId,
       '👋 *Welcome to the Jalwa Account Admin Bot!*\n\nUse this bot to manage user verifications.\n\n*Available commands:*\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] - Reject a verification\n/info [id] - Show details about a verification\n/stats - Show verification statistics\n/addadmin [chat_id] - Add a new admin chat ID\n/admins - List all admin chat IDs\n/help - Show this help message',
       { parse_mode: 'Markdown' }
@@ -137,7 +136,7 @@ function setupCommandHandlers(): void {
     
     if (!isAuthorized(chatId)) return;
     
-    bot?.sendMessage(
+    safeSendMessage(
       chatId,
       '*Available commands:*\n\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] [reason] - Reject a verification\n/info [id] - Show details about a verification\n/stats - Show verification statistics\n/addadmin [chat_id] - Add a new admin chat ID\n/admins - List all admin chat IDs\n/help - Show this help message',
       { parse_mode: 'Markdown' }
@@ -450,7 +449,7 @@ function setupCommandHandlers(): void {
       const message = `👑 *Admin Chat IDs (${AUTHORIZED_CHAT_IDS.length})*\n\n` +
         AUTHORIZED_CHAT_IDS.map((id, index) => `${index + 1}. ${id}`).join('\n');
       
-      bot?.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+      safeSendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
@@ -462,7 +461,7 @@ function setupCommandHandlers(): void {
     
     // Send notification to all authorized admins
     for (const chatId of AUTHORIZED_CHAT_IDS) {
-      bot.sendMessage(
+      safeSendMessage(
         chatId,
         `🔔 *New Verification Request*\n\n${formatVerification(verification)}\n\nUse /approve ${verification.id} to approve or /reject ${verification.id} to reject.`,
         { parse_mode: 'Markdown' }
