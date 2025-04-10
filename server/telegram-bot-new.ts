@@ -56,17 +56,91 @@ export function initBot(): TelegramBot | null {
     }
   }
   
-  // Create a new bot instance with optimized options
+  // Create a new bot instance with polling for callback processing
   try {
-    // Use a simple non-polling bot for maximum reliability
+    // We need polling to handle button callbacks
     const options = {
-      polling: false,
+      polling: true,
       filepath: false // Don't store files locally
     };
     
     botInstance = new TelegramBot(token, options);
     
-    console.log('✅ Bot instance created successfully');
+    // Set up callback query handler for approve/reject buttons
+    botInstance.on('callback_query', async (callbackQuery) => {
+      try {
+        const message = callbackQuery.message;
+        const chatId = message?.chat.id;
+        const callbackData = callbackQuery.data || '';
+        
+        if (!chatId) return;
+        
+        console.log(`🔘 Received callback: ${callbackData} from ${chatId}`);
+        
+        // Check if admin is authorized
+        if (!adminChatIds.includes(chatId)) {
+          await botInstance?.answerCallbackQuery(callbackQuery.id, {
+            text: 'Unauthorized: You are not registered as an admin.',
+            show_alert: true
+          });
+          return;
+        }
+        
+        // Extract action and verification ID
+        const [action, verificationIdStr] = callbackData.split('_');
+        const verificationId = parseInt(verificationIdStr);
+        
+        if (isNaN(verificationId)) {
+          throw new Error('Invalid verification ID format');
+        }
+        
+        // Process the action
+        if (action === 'approve' || action === 'reject') {
+          const newStatus = action === 'approve' ? 'approved' : 'rejected';
+          const notes = `${newStatus === 'approved' ? 'Approved' : 'Rejected'} via Telegram by admin ${chatId}`;
+          
+          // Update verification status
+          const result = await storage.updateAccountVerificationStatus(verificationId, newStatus, notes);
+          
+          if (!result) {
+            throw new Error(`Verification #${verificationId} not found`);
+          }
+          
+          // Answer the callback query to show notification
+          await botInstance?.answerCallbackQuery(callbackQuery.id, {
+            text: `${action === 'approve' ? '✅' : '❌'} Verification #${verificationId} ${newStatus}!`,
+            show_alert: true
+          });
+          
+          // Update the message to show it's been processed
+          const emoji = action === 'approve' ? '✅' : '❌';
+          const statusText = action === 'approve' ? 'APPROVED' : 'REJECTED';
+          
+          await botInstance?.editMessageText(
+            `🔔 *VERIFICATION #${verificationId} ${statusText}* ${emoji}\n\nUser: ${result.jalwaUserId}\nTime: ${new Date().toLocaleString()}`,
+            {
+              chat_id: chatId,
+              message_id: message.message_id,
+              parse_mode: 'Markdown'
+            }
+          );
+          
+          console.log(`✅ Verification #${verificationId} ${newStatus} via Telegram by admin ${chatId}`);
+        } else {
+          throw new Error(`Unknown action: ${action}`);
+        }
+      } catch (error) {
+        console.error('❌ Error processing callback query:', error);
+        
+        // Notify the admin about the error
+        await botInstance?.answerCallbackQuery(callbackQuery.id, {
+          text: `Error: ${error.message || 'Failed to process your request'}`,
+          show_alert: true
+        });
+      }
+    });
+    
+    console.log('✅ Bot instance created successfully with callback handlers');
     
     // Send test message to all admins to confirm setup
     for (const chatId of adminChatIds) {
@@ -243,19 +317,19 @@ Time: ${new Date().toLocaleString()}
   
   console.log(`🔗 Using base URL for notifications: ${formattedBaseUrl}`);
   
-  // Create keyboard with action buttons
+  // Create keyboard with callback data instead of URLs
   const inlineKeyboard = {
     inline_keyboard: [
       [
         {
           text: "✅ Approve",
-          url: `${formattedBaseUrl}/api/admin/account-verifications/${verification.id}?action=approve&source=telegram`
+          callback_data: `approve_${verification.id}`
         }
       ],
       [
         {
           text: "❌ Reject",
-          url: `${formattedBaseUrl}/api/admin/account-verifications/${verification.id}?action=reject&source=telegram`
+          callback_data: `reject_${verification.id}`
         }
       ]
     ]

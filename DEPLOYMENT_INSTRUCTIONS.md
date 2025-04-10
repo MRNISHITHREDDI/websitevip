@@ -29,7 +29,7 @@ ADMIN_CHAT_IDS=123456789,987654321
 After deploying, verify the bot is working properly:
 
 1. Access the bot status endpoint: `/api/bot-status`
-2. Check that `isConfigured` is `true` (the new bot implementation doesn't use polling for improved reliability)
+2. Check that `isConfigured` is `true` and the bot status is operational
 3. Confirm your admin chat ID appears in the `adminIds` array
 
 Example successful response:
@@ -85,7 +85,7 @@ To test the verification system:
 - Each notification attempts multiple delivery methods with built-in fallbacks:
   - Direct HTTPS calls to Telegram API (most reliable in production)
   - Standard bot instance method (backup)
-- URL-based approval/rejection links for one-click admin actions
+- In-Telegram approval/rejection buttons that work directly within the chat
 - All verification changes are logged for accountability
 
 ## New Implementation Benefits
