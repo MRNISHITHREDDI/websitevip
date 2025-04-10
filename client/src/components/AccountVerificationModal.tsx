@@ -196,15 +196,6 @@ const AccountVerificationModal = ({
                 
                 <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
-                    <AlertTriangle className="h-4 w-4 text-[#00ECBE]" />
-                  </div>
-                  <p className="text-gray-200 text-sm">
-                    Old accounts will also provide incorrect predictions due to server mismatch.
-                  </p>
-                </div>
-                
-                <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
-                  <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
                   </div>
                   <p className="text-gray-200 text-sm">
