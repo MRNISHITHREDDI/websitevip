@@ -252,125 +252,56 @@ const AdminDashboard = () => {
       );
     }
 
-    // For mobile view - card-style display
-    const renderMobileCards = () => {
-      return (
-        <div className="space-y-4 lg:hidden">
-          {verifications.map((verification) => (
-            <div key={verification.id} className="bg-white rounded-lg border shadow-sm p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <span className="text-sm text-gray-500">ID: </span>
-                  <span className="font-medium">{verification.id}</span>
-                </div>
-                <StatusBadge status={verification.status} />
-              </div>
-              
-              <div className="mb-2">
-                <span className="text-sm text-gray-500">User ID: </span>
-                <span className="font-medium">{verification.jalwaUserId}</span>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                <div>
-                  <span className="text-gray-500">Created: </span>
-                  <span>{formatDate(verification.createdAt)}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Updated: </span>
-                  <span>{formatDate(verification.updatedAt)}</span>
-                </div>
-              </div>
-              
-              <div className="flex justify-end pt-2 border-t">
-                {verification.status === 'rejected' ? (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700 w-full"
-                    onClick={() => handleApprove(verification.id)}
-                    disabled={isLoading}
-                  >
-                    Approve
-                  </Button>
-                ) : (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => handleRemove(verification.id)}
-                    disabled={isLoading}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    };
-    
-    // For desktop view - regular table
-    const renderDesktopTable = () => {
-      return (
-        <div className="rounded-md border hidden lg:block">
-          <Table>
-            <TableCaption>List of account verification requests.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[80px]">ID</TableHead>
-                <TableHead>User ID</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {verifications.map((verification) => (
-                <TableRow key={verification.id}>
-                  <TableCell className="font-medium">{verification.id}</TableCell>
-                  <TableCell>{verification.jalwaUserId}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={verification.status} />
-                  </TableCell>
-                  <TableCell>{formatDate(verification.createdAt)}</TableCell>
-                  <TableCell>{formatDate(verification.updatedAt)}</TableCell>
-                  <TableCell className="text-right">
-                    {verification.status === 'rejected' ? (
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() => handleApprove(verification.id)}
-                        disabled={isLoading}
-                      >
-                        Approve
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleRemove(verification.id)}
-                        disabled={isLoading}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      );
-    };
-    
     return (
-      <div>
-        {renderMobileCards()}
-        {renderDesktopTable()}
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
+          <TableCaption>List of account verification requests.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>User ID</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {verifications.map((verification) => (
+              <TableRow key={verification.id}>
+                <TableCell className="font-medium">{verification.id}</TableCell>
+                <TableCell>{verification.jalwaUserId}</TableCell>
+                <TableCell>
+                  <StatusBadge status={verification.status} />
+                </TableCell>
+                <TableCell>{formatDate(verification.createdAt)}</TableCell>
+                <TableCell>{formatDate(verification.updatedAt)}</TableCell>
+                <TableCell className="text-right">
+                  {verification.status === 'rejected' ? (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleApprove(verification.id)}
+                      disabled={isLoading}
+                    >
+                      Approve
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleRemove(verification.id)}
+                      disabled={isLoading}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     );
   }
