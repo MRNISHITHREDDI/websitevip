@@ -117,6 +117,16 @@ export async function initBot(): Promise<TelegramBot | null> {
         
         // Extract action and verification ID
         const [action, verificationIdStr] = callbackData.split('_');
+        
+        // Handle test buttons specially
+        if (action === 'test') {
+          await botInstance?.answerCallbackQuery(callbackQuery.id, {
+            text: `Test button "${verificationIdStr}" clicked successfully!`,
+            show_alert: true
+          });
+          return;
+        }
+        
         const verificationId = parseInt(verificationIdStr);
         
         if (isNaN(verificationId)) {

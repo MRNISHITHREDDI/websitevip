@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 // Lazy load prediction pages for better performance
 const WingoPredictionPage = lazy(() => import("./pages/predictions/WingoPrediction"));
 const TrxPredictionPage = lazy(() => import("./pages/predictions/TrxPrediction"));
+const AdminPage = lazy(() => import("./pages/Admin"));
 
 // Loading component
 const PageLoader = () => (
@@ -38,6 +39,13 @@ function Router() {
             <TrxPredictionPage timeOption={params.timeOption} />
           </Suspense>
         )}
+      </Route>
+      
+      {/* Admin Dashboard Route */}
+      <Route path="/admin">
+        <Suspense fallback={<PageLoader />}>
+          <AdminPage />
+        </Suspense>
       </Route>
       
       <Route component={NotFound} />
