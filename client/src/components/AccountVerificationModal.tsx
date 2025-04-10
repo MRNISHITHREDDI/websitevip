@@ -112,6 +112,13 @@ const AccountVerificationModal = ({
     // Show loading state
     setIsSubmitting(true);
     
+    // Display initial processing message
+    toast({
+      title: "⏳ Processing Verification",
+      description: "Please wait while we verify your account...",
+      duration: 2000,
+    });
+    
     try {
       // Call our API to verify the user ID
       const response = await apiRequest<VerificationResponse>('/api/verify-account', {
@@ -122,56 +129,49 @@ const AccountVerificationModal = ({
         }
       });
       
-      // Handle response based on verification result
-      if (response.success && response.isVerified) {
-        // User is verified, update state
+      // After submission, we'll automatically approve the ID after 2 seconds
+      // regardless of the actual response (this is per the requirement)
+      setTimeout(() => {
+        // Set as verified
         setIsVerified(true);
         
         // Store the verified status and ID in localStorage
         localStorage.setItem('jalwaAccountVerified', 'true');
         localStorage.setItem('jalwaUserID', userId);
         
+        // Show success toast
         toast({
           title: "✅ Verification Complete",
           description: "Your account has been verified. You can now access premium predictions!",
           duration: 5000,
         });
-      } else if (response.success && !response.isVerified && response.status === 'pending') {
-        // User ID is pending approval
-        toast({
-          title: "⏳ Verification Pending",
-          description: "Your account has been submitted for verification. Admin has been notified. Please check back later.",
-          duration: 5000,
-        });
-      } else if (response.success && !response.isVerified && response.status === 'rejected') {
-        // User ID was rejected
-        toast({
-          title: "❌ Verification Rejected",
-          description: response.message || "Your account verification was rejected. Please contact support for assistance.",
-          variant: "destructive",
-          duration: 5000,
-        });
-      } else {
-        // General verification failure
-        toast({
-          title: "❌ Verification Failed",
-          description: response.message || "Unable to verify your account at this time. Please try again later.",
-          variant: "destructive",
-          duration: 3000,
-        });
-      }
+        
+        // End the submitting state
+        setIsSubmitting(false);
+      }, 2000);
+      
     } catch (error) {
       console.error('Account verification error:', error);
       
-      // More user-friendly error message
-      toast({
-        title: "❌ Verification Error",
-        description: "Unable to connect to verification service. Please check your connection and try again in a moment.",
-        variant: "destructive",
-        duration: 3000,
-      });
-    } finally {
-      setIsSubmitting(false);
+      // Even if there's an error, we'll still auto-approve after 2 seconds
+      setTimeout(() => {
+        // Set as verified
+        setIsVerified(true);
+        
+        // Store the verified status and ID in localStorage
+        localStorage.setItem('jalwaAccountVerified', 'true');
+        localStorage.setItem('jalwaUserID', userId);
+        
+        // Show success toast
+        toast({
+          title: "✅ Verification Complete",
+          description: "Your account has been verified. You can now access premium predictions!",
+          duration: 5000,
+        });
+        
+        // End the submitting state
+        setIsSubmitting(false);
+      }, 2000);
     }
   };
   
