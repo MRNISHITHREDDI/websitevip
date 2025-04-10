@@ -77,14 +77,14 @@ function setupCommandHandlers(): void {
     const chatId = msg.chat.id;
     
     if (!isAuthorized(chatId)) {
-      bot.sendMessage(
+      bot?.sendMessage(
         chatId,
         '🔒 You are not authorized to use this bot. Please contact the administrator.'
       );
       return;
     }
     
-    bot.sendMessage(
+    bot?.sendMessage(
       chatId,
       '👋 *Welcome to the Jalwa Account Admin Bot!*\n\nUse this bot to manage user verifications.\n\n*Available commands:*\n/list - List all verifications\n/pending - Show pending verifications\n/approved - Show approved verifications\n/rejected - Show rejected verifications\n/approve [id] - Approve a verification\n/reject [id] - Reject a verification\n/info [id] - Show details about a verification\n/help - Show this help message',
       { parse_mode: 'Markdown' }

@@ -6,6 +6,15 @@ import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X, ArrowRightCirc
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
+// Response type for account verification
+interface VerificationResponse {
+  success: boolean;
+  message: string;
+  isVerified: boolean;
+  status?: string;
+  userId?: string;
+}
+
 interface AccountVerificationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -105,13 +114,7 @@ const AccountVerificationModal = ({
     
     try {
       // Call our API to verify the user ID
-      const response = await apiRequest<{
-        success: boolean;
-        message: string;
-        isVerified: boolean;
-        status?: string;
-        userId?: string;
-      }>('/api/verify-account', {
+      const response = await apiRequest<VerificationResponse>('/api/verify-account', {
         method: 'POST',
         body: JSON.stringify({ jalwaUserId: userId.trim() }),
         headers: {
