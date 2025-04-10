@@ -534,13 +534,13 @@ export function notifyNewVerification(verification: any): void {
     adminChatIds: AUTHORIZED_CHAT_IDS.join(', ')
   });
   
-  // Prepare message with bold user ID for better visibility
-  const message = `🔔 *New Verification Request*
+  // Using HTML format instead of Markdown for better reliability
+  const message = `🔔 <b>New Verification Request</b>
 
-*User ID:* ${verification.jalwaUserId}
-*Status:* ${verification.status.toUpperCase()}
-*Created:* ${new Date(verification.createdAt).toLocaleString()}
-*ID:* ${verification.id}
+<b>User ID:</b> ${verification.jalwaUserId}
+<b>Status:</b> ${verification.status.toUpperCase()}
+<b>Created:</b> ${new Date(verification.createdAt).toLocaleString()}
+<b>ID:</b> ${verification.id}
 
 ▶️ Use /approve ${verification.id} to approve
 ❌ Use /reject ${verification.id} to reject`;
@@ -564,7 +564,7 @@ function sendMessageWithRetry(chatId: number, message: string, retries: number):
   bot.sendMessage(
     chatId,
     message,
-    { parse_mode: 'Markdown' }
+    { parse_mode: 'HTML' }
   ).then(messageInfo => {
     console.log(`✅ Notification sent successfully to admin ${chatId}`, messageInfo.message_id);
   }).catch(err => {
