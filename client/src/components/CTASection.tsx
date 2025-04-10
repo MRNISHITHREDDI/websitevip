@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import InfoModal from './InfoModal';
+import DemoVipPredictionModal from './DemoVipPredictionModal';
 
 const CTASection = () => {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,16 +76,28 @@ const CTASection = () => {
               >
                 Start Playing Now
               </motion.button>
-              <motion.button 
-                onClick={() => setInfoModalOpen(true)}
-                className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center"
-                whileHover={{ 
-                  boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
-                  y: -2 
-                }}
-              >
-                Learn More
-              </motion.button>
+              <div className="flex gap-4 w-full">
+                <motion.button 
+                  onClick={() => setInfoModalOpen(true)}
+                  className="bg-transparent border border-[#00ECBE] text-[#00ECBE] px-8 py-3 rounded-full transition duration-300 text-center flex-1"
+                  whileHover={{ 
+                    boxShadow: "0 0 20px 0 rgba(0, 236, 190, 0.6)",
+                    y: -2 
+                  }}
+                >
+                  Learn More
+                </motion.button>
+                <motion.button 
+                  onClick={() => setDemoModalOpen(true)}
+                  className="bg-[#8000FF] border border-[#A64DFF] text-white px-8 py-3 rounded-full transition duration-300 text-center flex-1"
+                  whileHover={{ 
+                    boxShadow: "0 0 20px 0 rgba(128, 0, 255, 0.6)",
+                    y: -2 
+                  }}
+                >
+                  Demo
+                </motion.button>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -92,6 +107,12 @@ const CTASection = () => {
       <InfoModal 
         isOpen={infoModalOpen} 
         onClose={() => setInfoModalOpen(false)} 
+      />
+      
+      {/* Demo VIP Prediction Modal */}
+      <DemoVipPredictionModal 
+        isOpen={demoModalOpen} 
+        onClose={() => setDemoModalOpen(false)} 
       />
     </section>
   );
