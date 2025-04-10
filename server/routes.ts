@@ -23,16 +23,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If this is a new pending verification, notify admins via Telegram
       if (result.success && !result.isVerified && result.status === 'pending') {
         try {
+          console.log('Attempting to send notification for pending verification:', jalwaUserId);
+          
           // Get the verification record to send with the notification
           const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
+          console.log('Retrieved verification record:', verification);
+          
           if (verification) {
+            console.log('Calling notifyNewVerification with verification id:', verification.id);
             // Send notification to Telegram admins
             notifyNewVerification(verification);
+            console.log('Notification function called for verification ID:', verification.id);
+          } else {
+            console.error('Could not find verification record for user ID:', jalwaUserId);
           }
         } catch (error) {
-          console.error('Failed to send Telegram notification:', error);
+          console.error('Failed to send Telegram notification. Error details:', error);
           // Continue with the response even if notification fails
         }
+      } else {
+        console.log('Not sending notification, verification result:', { 
+          success: result.success, 
+          isVerified: result.isVerified, 
+          status: result.status 
+        });
       }
       
       // Return the verification result

@@ -59,14 +59,45 @@ export function initBot(): void {
   }
   
   console.log('Starting Telegram bot...');
+  console.log('Admin chat IDs configured:', AUTHORIZED_CHAT_IDS);
+  console.log('ADMIN_CHAT_IDS env value:', process.env.ADMIN_CHAT_IDS);
   
-  // Create a bot instance
-  bot = new TelegramBot(token, { polling: true });
-  
-  // Set up command handlers
-  setupCommandHandlers();
-  
-  console.log('Telegram bot started!');
+  try {
+    // Create a bot instance
+    bot = new TelegramBot(token, { polling: true });
+    
+    // Register error event handler
+    bot.on('polling_error', (error) => {
+      console.error('Telegram polling error:', error);
+    });
+    
+    bot.on('error', (error) => {
+      console.error('Telegram general error:', error);
+    });
+    
+    // Set up command handlers
+    setupCommandHandlers();
+    
+    console.log('Telegram bot initialization successful!');
+    console.log('Bot is polling:', bot.isPolling());
+    
+    // Send test messages to admins
+    for (const chatId of AUTHORIZED_CHAT_IDS) {
+      try {
+        console.log(`Sending test message to admin ${chatId}...`);
+        bot.sendMessage(chatId, '🤖 Jalwa Admin Bot started successfully!')
+          .then(() => console.log(`Test message sent to admin ${chatId}`))
+          .catch(err => console.error(`Failed to send test message to admin ${chatId}:`, err));
+      } catch (error) {
+        console.error(`Error sending test message to admin ${chatId}:`, error);
+      }
+    }
+    
+    console.log('Telegram bot started!');
+  } catch (error) {
+    console.error('Failed to initialize Telegram bot:', error);
+    bot = null;
+  }
 }
 
 function setupCommandHandlers(): void {
@@ -114,7 +145,7 @@ function setupCommandHandlers(): void {
       const verifications = await storage.getAllAccountVerifications();
       
       if (verifications.length === 0) {
-        bot.sendMessage(chatId, 'No account verifications found.');
+        bot?.sendMessage(chatId, 'No account verifications found.');
         return;
       }
       
@@ -440,24 +471,51 @@ export function getBot(): TelegramBot | null {
 
 // Send notification to admins about a new verification
 export function notifyNewVerification(verification: any): void {
+  console.log('notifyNewVerification called with verification:', JSON.stringify(verification));
+  console.log('Current AUTHORIZED_CHAT_IDS:', AUTHORIZED_CHAT_IDS);
+  
   if (!bot) {
     console.error('Cannot send notification: Telegram bot is not initialized');
+    console.log('Bot instance:', bot);
+    console.log('TELEGRAM_BOT_TOKEN exists:', !!process.env.TELEGRAM_BOT_TOKEN);
+    return;
+  }
+  
+  if (!AUTHORIZED_CHAT_IDS || AUTHORIZED_CHAT_IDS.length === 0) {
+    console.error('Cannot send notification: No authorized chat IDs configured');
+    console.log('ADMIN_CHAT_IDS env value:', process.env.ADMIN_CHAT_IDS);
     return;
   }
   
   console.log('Sending notification for new verification ID:', verification.id);
+  console.log('Bot info:', { 
+    isPolling: bot.isPolling(), 
+    token: process.env.TELEGRAM_BOT_TOKEN ? 'exists' : 'missing',
+    adminCount: AUTHORIZED_CHAT_IDS.length
+  });
   
   // Send notification directly to all authorized admins
   for (const chatId of AUTHORIZED_CHAT_IDS) {
     try {
+      console.log(`Attempting to send message to admin chat ID: ${chatId}`);
+      const message = `🔔 *New Verification Request*\n\n${formatVerification(verification)}\n\nUse /approve ${verification.id} to approve or /reject ${verification.id} to reject.`;
+      console.log('Message content:', message);
+      
       bot.sendMessage(
         chatId,
-        `🔔 *New Verification Request*\n\n${formatVerification(verification)}\n\nUse /approve ${verification.id} to approve or /reject ${verification.id} to reject.`,
+        message,
         { parse_mode: 'Markdown' }
-      );
-      console.log(`Notification sent to admin ${chatId}`);
+      ).then(messageInfo => {
+        console.log(`Notification sent successfully to admin ${chatId}`, messageInfo.message_id);
+      }).catch(err => {
+        console.error(`Error in promise when sending to admin ${chatId}:`, err);
+      });
+      
+      console.log(`Notification sending initiated to admin ${chatId}`);
     } catch (error) {
-      console.error(`Failed to send notification to admin ${chatId}:`, error);
+      console.error(`Failed to send notification to admin ${chatId}. Error details:`, error);
     }
   }
+  
+  console.log('Notification process completed for verification ID:', verification.id);
 }
