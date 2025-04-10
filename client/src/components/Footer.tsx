@@ -6,6 +6,7 @@ import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { isAuthenticated } = useAdminAuth();
 
   return (
     <footer className="bg-[#05012B] pt-16 pb-8">
@@ -194,6 +195,14 @@ const Footer = () => {
               <button className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300">
                 Cookies
               </button>
+              {isAuthenticated && (
+                <Link 
+                  href="/admin" 
+                  className="text-gray-500 text-sm hover:text-[#00ECBE] transition duration-300"
+                >
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
         </div>
