@@ -3,22 +3,18 @@ import AdminDashboard from '@/components/AdminDashboard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useAdminAuth } from '@/hooks/use-admin-auth';
 import SEO from '@/components/SEO';
 
 // Simple auth for admin panel
 const Admin = () => {
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useLocalStorage('admin-auth', false);
+  const { isAuthenticated, login, logout } = useAdminAuth();
   const [error, setError] = useState('');
-
-  // The password could be moved to environment variables in a real app
-  const ADMIN_PASSWORD = 'jalwa-admin-2023';
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
+    if (login(password)) {
       setError('');
     } else {
       setError('Invalid password. Please try again.');
@@ -26,7 +22,7 @@ const Admin = () => {
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    logout();
     setPassword('');
   };
 

@@ -2,6 +2,7 @@ import { Twitter, MessageCircle, Share2, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import jalwaLogo from "../assets/jalwa-logo.png";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
