@@ -193,21 +193,21 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto py-4 px-3">
-      <h1 className="text-xl sm:text-3xl font-bold mb-4">Admin Dashboard</h1>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-          <TabsList className="w-full sm:w-auto">
-            <TabsTrigger value="all" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">All</TabsTrigger>
-            <TabsTrigger value="approved" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">Approved</TabsTrigger>
-            <TabsTrigger value="rejected" className="flex-grow sm:flex-grow-0 text-sm sm:text-base px-2 sm:px-4">Rejected</TabsTrigger>
+        <div className="flex justify-between items-center mb-4 overflow-x-auto">
+          <TabsList>
+            <TabsTrigger value="all">All Verifications</TabsTrigger>
+            <TabsTrigger value="approved">Approved</TabsTrigger>
+            <TabsTrigger value="rejected">Rejected</TabsTrigger>
           </TabsList>
           
-          <div className="flex items-center gap-1 w-full sm:w-auto mt-2 sm:mt-0">
-            <Label htmlFor="status-filter" className="whitespace-nowrap text-sm">Filter:</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="status-filter">Filter:</Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger id="status-filter" className="w-full">
+              <SelectTrigger id="status-filter" className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
