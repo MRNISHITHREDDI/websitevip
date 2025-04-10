@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 
@@ -15,8 +15,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -30,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 // Types for verification data
@@ -108,8 +105,6 @@ const StatusBadge = ({ status }: { status: string }) => {
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [noteInput, setNoteInput] = useState<string>('');
-  const [selectedVerification, setSelectedVerification] = useState<Verification | null>(null);
   
   const queryClient = useQueryClient();
 
@@ -136,28 +131,25 @@ const AdminDashboard = () => {
       
       toast({
         title: 'Success',
-        description: 'Verification status updated successfully',
+        description: 'User removed successfully',
         variant: 'default',
       });
-      
-      setSelectedVerification(null);
-      setNoteInput('');
     },
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to update verification status',
+        description: error.message || 'Failed to remove user',
         variant: 'destructive',
       });
     },
   });
 
-  // Handle status update
-  const handleStatusUpdate = (id: number, newStatus: string) => {
+  // Handle direct removal (rejection)
+  const handleRemove = (id: number) => {
     updateMutation.mutate({
       id,
-      status: newStatus,
-      notes: noteInput.trim() ? noteInput : `${newStatus} via admin dashboard`,
+      status: 'rejected',
+      notes: 'Removed via admin dashboard',
     });
   };
 
@@ -242,72 +234,6 @@ const AdminDashboard = () => {
           )}
         </TabsContent>
       </Tabs>
-      
-      {selectedVerification && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Update Verification #{selectedVerification.id}</CardTitle>
-            <CardDescription>
-              User ID: {selectedVerification.jalwaUserId}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="notes">Notes</Label>
-                <Input
-                  id="notes"
-                  placeholder="Add notes about this verification"
-                  value={noteInput}
-                  onChange={(e) => setNoteInput(e.target.value)}
-                />
-              </div>
-              <div className="flex space-x-4">
-                <Label>Current Status:</Label>
-                <StatusBadge status={selectedVerification.status} />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={() => setSelectedVerification(null)}
-            >
-              Cancel
-            </Button>
-            <div className="space-x-2">
-              {selectedVerification.status !== 'approved' && (
-                <Button
-                  variant="default"
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() => handleStatusUpdate(selectedVerification.id, 'approved')}
-                  disabled={isLoading}
-                >
-                  Approve
-                </Button>
-              )}
-              {selectedVerification.status !== 'rejected' && (
-                <Button
-                  variant="destructive"
-                  onClick={() => handleStatusUpdate(selectedVerification.id, 'rejected')}
-                  disabled={isLoading}
-                >
-                  Reject
-                </Button>
-              )}
-              {selectedVerification.status !== 'pending' && (
-                <Button
-                  variant="outline"
-                  onClick={() => handleStatusUpdate(selectedVerification.id, 'pending')}
-                  disabled={isLoading}
-                >
-                  Mark as Pending
-                </Button>
-              )}
-            </div>
-          </CardFooter>
-        </Card>
-      )}
     </div>
   );
 
@@ -350,14 +276,12 @@ const AdminDashboard = () => {
                 <TableCell>{formatDate(verification.updatedAt)}</TableCell>
                 <TableCell className="text-right">
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
-                    onClick={() => {
-                      setSelectedVerification(verification);
-                      setNoteInput('');
-                    }}
+                    onClick={() => handleRemove(verification.id)}
+                    disabled={isLoading}
                   >
-                    Manage
+                    Remove
                   </Button>
                 </TableCell>
               </TableRow>
