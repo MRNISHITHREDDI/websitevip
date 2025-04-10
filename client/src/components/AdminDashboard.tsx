@@ -258,7 +258,7 @@ const AdminDashboard = () => {
         {verifications.map((verification) => (
           <div 
             key={verification.id} 
-            className="bg-black bg-opacity-80 border border-[hsl(165,100%,46%)] border-opacity-30 rounded-lg shadow-lg p-4 text-white"
+            className="bg-[hsl(240,80%,12%)] border border-[hsl(165,100%,46%)] border-opacity-30 rounded-lg shadow-lg p-4 text-white"
           >
             <div className="flex justify-between items-start mb-2">
               <div>
@@ -276,11 +276,11 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
               <div>
                 <span className="text-[hsl(165,100%,46%)]">Created: </span>
-                <span className="text-gray-300">{formatDate(verification.createdAt)}</span>
+                <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.createdAt)}</span>
               </div>
               <div>
                 <span className="text-[hsl(165,100%,46%)]">Updated: </span>
-                <span className="text-gray-300">{formatDate(verification.updatedAt)}</span>
+                <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.updatedAt)}</span>
               </div>
             </div>
             
