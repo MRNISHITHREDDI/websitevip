@@ -129,7 +129,8 @@ export function initBot(): TelegramBot | null {
         } else {
           throw new Error(`Unknown action: ${action}`);
         }
-      } catch (error) {
+      } catch (err) {
+        const error = err as Error;
         console.error('❌ Error processing callback query:', error);
         
         // Notify the admin about the error
