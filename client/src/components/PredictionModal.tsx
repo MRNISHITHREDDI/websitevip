@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
 import AccountVerificationModal from './AccountVerificationModal';
+import LockedAccessPopup from './LockedAccessPopup';
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ const modalAnimation = {
 
 const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, title, gameType }) => {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showLockedPopup, setShowLockedPopup] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   
   // Prevent clicks inside the modal from closing it
@@ -91,6 +93,15 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
+    // If user clicks a second time on Get Prediction without verifying, show the locked popup
+    if (localStorage.getItem('attemptedGetPrediction') === 'true') {
+      setShowLockedPopup(true);
+      return;
+    }
+    
+    // Store that user has attempted to get a prediction
+    localStorage.setItem('attemptedGetPrediction', 'true');
+    
     // If user doesn't have a verified account, show account verification modal after a short delay
     setTimeout(() => {
       setShowVerificationModal(true);
@@ -109,6 +120,23 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
   const handleModalClose = () => {
     setShowVerificationModal(false);
   };
+  
+  const handleLockedPopupClose = () => {
+    setShowLockedPopup(false);
+  };
+  
+  // Listen for custom event to show locked access popup
+  React.useEffect(() => {
+    const handleShowLockedPopup = () => {
+      setShowLockedPopup(true);
+    };
+    
+    window.addEventListener('showLockedAccessPopup', handleShowLockedPopup);
+    
+    return () => {
+      window.removeEventListener('showLockedAccessPopup', handleShowLockedPopup);
+    };
+  }, []);
 
   return (
     <>
@@ -192,6 +220,12 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         onContinue={handleVerificationComplete}
         gameType={gameType}
         timeOption={selectedOption}
+      />
+      
+      {/* Locked access popup */}
+      <LockedAccessPopup 
+        isOpen={showLockedPopup}
+        onClose={handleLockedPopupClose}
       />
     </>
   );
