@@ -23,26 +23,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If this is a new pending verification, notify admins via Telegram
       if (result.success && !result.isVerified && result.status === 'pending') {
         try {
-          console.log('Attempting to send notification for pending verification:', jalwaUserId);
+          console.log('🔔 New verification request received for User ID:', jalwaUserId);
           
           // Get the verification record to send with the notification
           const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
-          console.log('Retrieved verification record:', verification);
           
           if (verification) {
-            console.log('Calling notifyNewVerification with verification id:', verification.id);
-            // Send notification to Telegram admins
-            notifyNewVerification(verification);
-            console.log('Notification function called for verification ID:', verification.id);
+            console.log('✅ Retrieved verification record with ID:', verification.id);
+            
+            // Send notification to Telegram admins on a separate thread
+            // to avoid blocking the API response
+            setTimeout(() => {
+              try {
+                console.log('🚀 Sending Telegram notification for verification ID:', verification.id);
+                notifyNewVerification(verification);
+              } catch (notifyError) {
+                console.error('❌ Error in notification thread:', notifyError);
+              }
+            }, 100);
+            
+            console.log('✅ Notification process initiated for verification ID:', verification.id);
           } else {
-            console.error('Could not find verification record for user ID:', jalwaUserId);
+            console.error('❌ Could not find verification record for user ID:', jalwaUserId);
           }
         } catch (error) {
-          console.error('Failed to send Telegram notification. Error details:', error);
+          console.error('❌ Failed to process Telegram notification:', error);
           // Continue with the response even if notification fails
         }
       } else {
-        console.log('Not sending notification, verification result:', { 
+        console.log('ℹ️ Not sending notification - verification status:', { 
           success: result.success, 
           isVerified: result.isVerified, 
           status: result.status 

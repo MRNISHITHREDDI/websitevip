@@ -471,51 +471,105 @@ export function getBot(): TelegramBot | null {
 
 // Send notification to admins about a new verification
 export function notifyNewVerification(verification: any): void {
-  console.log('notifyNewVerification called with verification:', JSON.stringify(verification));
+  console.log('📧 notifyNewVerification called with verification:', JSON.stringify(verification));
   console.log('Current AUTHORIZED_CHAT_IDS:', AUTHORIZED_CHAT_IDS);
   
+  // Ensure bot is initialized
   if (!bot) {
-    console.error('Cannot send notification: Telegram bot is not initialized');
-    console.log('Bot instance:', bot);
-    console.log('TELEGRAM_BOT_TOKEN exists:', !!process.env.TELEGRAM_BOT_TOKEN);
-    return;
+    console.error('❌ Cannot send notification: Telegram bot is not initialized');
+    console.log('Attempting to initialize bot now...');
+    
+    if (token) {
+      try {
+        bot = new TelegramBot(token, { polling: true });
+        console.log('✅ Bot initialized successfully');
+        
+        // Register necessary event handlers
+        bot.on('polling_error', (error) => {
+          console.error('Telegram polling error:', error);
+        });
+        
+        bot.on('error', (error) => {
+          console.error('Telegram general error:', error);
+        });
+      } catch (error) {
+        console.error('❌ Failed to initialize bot for notification:', error);
+        return;
+      }
+    } else {
+      console.error('❌ Cannot initialize bot: TELEGRAM_BOT_TOKEN is missing');
+      return;
+    }
   }
   
+  // Check if we have admin chat IDs
   if (!AUTHORIZED_CHAT_IDS || AUTHORIZED_CHAT_IDS.length === 0) {
-    console.error('Cannot send notification: No authorized chat IDs configured');
+    console.error('❌ Cannot send notification: No authorized chat IDs configured');
     console.log('ADMIN_CHAT_IDS env value:', process.env.ADMIN_CHAT_IDS);
-    return;
+    
+    // Re-parse admin chat IDs from environment
+    if (process.env.ADMIN_CHAT_IDS) {
+      AUTHORIZED_CHAT_IDS = process.env.ADMIN_CHAT_IDS
+        .split(',')
+        .map(id => parseInt(id.trim(), 10))
+        .filter(id => !isNaN(id));
+      
+      console.log('Re-parsed admin chat IDs:', AUTHORIZED_CHAT_IDS);
+      
+      if (AUTHORIZED_CHAT_IDS.length === 0) {
+        console.error('❌ Still no valid admin chat IDs after re-parsing');
+        return;
+      }
+    } else {
+      return;
+    }
   }
   
-  console.log('Sending notification for new verification ID:', verification.id);
+  console.log('🚀 Sending notification for new verification ID:', verification.id);
   console.log('Bot info:', { 
     isPolling: bot.isPolling(), 
     token: process.env.TELEGRAM_BOT_TOKEN ? 'exists' : 'missing',
     adminCount: AUTHORIZED_CHAT_IDS.length
   });
   
-  // Send notification directly to all authorized admins
+  // Prepare message with bold user ID for better visibility
+  const message = `🔔 *New Verification Request*
+
+*User ID:* ${verification.jalwaUserId}
+*Status:* ${verification.status.toUpperCase()}
+*Created:* ${new Date(verification.createdAt).toLocaleString()}
+*ID:* ${verification.id}
+
+▶️ Use /approve ${verification.id} to approve
+❌ Use /reject ${verification.id} to reject`;
+
+  // Send notification directly to all authorized admins with forced retry
   for (const chatId of AUTHORIZED_CHAT_IDS) {
-    try {
-      console.log(`Attempting to send message to admin chat ID: ${chatId}`);
-      const message = `🔔 *New Verification Request*\n\n${formatVerification(verification)}\n\nUse /approve ${verification.id} to approve or /reject ${verification.id} to reject.`;
-      console.log('Message content:', message);
-      
-      bot.sendMessage(
-        chatId,
-        message,
-        { parse_mode: 'Markdown' }
-      ).then(messageInfo => {
-        console.log(`Notification sent successfully to admin ${chatId}`, messageInfo.message_id);
-      }).catch(err => {
-        console.error(`Error in promise when sending to admin ${chatId}:`, err);
-      });
-      
-      console.log(`Notification sending initiated to admin ${chatId}`);
-    } catch (error) {
-      console.error(`Failed to send notification to admin ${chatId}. Error details:`, error);
-    }
+    sendMessageWithRetry(chatId, message, 3);
   }
   
-  console.log('Notification process completed for verification ID:', verification.id);
+  console.log('✅ Notification process initiated for verification ID:', verification.id);
+}
+
+// Helper function to send messages with retry
+function sendMessageWithRetry(chatId: number, message: string, retries: number): void {
+  if (!bot || retries <= 0) return;
+  
+  console.log(`📤 Attempting to send notification to admin ${chatId} (retries left: ${retries})`);
+  
+  bot.sendMessage(
+    chatId,
+    message,
+    { parse_mode: 'Markdown' }
+  ).then(messageInfo => {
+    console.log(`✅ Notification sent successfully to admin ${chatId}`, messageInfo.message_id);
+  }).catch(err => {
+    console.error(`❌ Error sending to admin ${chatId}:`, err);
+    
+    // Wait 1 second before retrying
+    setTimeout(() => {
+      console.log(`🔄 Retrying notification to admin ${chatId}...`);
+      sendMessageWithRetry(chatId, message, retries - 1);
+    }, 1000);
+  });
 }
