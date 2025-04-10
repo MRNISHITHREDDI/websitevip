@@ -115,7 +115,9 @@ export function initBot(): TelegramBot | null {
           // Update the message to show it's been processed or send a new one if editing fails
           const emoji = action === 'approve' ? '✅' : '❌';
           const statusText = action === 'approve' ? 'APPROVED' : 'REJECTED';
-          const responseText = `🔔 *VERIFICATION #${verificationId} ${statusText}* ${emoji}\n\nUser: ${result.jalwaUserId}\nTime: ${new Date().toLocaleString()}`;
+          // Escape any special Markdown characters in the jalwaUserId
+          const safeUserId = result.jalwaUserId.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+          const responseText = `🔔 VERIFICATION #${verificationId} ${statusText} ${emoji}\n\nUser: ${safeUserId}\nTime: ${new Date().toLocaleString()}`;
           
           try {
             // Try to edit the message first
@@ -300,14 +302,17 @@ export async function notifyNewVerification(verification: any): Promise<void> {
   const isDev = !baseUrl && process.env.NODE_ENV !== 'production';
   
   // Format message - same for both development and production
-  const message = `🚨 *NEW VERIFICATION REQUEST* 🚨
-    
+  // Escape any special Markdown characters in the jalwaUserId
+  const safeUserId = verification.jalwaUserId.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+  
+  const message = `🚨 NEW VERIFICATION REQUEST 🚨
+
 ID: ${verification.id}
-User: ${verification.jalwaUserId}
+User: ${safeUserId}
 Status: ${verification.status}
 Time: ${new Date().toLocaleString()}
 
-*Instructions:*
+Instructions:
 - Review the user ID
 - Use the approve or reject buttons below`;
 
