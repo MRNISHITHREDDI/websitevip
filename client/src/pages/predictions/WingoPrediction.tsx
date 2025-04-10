@@ -490,6 +490,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
         onContinue={handleVerificationComplete}
+        onShowLockedPopup={() => {/* Not implemented yet */}}
         gameType="wingo"
         timeOption={timeOption}
       />

@@ -490,17 +490,18 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         if (currentPrediction) {
           const latestResult = results[0];
           
-          // Update previous predictions by checking if the current prediction needs to be updated
+          // Enhanced approach to update predictions and results properly for TRX Hash
           setPreviousPredictions(prev => {
+            // Create a new array to avoid mutation issues
             const updatedPredictions = [...prev];
             
-            // First, check if we have a prediction for the latest result period
+            // STEP 1: Update any existing prediction that matches the latest result's period number
             const latestResultIndex = updatedPredictions.findIndex(
               p => p.periodNumber === latestResult.periodNumber
             );
             
             if (latestResultIndex !== -1) {
-              // Update existing prediction with actual result
+              // Found a prediction for this period, update with actual result
               const predBigSmall = updatedPredictions[latestResultIndex].bigOrSmall;
               const resultNumber = parseInt(latestResult.result.toString());
               const actualBigSmall = resultNumber >= 5 ? 'BIG' as const : 'SMALL' as const;
@@ -509,25 +510,57 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                 actualResult: resultNumber,
                 status: predBigSmall === actualBigSmall ? 'WIN' as const : 'LOSS' as const
               };
+              
+              // Log successful update of result
+              console.log(`TRX: Updated prediction for period ${latestResult.periodNumber} with result ${resultNumber}`);
+            } else {
+              // We don't have a prediction for this result period, but we should still record it
+              // This ensures we don't miss any results
+              console.log(`TRX: No existing prediction found for period ${latestResult.periodNumber}, recording result only`);
+              const resultNumber = parseInt(latestResult.result.toString());
+              
+              // Only add past results that aren't too old (within last 10 periods)
+              if (updatedPredictions.length < 10 || 
+                  parseInt(latestResult.periodNumber) > parseInt(updatedPredictions[updatedPredictions.length-1].periodNumber)) {
+                updatedPredictions.push({
+                  id: `past-trx-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+                  periodNumber: latestResult.periodNumber,
+                  prediction: -1, // Unknown prediction
+                  color: "",
+                  bigOrSmall: resultNumber >= 5 ? 'BIG' as const : 'SMALL' as const,
+                  oddOrEven: resultNumber % 2 === 0 ? 'EVEN' as const : 'ODD' as const,
+                  timestamp: new Date().toISOString(),
+                  timeRemaining: 0,
+                  actualResult: resultNumber,
+                  status: null // Can't determine win/loss as we didn't predict
+                });
+              }
             }
             
-            // Only add current prediction if it's not already in the list
+            // STEP 2: Add the current prediction if it's not already in the list
+            // This includes checking by period number to avoid duplicates
             const currentPredictionExists = updatedPredictions.some(
               p => p.periodNumber === currentPrediction.periodNumber
             );
             
-            if (!currentPredictionExists && currentPrediction.periodNumber !== latestResult.periodNumber) {
-              // Add the current prediction to the list
+            if (!currentPredictionExists) {
+              console.log(`TRX: Adding new prediction for period ${currentPrediction.periodNumber}`);
+              // Add the current prediction to the beginning of the list (newest first)
               updatedPredictions.unshift({
                 ...currentPrediction,
                 actualResult: null,
                 status: null
               });
-              
-              // Keep only the last 20 predictions
-              if (updatedPredictions.length > 20) {
-                updatedPredictions.pop();
-              }
+            }
+            
+            // STEP 3: Sort predictions by period number (descending) to ensure newest first
+            updatedPredictions.sort((a, b) => 
+              parseInt(b.periodNumber) - parseInt(a.periodNumber)
+            );
+            
+            // STEP 4: Keep only the last 20 predictions to avoid the list getting too long
+            if (updatedPredictions.length > 20) {
+              return updatedPredictions.slice(0, 20);
             }
             
             return updatedPredictions;
@@ -635,6 +668,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
         onContinue={handleVerificationComplete}
+        onShowLockedPopup={() => {/* Not implemented yet */}}
         gameType="trx"
         timeOption={timeOption}
       />
