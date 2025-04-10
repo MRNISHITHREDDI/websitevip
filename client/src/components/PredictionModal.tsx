@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
-import LicenseModal from './LicenseModal';
+import AccountVerificationModal from './AccountVerificationModal';
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -39,7 +39,7 @@ const modalAnimation = {
 };
 
 const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, title, gameType }) => {
-  const [showLicenseModal, setShowLicenseModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   
   // Prevent clicks inside the modal from closing it
@@ -78,13 +78,11 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
     // Close this modal first for smoother transition
     onClose();
     
-    // Check if user has a valid license (for this game/time combo)
-    const storedLicenses = localStorage.getItem('validLicenses');
-    const licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
-    const hasValidLicense = licenses[`${gameType}-${selectedOption}`];
+    // Check if user has a verified account
+    const isAccountVerified = localStorage.getItem('jalwaAccountVerified') === 'true';
     
-    if (hasValidLicense) {
-      // User already has a valid license, redirect directly to prediction page
+    if (isAccountVerified) {
+      // User already has a verified account, redirect directly to prediction page
       if (gameType === 'wingo') {
         window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
       } else {
@@ -93,14 +91,23 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
-    // If user doesn't have a valid license, show license verification modal after a short delay
+    // If user doesn't have a verified account, show account verification modal after a short delay
     setTimeout(() => {
-      setShowLicenseModal(true);
+      setShowVerificationModal(true);
     }, 50);
   };
   
+  const handleVerificationComplete = () => {
+    // When verification is complete, redirect to prediction page
+    if (gameType === 'wingo') {
+      window.location.href = `/predictions/wingo/${encodeURIComponent(selectedOption)}`;
+    } else {
+      window.location.href = `/predictions/trx/${encodeURIComponent(selectedOption)}`;
+    }
+  };
+  
   const handleModalClose = () => {
-    setShowLicenseModal(false);
+    setShowVerificationModal(false);
   };
 
   return (
@@ -178,10 +185,11 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
         )}
       </AnimatePresence>
       
-      {/* License verification modal */}
-      <LicenseModal 
-        isOpen={showLicenseModal} 
+      {/* Account verification modal */}
+      <AccountVerificationModal 
+        isOpen={showVerificationModal} 
         onClose={handleModalClose}
+        onContinue={handleVerificationComplete}
         gameType={gameType}
         timeOption={selectedOption}
       />

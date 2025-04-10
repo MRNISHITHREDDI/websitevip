@@ -6,6 +6,7 @@ import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigO
 import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
 import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
+import AccountVerificationModal from '@/components/AccountVerificationModal';
 
 // Real API endpoints for TRX predictions - using the exact URLs provided by the user
 const PERIOD_API_URL = "https://imgametransit.com/api/webapi/GetGameIssue";
@@ -459,26 +460,19 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
   const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
   
-  // License verification check
+  // Account verification modal state
+  const [showVerificationModal, setShowVerificationModal] = useState<boolean>(false);
+  
+  // Account verification check
   useEffect(() => {
-    // Check if user has a valid license for this game type and time option
-    const storedLicenses = localStorage.getItem('validLicenses');
-    const licenses = storedLicenses ? JSON.parse(storedLicenses) : {};
-    const hasValidLicense = licenses[`trx-${timeOption}`];
+    // Check if user has a verified account
+    const isAccountVerified = localStorage.getItem('jalwaAccountVerified') === 'true';
     
-    if (!hasValidLicense) {
-      // No valid license, redirect to home
-      toast({
-        title: "License Required",
-        description: "You need a valid license to access this prediction.",
-        variant: "destructive",
-      });
-      
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
+    if (!isAccountVerified) {
+      // No verified account, show the verification modal
+      setShowVerificationModal(true);
     }
-  }, [timeOption, toast]);
+  }, [timeOption]);
   const [predictionHash, setPredictionHash] = useState<string>('');
   const [verificationComplete, setVerificationComplete] = useState<boolean>(false);
   
@@ -629,8 +623,22 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
     show: { opacity: 1, y: 0 }
   };
   
+  // Handle account verification completion
+  const handleVerificationComplete = () => {
+    setShowVerificationModal(false);
+  };
+  
   return (
     <React.Fragment>
+      {/* Account verification modal */}
+      <AccountVerificationModal 
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onContinue={handleVerificationComplete}
+        gameType="trx"
+        timeOption={timeOption}
+      />
+    
       <SEO 
         title={`TRX Hash ${timeOption} AI Predictions | JALWA VIP TRX Win Strategy`}
         description={`Exclusive TRX Hash ${timeOption} AI blockchain predictions with 99% accuracy. Get real-time TRX win signals for maximum earning.`}
