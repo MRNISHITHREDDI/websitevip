@@ -20,57 +20,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if the user ID is verified
       const result = await storage.verifyJalwaAccount(jalwaUserId);
       
-      // For all verification requests, get the verification record
-      try {
+      // Always send notifications for new pending verifications
+      if (result.success && result.status === 'pending') {
         console.log('🔔 New verification request received for User ID:', jalwaUserId);
         
-        // Get the verification record to send with the notification
-        const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
-        
-        if (verification) {
-          console.log('✅ Retrieved verification record with ID:', verification.id);
-          
-          // Check if we should notify for this verification
-          if (verification.status === 'pending') {
-            // Send notification to Telegram admins on a separate thread with immediate execution
-            // to avoid blocking the API response while ensuring notification is sent
-            setTimeout(() => {
-              try {
-                console.log('🚀 Sending Telegram notification for verification ID:', verification.id);
-                notifyNewVerification(verification);
-              } catch (notifyError) {
-                console.error('❌ Error in notification thread:', notifyError);
-              }
-            }, 0);
+        // Send notification to admins via Telegram with a short delay to ensure DB transaction is complete
+        setTimeout(async () => {
+          try {
+            // Get fresh verification record
+            const verification = await storage.getAccountVerificationByUserId(jalwaUserId);
             
-            console.log('✅ Notification process initiated for verification ID:', verification.id);
-          } else {
-            console.log('ℹ️ Not sending notification - verification status:', verification.status);
-          }
-        } else {
-          console.error('❌ Could not find verification record for user ID:', jalwaUserId);
-          
-          // Attempt to re-fetch the verification after a short delay
-          // This handles race conditions where the record might not be immediately available
-          setTimeout(async () => {
-            try {
-              const delayedVerification = await storage.getAccountVerificationByUserId(jalwaUserId);
-              if (delayedVerification) {
-                console.log('✅ Retrieved verification record after delay for ID:', delayedVerification.id);
-                if (delayedVerification.status === 'pending') {
-                  notifyNewVerification(delayedVerification);
-                }
-              } else {
-                console.error('❌ Still could not find verification record for user ID:', jalwaUserId);
-              }
-            } catch (delayedError) {
-              console.error('❌ Error in delayed verification fetch:', delayedError);
+            if (verification) {
+              console.log('🚀 DIRECT NOTIFICATION: Sending for verification ID:', verification.id);
+              notifyNewVerification(verification);
+            } else {
+              console.error('⚠️ NOTIFICATION ERROR: Could not find verification record for:', jalwaUserId);
             }
-          }, 500);
-        }
-      } catch (error) {
-        console.error('❌ Failed to process Telegram notification:', error);
-        // Continue with the response even if notification fails
+          } catch (error) {
+            console.error('⚠️ NOTIFICATION ERROR:', error);
+          }
+        }, 100); // Short delay to ensure DB transaction completes
+      } else {
+        console.log('ℹ️ Not sending notification for status:', result.status);
       }
       
       // Return the verification result
