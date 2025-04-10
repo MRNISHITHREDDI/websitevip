@@ -18,16 +18,25 @@ const LockedAccessPopup: React.FC<LockedAccessPopupProps> = ({ isOpen, onClose }
     }
   }, [isOpen]);
   
-  const handleUnderstandClick = () => {
-    // Provide visual feedback and prevent double-click issues
+  const handleUnderstandClick = (e: React.MouseEvent) => {
+    // Prevent any default behavior and propagation
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Prevent multiple clicks
+    if (isClicked) return;
+    
+    // Provide visual feedback
     setIsClicked(true);
     
     // Close this popup first
     onClose();
     
-    // Show the account verification modal after a longer delay for smoother transition
+    // Show the account verification modal after a delay for smoother transition
     setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('showAccountVerificationModal'));
+      // Dispatch event with a MouseEvent object to prevent issues
+      const event = new CustomEvent('showAccountVerificationModal');
+      window.dispatchEvent(event);
     }, 400);
   };
   
