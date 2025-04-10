@@ -7,13 +7,11 @@ import * as https from 'https';
 dotenv.config();
 
 // Initialize the bot with the token from environment variables
-const token = process.env.TELEGRAM_BOT_TOKEN;
+let token: string | undefined = process.env.TELEGRAM_BOT_TOKEN;
 let bot: TelegramBot | null = null;
 
 // List of authorized admin chat IDs (for security)
-let AUTHORIZED_CHAT_IDS = process.env.ADMIN_CHAT_IDS 
-  ? process.env.ADMIN_CHAT_IDS.split(',').map(id => parseInt(id.trim(), 10))
-  : [];
+let AUTHORIZED_CHAT_IDS: number[] = [];
 
 // Check if a chat is authorized
 function isAuthorized(chatId: number): boolean {
@@ -62,6 +60,17 @@ ${verification.notes ? `*Notes:* ${verification.notes}` : ''}
 
 // Initialize the bot with commands
 export function initBot(): void {
+  // Reload token and chat IDs from environment variables (important for deployment)
+  token = process.env.TELEGRAM_BOT_TOKEN;
+  
+  // Reload admin chat IDs from environment
+  if (process.env.ADMIN_CHAT_IDS) {
+    AUTHORIZED_CHAT_IDS = process.env.ADMIN_CHAT_IDS
+      .split(',')
+      .map(id => parseInt(id.trim(), 10))
+      .filter(id => !isNaN(id));
+  }
+  
   // Don't initialize if the token is missing
   if (!token) {
     console.warn('TELEGRAM_BOT_TOKEN is not set. Telegram bot will not be started.');
@@ -92,14 +101,18 @@ export function initBot(): void {
     console.log('Bot is polling:', bot.isPolling());
     
     // Send test messages to admins
-    for (const chatId of AUTHORIZED_CHAT_IDS) {
-      try {
-        console.log(`Sending test message to admin ${chatId}...`);
-        safeSendMessage(chatId, '🤖 Jalwa Admin Bot started successfully!');
-        console.log(`Test message initiated for admin ${chatId}`);
-      } catch (error) {
-        console.error(`Error sending test message to admin ${chatId}:`, error);
+    if (AUTHORIZED_CHAT_IDS.length > 0) {
+      for (const chatId of AUTHORIZED_CHAT_IDS) {
+        try {
+          console.log(`Sending test message to admin ${chatId}...`);
+          safeSendMessage(chatId, '🤖 Jalwa Admin Bot started successfully!');
+          console.log(`Test message initiated for admin ${chatId}`);
+        } catch (error) {
+          console.error(`Error sending test message to admin ${chatId}:`, error);
+        }
       }
+    } else {
+      console.warn('No admin chat IDs configured. Test messages will not be sent.');
     }
     
     console.log('Telegram bot started!');
