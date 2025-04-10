@@ -1,7 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { initBot } from "./telegram-bot-new";
 
 const app = express();
 app.use(express.json());
@@ -67,11 +66,6 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
-    
-    // Initialize the Telegram bot (async)
-    initBot().catch(error => {
-      console.error('❌ Error initializing Telegram bot:', error);
-    });
     
     // Set up graceful shutdown
     process.on('SIGINT', () => {
