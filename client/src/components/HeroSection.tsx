@@ -5,18 +5,18 @@ import { useLocation } from "wouter";
 
 const HeroSection = () => {
   const [, setLocation] = useLocation();
-  
+
   // Add scroll event listener to hide/show the scroll indicator
   useEffect(() => {
     const scrollIndicator = document.getElementById("scroll-indicator");
-    
+
     const handleScroll = () => {
       // Get the scroll position
       const scrollPosition = window.scrollY;
-      
+
       // Get the height of the hero section (approximately)
       const heroSectionHeight = window.innerHeight * 0.5; // Hide after scrolling 50% of view height
-      
+
       // Hide the scroll indicator when scrolled past the hero section
       if (scrollIndicator) {
         if (scrollPosition > heroSectionHeight) {
@@ -28,13 +28,13 @@ const HeroSection = () => {
         }
       }
     };
-    
+
     // Execute once on load
     handleScroll();
-    
+
     // Add the scroll event listener
     window.addEventListener("scroll", handleScroll);
-    
+
     // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -44,10 +44,10 @@ const HeroSection = () => {
     <section className="relative pt-20 mt-14 lg:pt-24 lg:mt-14 pb-16 lg:pb-24 overflow-hidden">
       {/* Video background with color overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <video 
-          autoPlay 
-          loop 
-          muted 
+        <video
+          autoPlay
+          loop
+          muted
           playsInline
           className="absolute w-full h-full object-cover"
         >
@@ -80,7 +80,7 @@ const HeroSection = () => {
             {/* VIP PREDICTION heading - fixed for mobile display */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-poppins mb-6 tracking-wide">
               <span className="text-white inline-block">VIP</span>{" "}
-              <motion.span 
+              <motion.span
                 className="text-[#00ECBE] inline-block"
                 initial={{ textShadow: "0 0 0px rgba(0, 236, 190, 0)" }}
                 animate={{ textShadow: "0 0 20px rgba(0, 236, 190, 0.7)" }}
@@ -102,7 +102,7 @@ const HeroSection = () => {
             {/* Three buttons: Register, Start Playing, How It Works */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5">
               <motion.a
-                href="https://www.jalwa.live/#/register?invitationCode=78648100073"
+                href="https://www.jalwa.vip/#/register?invitationCode=327361287589"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-[#7B42F6] to-[#B01EFF] text-white font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
@@ -117,9 +117,9 @@ const HeroSection = () => {
               <motion.button
                 onClick={() => {
                   // Scroll to the prediction section (Section 2)
-                  document.getElementById('prediction')?.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
+                  document.getElementById("prediction")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
                   });
                 }}
                 className="bg-[#00ECBE] text-[#05012B] font-semibold px-8 py-3 rounded-full transition duration-300 flex items-center justify-center gap-2"
@@ -134,12 +134,13 @@ const HeroSection = () => {
               <motion.button
                 onClick={() => {
                   // Find the HowItWorksSection and scroll to it (Section 4)
-                  const howItWorksSection = document.getElementById('how-it-works');
-                  
+                  const howItWorksSection =
+                    document.getElementById("how-it-works");
+
                   if (howItWorksSection) {
-                    howItWorksSection.scrollIntoView({ 
-                      behavior: 'smooth',
-                      block: 'start'
+                    howItWorksSection.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
                     });
                   }
                 }}
@@ -155,15 +156,15 @@ const HeroSection = () => {
             </div>
 
             {/* Removed money animation elements as requested */}
-            
+
             {/* Scroll indicator directly below buttons with 10px gap */}
             <motion.div
               className="mt-12 inline-block text-[#00ECBE] text-center transition-opacity duration-500"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               id="scroll-indicator"
-              whileHover={{ 
-                scale: 1.05
+              whileHover={{
+                scale: 1.05,
               }}
             >
               <div className="flex items-center justify-center gap-3">
