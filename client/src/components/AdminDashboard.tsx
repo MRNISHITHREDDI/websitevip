@@ -204,10 +204,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="rejected">Rejected</TabsTrigger>
           </TabsList>
           
-          <div className="flex items-center gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+          <div className="hidden sm:flex items-center gap-2">
             <Label htmlFor="status-filter">Filter:</Label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger id="status-filter" className="w-full sm:w-[180px]">
+              <SelectTrigger id="status-filter" className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
