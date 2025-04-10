@@ -187,14 +187,14 @@ function setupCommandHandlers(): void {
       const verifications = await storage.getAccountVerificationsByStatus('pending');
       
       if (verifications.length === 0) {
-        bot.sendMessage(chatId, '✅ No pending verifications.');
+        safeSendMessage(chatId, '✅ No pending verifications.');
         return;
       }
       
       const message = `⏳ *Pending Verifications (${verifications.length})*\n\n` +
         verifications.map(v => `ID ${v.id}: ${v.jalwaUserId}`).join('\n');
       
-      bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+      safeSendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
@@ -211,14 +211,14 @@ function setupCommandHandlers(): void {
       const verifications = await storage.getAccountVerificationsByStatus('approved');
       
       if (verifications.length === 0) {
-        bot.sendMessage(chatId, 'No approved verifications.');
+        safeSendMessage(chatId, 'No approved verifications.');
         return;
       }
       
       const message = `✅ *Approved Verifications (${verifications.length})*\n\n` +
         verifications.map(v => `ID ${v.id}: ${v.jalwaUserId}`).join('\n');
       
-      bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+      safeSendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
@@ -235,14 +235,14 @@ function setupCommandHandlers(): void {
       const verifications = await storage.getAccountVerificationsByStatus('rejected');
       
       if (verifications.length === 0) {
-        bot.sendMessage(chatId, 'No rejected verifications.');
+        safeSendMessage(chatId, 'No rejected verifications.');
         return;
       }
       
       const message = `❌ *Rejected Verifications (${verifications.length})*\n\n` +
         verifications.map(v => `ID ${v.id}: ${v.jalwaUserId}`).join('\n');
       
-      bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+      safeSendMessage(chatId, message, { parse_mode: 'Markdown' });
     } catch (error) {
       handleError(chatId, error);
     }
@@ -256,7 +256,7 @@ function setupCommandHandlers(): void {
     if (!bot) return;
     
     if (!match || !match[1]) {
-      bot.sendMessage(chatId, 'Please provide a verification ID: /approve [id]');
+      safeSendMessage(chatId, 'Please provide a verification ID: /approve [id]');
       return;
     }
     
@@ -267,7 +267,7 @@ function setupCommandHandlers(): void {
       const verification = await storage.getAccountVerification(id);
       
       if (!verification) {
-        bot.sendMessage(chatId, `❌ Verification with ID ${id} not found.`);
+        safeSendMessage(chatId, `❌ Verification with ID ${id} not found.`);
         return;
       }
       
@@ -279,11 +279,11 @@ function setupCommandHandlers(): void {
       );
       
       if (!updated) {
-        bot.sendMessage(chatId, `❌ Failed to approve verification with ID ${id}.`);
+        safeSendMessage(chatId, `❌ Failed to approve verification with ID ${id}.`);
         return;
       }
       
-      bot.sendMessage(
+      safeSendMessage(
         chatId,
         `✅ Successfully approved User ID: ${updated.jalwaUserId}`,
         { parse_mode: 'Markdown' }
@@ -301,7 +301,7 @@ function setupCommandHandlers(): void {
     if (!bot) return;
     
     if (!match || !match[1]) {
-      bot.sendMessage(chatId, 'Please provide a verification ID: /reject [id] [reason]');
+      safeSendMessage(chatId, 'Please provide a verification ID: /reject [id] [reason]');
       return;
     }
     
@@ -313,7 +313,7 @@ function setupCommandHandlers(): void {
       const verification = await storage.getAccountVerification(id);
       
       if (!verification) {
-        bot.sendMessage(chatId, `❌ Verification with ID ${id} not found.`);
+        safeSendMessage(chatId, `❌ Verification with ID ${id} not found.`);
         return;
       }
       
@@ -325,11 +325,11 @@ function setupCommandHandlers(): void {
       );
       
       if (!updated) {
-        bot.sendMessage(chatId, `❌ Failed to reject verification with ID ${id}.`);
+        safeSendMessage(chatId, `❌ Failed to reject verification with ID ${id}.`);
         return;
       }
       
-      bot.sendMessage(
+      safeSendMessage(
         chatId,
         `❌ Rejected User ID: ${updated.jalwaUserId}\nReason: ${reason}`,
         { parse_mode: 'Markdown' }
@@ -347,7 +347,7 @@ function setupCommandHandlers(): void {
     if (!bot) return;
     
     if (!match || !match[1]) {
-      bot.sendMessage(chatId, 'Please provide a verification ID: /info [id]');
+      safeSendMessage(chatId, 'Please provide a verification ID: /info [id]');
       return;
     }
     
@@ -357,11 +357,11 @@ function setupCommandHandlers(): void {
       const verification = await storage.getAccountVerification(id);
       
       if (!verification) {
-        bot.sendMessage(chatId, `❌ Verification with ID ${id} not found.`);
+        safeSendMessage(chatId, `❌ Verification with ID ${id} not found.`);
         return;
       }
       
-      bot.sendMessage(
+      safeSendMessage(
         chatId,
         `ℹ️ *Verification Details*\n\n${formatVerification(verification)}`,
         { parse_mode: 'Markdown' }
@@ -383,7 +383,7 @@ function setupCommandHandlers(): void {
       const approved = await storage.getAccountVerificationsByStatus('approved');
       const rejected = await storage.getAccountVerificationsByStatus('rejected');
       
-      bot?.sendMessage(
+      safeSendMessage(
         chatId,
         `📊 *Verification Statistics*\n\n` +
         `Total: ${all.length}\n` +
@@ -404,7 +404,7 @@ function setupCommandHandlers(): void {
     if (!isAuthorized(chatId)) return;
     
     if (!match || !match[1]) {
-      bot?.sendMessage(chatId, 'Please provide a chat ID: /addadmin [chat_id]');
+      safeSendMessage(chatId, 'Please provide a chat ID: /addadmin [chat_id]');
       return;
     }
     
@@ -413,7 +413,7 @@ function setupCommandHandlers(): void {
       
       // Check if the chat ID is already an admin
       if (AUTHORIZED_CHAT_IDS.includes(newAdminChatId)) {
-        bot?.sendMessage(chatId, `❌ Chat ID ${newAdminChatId} is already an admin.`);
+        safeSendMessage(chatId, `❌ Chat ID ${newAdminChatId} is already an admin.`);
         return;
       }
       
@@ -421,14 +421,14 @@ function setupCommandHandlers(): void {
       AUTHORIZED_CHAT_IDS.push(newAdminChatId);
       
       // Notify the current admin
-      bot?.sendMessage(
+      safeSendMessage(
         chatId,
         `✅ Successfully added Chat ID ${newAdminChatId} as an admin.`,
         { parse_mode: 'Markdown' }
       );
       
       // Notify the new admin
-      bot?.sendMessage(
+      safeSendMessage(
         newAdminChatId,
         `🔔 *Welcome Admin!*\n\nYou have been added as an admin by Chat ID ${chatId}. Use /help to see available commands.`,
         { parse_mode: 'Markdown' }
