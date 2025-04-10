@@ -54,7 +54,7 @@ export class MemStorage implements IStorage {
   };
   
   // Approved Jalwa user IDs (these would be manually approved via Telegram bot)
-  private approvedUserIds: string[] = ['12345', '56789', 'admin123'];
+  private approvedUserIds: string[] = ['12345', '56789', 'admin123', 'approved_test_user'];
 
   constructor() {
     this.users = new Map();

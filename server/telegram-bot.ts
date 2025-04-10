@@ -527,9 +527,9 @@ export function notifyNewVerification(verification: any): void {
     return;
   }
   
-  console.log('🚀 Sending direct notification for verification ID:', verification.id);
+  console.log('🚀 Sending notification for verification ID:', verification.id);
   console.log('Bot info:', { 
-    isPolling: bot.isPolling(), 
+    isPolling: bot ? (typeof bot.isPolling === 'function' ? bot.isPolling() : 'unknown') : 'bot is null', 
     token: process.env.TELEGRAM_BOT_TOKEN ? 'exists' : 'missing',
     adminChatIds: AUTHORIZED_CHAT_IDS.join(', ')
   });
@@ -545,21 +545,10 @@ export function notifyNewVerification(verification: any): void {
 ▶️ Use /approve ${verification.id} to approve
 ❌ Use /reject ${verification.id} to reject`;
 
-  // Send direct message to all admins with forced retry
+  // Send message to all admins (only use a single notification approach)
   for (const chatId of AUTHORIZED_CHAT_IDS) {
-    // Use direct bot.sendMessage for testing instead of the wrapper
-    console.log(`Attempting direct message to chat ID: ${chatId}`);
-    bot.sendMessage(
-      chatId,
-      message,
-      { parse_mode: 'Markdown' }
-    ).then(() => {
-      console.log(`✅ Direct notification sent successfully to admin ${chatId}`);
-    }).catch(err => {
-      console.error(`❌ Direct notification error for admin ${chatId}:`, err);
-    });
-    
-    // Also try the retry mechanism
+    console.log(`Sending notification to chat ID: ${chatId}`);
+    // Use only the retry mechanism which is more reliable
     sendMessageWithRetry(chatId, message, 3);
   }
   
