@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
+import './admin-dashboard.css';
 
 // UI Components
 import {
@@ -258,38 +259,40 @@ const AdminDashboard = () => {
         {verifications.map((verification) => (
           <div 
             key={verification.id} 
-            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg p-4 text-white"
+            className="border border-[hsl(165,100%,46%)] border-opacity-20 rounded-lg p-0 text-white"
           >
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <span className="text-sm text-[hsl(165,100%,46%)]">ID: </span>
-                <span className="font-medium">{verification.id}</span>
+            <div className="p-2 admin-card-content">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <span className="text-sm text-[hsl(165,100%,46%)]">ID: </span>
+                  <span className="font-medium">{verification.id}</span>
+                </div>
+                <StatusBadge status={verification.status} />
               </div>
-              <StatusBadge status={verification.status} />
+              
+              <div className="mb-2">
+                <span className="text-sm text-[hsl(165,100%,46%)]">User ID: </span>
+                <span className="font-medium">{verification.jalwaUserId}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                <div>
+                  <span className="text-[hsl(165,100%,46%)]">Created: </span>
+                  <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.createdAt)}</span>
+                </div>
+                <div>
+                  <span className="text-[hsl(165,100%,46%)]">Updated: </span>
+                  <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.updatedAt)}</span>
+                </div>
+              </div>
             </div>
             
-            <div className="mb-2">
-              <span className="text-sm text-[hsl(165,100%,46%)]">User ID: </span>
-              <span className="font-medium">{verification.jalwaUserId}</span>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-              <div>
-                <span className="text-[hsl(165,100%,46%)]">Created: </span>
-                <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.createdAt)}</span>
-              </div>
-              <div>
-                <span className="text-[hsl(165,100%,46%)]">Updated: </span>
-                <span className="text-[hsl(240,20%,80%)]">{formatDate(verification.updatedAt)}</span>
-              </div>
-            </div>
-            
-            <div className="flex justify-end pt-2 border-t border-[hsl(165,100%,46%)] border-opacity-20">
+            <div className="flex justify-end p-1 border-t border-[hsl(165,100%,46%)] border-opacity-20">
               {verification.status === 'rejected' ? (
                 <Button
                   variant="default"
                   size="sm"
-                  className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black w-full"
+                  className="bg-[hsl(165,100%,46%)] hover:bg-[hsl(165,100%,40%)] text-black w-full admin-action-button"
                   onClick={() => handleApprove(verification.id)}
                   disabled={isLoading}
                 >
@@ -299,7 +302,7 @@ const AdminDashboard = () => {
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="w-full"
+                  className="w-full admin-action-button"
                   onClick={() => handleRemove(verification.id)}
                   disabled={isLoading}
                 >
@@ -315,29 +318,29 @@ const AdminDashboard = () => {
     // Desktop table view
     const DesktopTable = () => (
       <div className="rounded-md border overflow-x-auto hidden lg:block">
-        <Table>
+        <Table className="admin-dashboard-table">
           <TableCaption>List of account verification requests.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[100px] py-2">ID</TableHead>
+              <TableHead className="py-2">User ID</TableHead>
+              <TableHead className="py-2">Status</TableHead>
+              <TableHead className="py-2">Created</TableHead>
+              <TableHead className="py-2">Updated</TableHead>
+              <TableHead className="text-right py-2">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {verifications.map((verification) => (
               <TableRow key={verification.id}>
-                <TableCell className="font-medium">{verification.id}</TableCell>
-                <TableCell>{verification.jalwaUserId}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium py-2">{verification.id}</TableCell>
+                <TableCell className="py-2">{verification.jalwaUserId}</TableCell>
+                <TableCell className="py-2">
                   <StatusBadge status={verification.status} />
                 </TableCell>
-                <TableCell>{formatDate(verification.createdAt)}</TableCell>
-                <TableCell>{formatDate(verification.updatedAt)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="py-2">{formatDate(verification.createdAt)}</TableCell>
+                <TableCell className="py-2">{formatDate(verification.updatedAt)}</TableCell>
+                <TableCell className="text-right py-2">
                   {verification.status === 'rejected' ? (
                     <Button
                       variant="default"
