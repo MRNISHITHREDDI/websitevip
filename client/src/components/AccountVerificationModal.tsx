@@ -50,7 +50,23 @@ const AccountVerificationModal = ({
   gameType, 
   timeOption 
 }: AccountVerificationModalProps) => {
-  const [isVerified, setIsVerified] = useState(false);
+  // Check if user is already verified from localStorage
+  const [isVerified, setIsVerified] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const verified = localStorage.getItem('jalwaAccountVerified') === 'true';
+      return verified;
+    }
+    return false;
+  });
+  
+  const [registrationStarted, setRegistrationStarted] = useState(false);
+  const [userId, setUserId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('jalwaUserID') || "";
+    }
+    return "";
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   // Prevent clicks inside the modal from closing it
@@ -62,21 +78,45 @@ const AccountVerificationModal = ({
     // Open the registration link in a new tab
     window.open('https://www.jalwa.vip/#/register?invitationCode=327361287589', '_blank');
     
+    // Mark registration as started
+    setRegistrationStarted(true);
+    
     toast({
       title: "🚀 Registration Started",
-      description: "Please complete the registration process to access VIP predictions.",
+      description: "Complete the registration on Jalwa site, then return here and enter your User ID.",
       duration: 5000,
     });
+  };
+  
+  const handleVerifyUserID = () => {
+    if (!userId || userId.trim() === "") {
+      toast({
+        title: "❌ Verification Failed",
+        description: "Please enter your Jalwa User ID to continue.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
     
-    // Simulate verification
+    // Show loading state
+    setIsSubmitting(true);
+    
+    // Simulate verification process (in a real app, we might do additional validation)
     setTimeout(() => {
       setIsVerified(true);
+      setIsSubmitting(false);
+      
+      // Store the verified status and ID in localStorage
+      localStorage.setItem('jalwaAccountVerified', 'true');
+      localStorage.setItem('jalwaUserID', userId);
+      
       toast({
         title: "✅ Verification Complete",
         description: "Your account has been verified. You can now access premium predictions!",
         duration: 5000,
       });
-    }, 3000);
+    }, 1500);
   };
   
   const handleContinueClick = () => {
@@ -172,14 +212,67 @@ const AccountVerificationModal = ({
                   </p>
                 </div>
                 
+                {isVerified ? (
+                  <div className="bg-[#081042]/70 p-4 rounded-lg border border-[#00ECBE]/40 mb-3">
+                    <div className="flex items-center justify-center mb-2">
+                      <CheckCircle className="h-5 w-5 mr-2 text-[#00ECBE]" />
+                      <h3 className="text-[#00ECBE] font-semibold text-center">Account Already Verified</h3>
+                    </div>
+                    <p className="text-gray-200 text-sm text-center">
+                      Your Jalwa account (ID: {userId}) is verified. Click "Continue" to access premium predictions.
+                    </p>
+                  </div>
+                ) : registrationStarted && (
+                  <div className="bg-[#081042]/70 p-4 rounded-lg border border-[#00ECBE]/40 mb-3">
+                    <h3 className="text-[#00ECBE] font-semibold mb-2 text-center">Verify Your Jalwa Account</h3>
+                    <p className="text-gray-200 text-sm mb-3">
+                      Enter your Jalwa User ID to verify your account registration:
+                    </p>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={userId}
+                        onChange={(e) => setUserId(e.target.value)}
+                        placeholder="Enter Jalwa User ID"
+                        className="flex-1 bg-[#05012B] border border-[#00ECBE]/30 rounded px-3 py-2 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00ECBE]/50"
+                      />
+                      <Button
+                        onClick={handleVerifyUserID}
+                        disabled={isSubmitting}
+                        className="bg-[#00ECBE] text-[#05012B] font-medium hover:bg-[#00ECBE]/90"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <ArrowRightCircle className="h-4 w-4 mr-2 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : "Verify"}
+                      </Button>
+                    </div>
+                    <p className="text-gray-400 text-xs italic">
+                      You can find your User ID on your Jalwa profile page after logging in.
+                    </p>
+                  </div>
+                )}
+
                 <motion.div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-5 pb-2 mt-3">
-                  <Button
-                    onClick={handleStartClick}
-                    className="w-full sm:w-auto transition-all bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-3 rounded-lg"
-                  >
-                    <Rocket className="h-4 w-4 mr-2" />
-                    Start
-                  </Button>
+                  {!registrationStarted ? (
+                    <Button
+                      onClick={handleStartClick}
+                      className="w-full sm:w-auto transition-all bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium py-3 rounded-lg"
+                    >
+                      <Rocket className="h-4 w-4 mr-2" />
+                      Start
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleStartClick}
+                      className="w-full sm:w-auto transition-all border border-[#00ECBE]/50 bg-transparent hover:bg-[#00ECBE]/10 text-[#00ECBE] py-3 rounded-lg"
+                    >
+                      <Rocket className="h-4 w-4 mr-2" />
+                      Reopen Registration
+                    </Button>
+                  )}
                   
                   <Button
                     onClick={handleContinueClick}
