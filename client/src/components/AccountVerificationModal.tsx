@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Lock, Rocket, HelpCircle, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AccountVerificationModalProps {
   isOpen: boolean;
@@ -66,83 +61,112 @@ const AccountVerificationModal = ({ isOpen, onClose, onContinue, gameType, timeO
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-[#05012B] text-white border-none" aria-describedby="verification-description">
-        <DialogHeader className="p-6 pb-0">
-          <div className="flex items-center justify-center mb-2">
-            <Rocket className="h-6 w-6 mr-2 text-amber-400" />
-            <DialogTitle className="text-2xl font-bold text-center text-white">JALWA VIP PREDICTION</DialogTitle>
-          </div>
-          <Badge variant="outline" className="mx-auto w-auto p-1 px-3 bg-indigo-900/50 text-amber-300 mb-3">
-            🚀 Important Instructions
-          </Badge>
-        </DialogHeader>
-        
-        <div className="p-6 pt-2 space-y-4">
-          <div className="flex items-start space-x-3">
-            <CheckCircle className="h-5 w-5 mt-0.5 text-green-400 flex-shrink-0" />
-            <p id="verification-description" className="text-gray-200 text-sm">
-              Create a new account via the "Start" button for server connection. Our app checks the server to ensure accurate predictions.
-            </p>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <AlertTriangle className="h-5 w-5 mt-0.5 text-amber-400 flex-shrink-0" />
-            <p className="text-gray-200 text-sm">
-              Warning: Accounts not created through our link will give incorrect predictions due to server mismatch.
-            </p>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <AlertTriangle className="h-5 w-5 mt-0.5 text-amber-400 flex-shrink-0" />
-            <p className="text-gray-200 text-sm">
-              Old accounts will also provide incorrect predictions due to server mismatch.
-            </p>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <CheckCircle className="h-5 w-5 mt-0.5 text-green-400 flex-shrink-0" />
-            <p className="text-gray-200 text-sm">
-              For 100% accurate predictions, use the account created via our URL.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3 pb-1">
-            <Button
-              onClick={handleStartClick}
-              className="w-full sm:w-auto transition-all bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-            >
-              Start
-            </Button>
-            
-            <Button
-              onClick={handleContinueClick}
-              className={`w-full sm:w-auto transition-all ${
-                isVerified 
-                  ? "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700" 
-                  : "bg-gray-700 hover:bg-gray-600 opacity-80"
-              } text-white`}
-            >
-              {isVerified ? "Continue" : (
-                <div className="flex items-center">
-                  <Lock className="h-4 w-4 mr-2" />
-                  <span>Continue</span>
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <motion.div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={onClose}
+        >
+          <motion.div
+            className="bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] overflow-hidden"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 20 }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-describedby="verification-description"
+          >
+            <div className="relative">
+              <button 
+                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
+                onClick={onClose}
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="p-6 pb-0">
+                <div className="flex items-center justify-center mb-2">
+                  <Rocket className="h-6 w-6 mr-2 text-[#00ECBE]" />
+                  <h2 className="text-2xl font-bold text-center text-white">JALWA VIP PREDICTION</h2>
                 </div>
-              )}
-            </Button>
-            
-            <Button
-              onClick={handleHelpClick}
-              variant="outline"
-              className="w-full sm:w-auto border-indigo-500 text-indigo-300 hover:text-indigo-200 hover:bg-indigo-950"
-            >
-              <HelpCircle className="h-4 w-4 mr-2" />
-              Help
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+                <Badge variant="outline" className="mx-auto w-auto p-1 px-3 bg-[#081042] text-[#00ECBE] mb-3">
+                  🚀 Important Instructions
+                </Badge>
+              </div>
+              
+              <div className="p-6 pt-2 space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                  <p id="verification-description" className="text-gray-200 text-sm">
+                    Create a new account via the "Start" button for server connection. Our app checks the server to ensure accurate predictions.
+                  </p>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <AlertTriangle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                  <p className="text-gray-200 text-sm">
+                    Warning: Accounts not created through our link will give incorrect predictions due to server mismatch.
+                  </p>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <AlertTriangle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                  <p className="text-gray-200 text-sm">
+                    Old accounts will also provide incorrect predictions due to server mismatch.
+                  </p>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-5 w-5 mt-0.5 text-[#00ECBE] flex-shrink-0" />
+                  <p className="text-gray-200 text-sm">
+                    For 100% accurate predictions, use the account created via our URL.
+                  </p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3 pb-1">
+                  <Button
+                    onClick={handleStartClick}
+                    className="w-full sm:w-auto transition-all bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B] font-medium"
+                  >
+                    Start
+                  </Button>
+                  
+                  <Button
+                    onClick={handleContinueClick}
+                    className={`w-full sm:w-auto transition-all ${
+                      isVerified 
+                        ? "bg-gradient-to-r from-[#00ECBE] to-[#00ECBE]/70 hover:from-[#00ECBE]/90 hover:to-[#00ECBE]/60 text-[#05012B]" 
+                        : "bg-gray-700 hover:bg-gray-600 opacity-80 text-white"
+                    }`}
+                  >
+                    {isVerified ? "Continue" : (
+                      <div className="flex items-center">
+                        <Lock className="h-4 w-4 mr-2" />
+                        <span>Continue</span>
+                      </div>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={handleHelpClick}
+                    variant="outline"
+                    className="w-full sm:w-auto border-[#00ECBE]/50 text-[#00ECBE] hover:text-[#00ECBE]/80 hover:bg-[#00ECBE]/10"
+                  >
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Help
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

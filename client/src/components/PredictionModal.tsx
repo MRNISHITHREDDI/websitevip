@@ -93,19 +93,11 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       return;
     }
     
-    // If user clicks a second time on Get Prediction without verifying, show the locked popup
-    if (localStorage.getItem('attemptedGetPrediction') === 'true') {
-      setShowLockedPopup(true);
-      return;
-    }
-    
-    // Store that user has attempted to get a prediction
-    localStorage.setItem('attemptedGetPrediction', 'true');
-    
+    // Always show AccountVerificationModal instead of LockedAccessPopup
     // If user doesn't have a verified account, show account verification modal after a short delay
     setTimeout(() => {
       setShowVerificationModal(true);
-    }, 50);
+    }, 150); // Increased delay for smoother transition
   };
   
   const handleVerificationComplete = () => {
