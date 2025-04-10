@@ -69,12 +69,12 @@ const LockedAccessPopup = ({ isOpen, onClose, onUnderstand }: LockedAccessPopupP
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto"
           {...overlayAnimation}
           onClick={onClose}
         >
           <motion.div
-            className="bg-[#05012B] border border-[#00ECBE]/50 rounded-xl max-w-md w-full z-[101] overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]"
+            className="bg-[#05012B] border border-[#00ECBE]/50 rounded-xl max-w-md w-full z-[101] shadow-[0_0_25px_rgba(0,236,190,0.3)] my-auto max-h-[90vh] md:max-h-none"
             {...modalAnimation}
             onClick={handleModalClick}
           >
@@ -88,7 +88,7 @@ const LockedAccessPopup = ({ isOpen, onClose, onUnderstand }: LockedAccessPopupP
               </div>
             </div>
             
-            <div className="p-6 pb-5">
+            <div className="p-6 pb-5 overflow-y-auto">
               <p className="text-gray-200 text-sm mb-5 bg-[#00ECBE]/10 p-3 rounded-lg border border-[#00ECBE]/20">
                 To receive winning predictions, you need to create an account through our app. Please follow these steps:
               </p>

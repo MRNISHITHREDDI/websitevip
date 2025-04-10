@@ -141,12 +141,12 @@ const PredictionModal: React.FC<PredictionModalProps> = ({ isOpen, onClose, titl
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 overflow-y-auto"
             {...overlayAnimation}
             onClick={onClose}
           >
             <motion.div
-              className="bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-2xl max-w-md w-full border border-[#00ECBE]/30 shadow-[0_0_25px_rgba(0,236,190,0.3)]"
+              className="bg-gradient-to-b from-[#001c54] to-[#000c33] rounded-2xl max-w-md w-full border border-[#00ECBE]/30 shadow-[0_0_25px_rgba(0,236,190,0.3)] my-auto"
               {...modalAnimation}
               onClick={handleModalClick}
             >

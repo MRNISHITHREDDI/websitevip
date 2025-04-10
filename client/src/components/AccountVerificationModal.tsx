@@ -200,24 +200,24 @@ const AccountVerificationModal = ({
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 overflow-y-auto"
           {...overlayAnimation}
           onClick={onClose}
         >
           <motion.div
-            className="bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] overflow-hidden shadow-[0_0_25px_rgba(0,236,190,0.3)]"
+            className="bg-[#05012B] border border-[#00ECBE]/30 rounded-xl sm:max-w-[500px] w-full z-[101] shadow-[0_0_25px_rgba(0,236,190,0.3)] my-auto max-h-[90vh] md:max-h-none"
             {...modalAnimation}
             onClick={handleModalClick}
           >
-            <div className="relative">
+            <div className="relative overflow-y-auto max-h-[90vh] md:max-h-none">
               <button 
-                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10"
+                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-[#00ECBE]/10 z-10"
                 onClick={onClose}
               >
                 <X size={20} />
               </button>
               
-              <div className="p-6 pb-0">
+              <div className="p-6 pb-0 sticky top-0 bg-[#05012B] z-[5]">
                 <div className="flex items-center justify-center mb-2">
                   <Rocket className="h-6 w-6 mr-2 text-[#00ECBE]" />
                   <h2 className="text-2xl font-bold text-center text-white">JALWA VIP PREDICTION</h2>
@@ -229,7 +229,7 @@ const AccountVerificationModal = ({
                 </div>
               </div>
               
-              <div className="p-6 pt-2 space-y-4">
+              <div className="p-6 pt-2 space-y-4 overflow-y-auto">
                 <div className="flex items-start space-x-3 bg-[#081042] p-3 rounded-lg border border-[#00ECBE]/20">
                   <div className="bg-[#00ECBE]/10 rounded-full p-1 flex-shrink-0 mt-0.5">
                     <CheckCircle className="h-4 w-4 text-[#00ECBE]" />
