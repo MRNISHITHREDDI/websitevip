@@ -1,48 +1,101 @@
-// Direct Telegram Bot test using CommonJS
-require('dotenv').config();
-const TelegramBot = require('node-telegram-bot-api');
+/**
+ * Direct Telegram API Test Script
+ * 
+ * This script is used to verify your Telegram bot token and admin chat IDs
+ * without using the node-telegram-bot-api library. It makes direct HTTPS
+ * requests to the Telegram API, which is helpful for diagnosing issues
+ * in various deployment environments.
+ * 
+ * Usage:
+ * 1. node direct-telegram-test.cjs <BOT_TOKEN> <CHAT_ID>
+ * 
+ * For example:
+ * node direct-telegram-test.cjs 1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZ 123456789
+ */
 
-// Log environment variables (without revealing the actual token)
-console.log('TELEGRAM_BOT_TOKEN exists:', !!process.env.TELEGRAM_BOT_TOKEN);
-console.log('ADMIN_CHAT_IDS:', process.env.ADMIN_CHAT_IDS);
+const https = require('https');
 
-// Parse the admin chat IDs
-const adminChatIds = process.env.ADMIN_CHAT_IDS
-  ? process.env.ADMIN_CHAT_IDS.split(',').map(id => parseInt(id.trim(), 10))
-  : [];
+// Get command line arguments
+const botToken = process.argv[2];
+const chatId = process.argv[3];
 
-console.log('Parsed admin chat IDs:', adminChatIds);
-
-if (!process.env.TELEGRAM_BOT_TOKEN) {
-  console.error('No TELEGRAM_BOT_TOKEN found in environment variables');
+if (!botToken || !chatId) {
+  console.error('❌ Error: Missing required arguments');
+  console.log('Usage: node direct-telegram-test.cjs <BOT_TOKEN> <CHAT_ID>');
   process.exit(1);
 }
 
-if (adminChatIds.length === 0) {
-  console.error('No admin chat IDs found in environment variables');
-  process.exit(1);
-}
+console.log('🔍 Testing Telegram API with:');
+console.log(`🤖 Bot Token: ${botToken.substring(0, 5)}...${botToken.substring(botToken.length - 5)}`);
+console.log(`👤 Chat ID: ${chatId}`);
+console.log('\n📡 Sending test message...');
 
-// Create a new bot instance
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
+// Create test message with timestamp
+const message = `🧪 Test message from direct API test script\n\nTimestamp: ${new Date().toISOString()}\n\nIf you're seeing this message, your Telegram bot token and chat ID are correctly configured!`;
 
-// Create a test message
-const testMessage = `🧪 *Test Message*\n\nThis is a direct test message sent at ${new Date().toISOString()}`;
+// Prepare the request body
+const requestBody = JSON.stringify({
+  chat_id: chatId,
+  text: message,
+  parse_mode: 'Markdown'
+});
 
-// Send a message to each admin
-console.log('Sending direct test messages...');
+// Set up the request options
+const requestOptions = {
+  hostname: 'api.telegram.org',
+  port: 443,
+  path: `/bot${botToken}/sendMessage`,
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(requestBody)
+  }
+};
 
-for (const chatId of adminChatIds) {
-  console.log(`Sending to chat ID: ${chatId}`);
+// Make the request
+const req = https.request(requestOptions, (res) => {
+  console.log(`\n📊 Status Code: ${res.statusCode}`);
   
-  bot.sendMessage(chatId, testMessage, { parse_mode: 'Markdown' })
-    .then(msg => {
-      console.log(`✓ Message sent successfully to ${chatId}`, msg.message_id);
-    })
-    .catch(err => {
-      console.error(`✗ Failed to send message to ${chatId}:`, err.message);
-      console.error('Error details:', JSON.stringify(err, null, 2));
-    });
-}
+  let data = '';
+  
+  res.on('data', (chunk) => {
+    data += chunk;
+  });
+  
+  res.on('end', () => {
+    try {
+      const response = JSON.parse(data);
+      console.log('\n📄 Response:');
+      console.log(JSON.stringify(response, null, 2));
+      
+      if (response.ok) {
+        console.log('\n✅ SUCCESS: Message sent successfully!');
+        console.log('📱 Check your Telegram app to confirm you received the message.');
+      } else {
+        console.error('\n❌ ERROR: Failed to send message');
+        console.error(`📝 Reason: ${response.description}`);
+        
+        // Common error handling
+        if (response.description.includes('bot was blocked')) {
+          console.log('\n💡 TIP: Make sure you have started a conversation with the bot using /start');
+        } else if (response.description.includes('chat not found')) {
+          console.log('\n💡 TIP: Check that the chat ID is correct');
+        } else if (response.description.includes('Unauthorized')) {
+          console.log('\n💡 TIP: Check that the bot token is correct');
+        }
+      }
+    } catch (error) {
+      console.error('\n❌ Error parsing Telegram response:', error);
+    }
+  });
+});
 
-console.log('Test messages initiated. Check your Telegram!');
+req.on('error', (error) => {
+  console.error('\n❌ HTTPS request error:', error);
+});
+
+// Send the request
+req.write(requestBody);
+req.end();
+
+console.log('⏳ Waiting for response...');

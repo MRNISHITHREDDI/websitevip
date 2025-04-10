@@ -122,16 +122,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update account verification status (admin only)
+  // Update account verification status (admin only) - supports both POST and GET (for Telegram links)
   app.post('/api/admin/account-verifications/:id', async (req: Request, res: Response) => {
     try {
-      const schema = z.object({
-        status: z.enum(['pending', 'approved', 'rejected']),
-        notes: z.string().optional()
-      });
+      // Handle both JSON body and query parameters (for Telegram links)
+      // Check if this is a Telegram link click
+      const isTelegramRequest = req.query.source === 'telegram';
+      let status, notes;
+      
+      if (isTelegramRequest) {
+        // This is a click from Telegram inline button
+        // Use query parameters
+        status = req.query.action === 'approve' ? 'approved' : 
+                req.query.action === 'reject' ? 'rejected' : null;
+                
+        if (!status) {
+          return res.status(400).send('<h1>Error: Invalid action</h1><p>Action must be either approve or reject</p>');
+        }
+        
+        notes = `${status === 'approved' ? 'Approved' : 'Rejected'} via Telegram link click`;
+        
+        console.log(`📱 Telegram admin action: ${status} for ID ${req.params.id}`);
+      } else {
+        // Regular API call - validate request body
+        const schema = z.object({
+          status: z.enum(['pending', 'approved', 'rejected']),
+          notes: z.string().optional()
+        });
+        
+        const validatedData = schema.parse(req.body);
+        status = validatedData.status;
+        notes = validatedData.notes;
+      }
       
       const { id } = req.params;
-      const { status, notes } = schema.parse(req.body);
       
       const updated = await storage.updateAccountVerificationStatus(
         parseInt(id, 10),
@@ -140,10 +164,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       
       if (!updated) {
+        if (isTelegramRequest) {
+          return res.status(404).send('<h1>Error: Verification not found</h1><p>The requested verification ID does not exist.</p>');
+        }
+        
         return res.status(404).json({
           success: false,
           message: 'Account verification not found'
         });
+      }
+      
+      if (isTelegramRequest) {
+        // Return HTML response for browser viewing
+        return res.status(200).send(`
+          <html>
+            <head>
+              <title>Verification ${status}</title>
+              <style>
+                body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto; padding: 2rem; line-height: 1.5; }
+                .container { border: 1px solid #ddd; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                h1 { color: ${status === 'approved' ? '#10b981' : '#ef4444'}; margin-top: 0; }
+                .details { background: #f9fafb; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+                .footer { color: #6b7280; font-size: 0.875rem; margin-top: 2rem; text-align: center; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>${status === 'approved' ? '✅ Approved' : '❌ Rejected'} Successfully</h1>
+                <p>The verification request has been <strong>${status}</strong>.</p>
+                <div class="details">
+                  <p><strong>User ID:</strong> ${updated.jalwaUserId}</p>
+                  <p><strong>Verification ID:</strong> ${updated.id}</p>
+                  <p><strong>Status:</strong> ${updated.status}</p>
+                  <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+                </div>
+                <p>You can now close this window and return to Telegram.</p>
+                <div class="footer">Jalwa Admin Verification System</div>
+              </div>
+            </body>
+          </html>
+        `);
       }
       
       return res.status(200).json({

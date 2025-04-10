@@ -29,7 +29,7 @@ ADMIN_CHAT_IDS=123456789,987654321
 After deploying, verify the bot is working properly:
 
 1. Access the bot status endpoint: `/api/bot-status`
-2. Check that `isConfigured` and `isPolling` are both `true`
+2. Check that `isConfigured` is `true` (the new bot implementation doesn't use polling for improved reliability)
 3. Confirm your admin chat ID appears in the `adminIds` array
 
 Example successful response:
@@ -38,7 +38,6 @@ Example successful response:
   "success": true,
   "data": {
     "isConfigured": true,
-    "isPolling": true,
     "adminIds": [123456789],
     "timestamp": "2025-04-10T16:00:00.000Z",
     "environment": "production"
@@ -51,12 +50,15 @@ Example successful response:
 If the bot is not working after deployment:
 
 1. Check the bot status using `/api/bot-status` to see detailed information
-2. If environment variables are properly set but the bot is not polling, try restarting it: 
+2. If the bot shows configuration issues, verify your environment variables are correctly set
+3. Try restarting the bot integration using:
    ```
    POST /api/restart-bot
    ```
-3. Verify you've started a conversation with your bot by sending `/start` to it
-4. Check your deployment platform for any logs related to the Telegram API
+4. Verify the API response and check if any errors are reported
+5. The new implementation uses direct HTTPS calls to Telegram's API for maximum reliability
+6. Check your deployment platform for any logs related to the Telegram API
+7. Test notification delivery with a verification request
 
 ## Testing User Verification
 
@@ -77,7 +79,30 @@ To test the verification system:
 
 ## Security Notes
 
-- Keep your Telegram bot token secure
+- Keep your Telegram bot token secure as it provides full access to your bot
 - Only add trusted admins to the `ADMIN_CHAT_IDS` list
-- The Telegram bot uses multiple fallback mechanisms for maximum reliability
-- All admin actions are logged with the admin's name for accountability
+- The new simplified implementation eliminates polling for improved reliability
+- Each notification attempts multiple delivery methods with built-in fallbacks:
+  - Direct HTTPS calls to Telegram API (most reliable in production)
+  - Standard bot instance method (backup)
+- URL-based approval/rejection links for one-click admin actions
+- All verification changes are logged for accountability
+
+## New Implementation Benefits
+
+- Non-polling design eliminates webhook issues and bot conflicts
+- No file-based storage means better performance in serverless environments
+- Direct HTTPS requests bypass network/library issues in certain deployment environments
+- Simplified code reduces potential points of failure
+- Built-in multiple fallback mechanisms ensure notification delivery
+
+## Standalone Verification Tool
+
+A standalone direct Telegram test script is included to verify your bot token and chat IDs:
+
+```bash
+# Run this on your local machine or server to test Telegram connectivity
+node direct-telegram-test.cjs YOUR_BOT_TOKEN ADMIN_CHAT_ID
+```
+
+This script uses direct HTTPS calls without any dependencies, making it useful for verifying your Telegram configuration in any environment, even if other aspects of the application aren't working properly.

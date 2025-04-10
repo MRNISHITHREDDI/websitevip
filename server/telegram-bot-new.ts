@@ -223,20 +223,26 @@ Time: ${new Date().toLocaleString()}
 - Use the approve or reject link below`;
 
   // Create approve/reject action URLs that point to our API
-  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  // Determine base URL - try multiple environment variables for maximum compatibility with different hosting providers
+  const baseUrl = process.env.BASE_URL || process.env.REPLIT_URL || process.env.VERCEL_URL || process.env.PUBLIC_URL || 'http://localhost:5000';
+  
+  // Ensure proper URL formatting with protocol
+  const formattedBaseUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
+  
+  console.log(`🔗 Using base URL for notifications: ${formattedBaseUrl}`);
   
   const inlineKeyboard = {
     inline_keyboard: [
       [
         {
           text: "✅ Approve",
-          url: `${baseUrl}/api/admin/account-verifications/${verification.id}?action=approve&source=telegram`
+          url: `${formattedBaseUrl}/api/admin/account-verifications/${verification.id}?action=approve&source=telegram`
         }
       ],
       [
         {
           text: "❌ Reject",
-          url: `${baseUrl}/api/admin/account-verifications/${verification.id}?action=reject&source=telegram`
+          url: `${formattedBaseUrl}/api/admin/account-verifications/${verification.id}?action=reject&source=telegram`
         }
       ]
     ]
