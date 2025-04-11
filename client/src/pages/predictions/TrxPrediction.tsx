@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
-import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash, Clock, BarChart3, Brain } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
 import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
 import AccountVerificationModal from '@/components/AccountVerificationModal';
@@ -460,7 +459,6 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [periodResults, setPeriodResults] = useState<PeriodResult[]>([]);
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
   const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
-  const isMobile = useIsMobile();
   
   // Account verification modal state
   const [showVerificationModal, setShowVerificationModal] = useState<boolean>(false);
@@ -707,54 +705,23 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         onRefresh={fetchData}
         previousPredictions={previousPredictions}
       >
-      {/* TRX specific prediction display - responsive design for mobile/desktop */}
+      {/* TRX specific prediction display */}
       {currentPrediction && (
         <div className="mt-4">
-          {!isMobile ? (
-            // Desktop version
-            <motion.h3 
-              className="text-center text-white text-xl font-semibold mb-5 flex sm:flex-row flex-col items-center justify-center"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex items-center">
-                <Lock size={16} className="text-[#00ECBE] mr-2" />
-                <span>Blockchain Verified Prediction</span>
-              </div>
-              <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">#{currentPrediction.periodNumber}</span>
-            </motion.h3>
-          ) : (
-            // Mobile version header with period and timer
-            <div className="mb-4">
-              <div className="flex flex-col items-center relative max-w-sm mx-auto">
-                <div className="w-full bg-gradient-to-br from-[#000d35] to-[#000720] rounded-xl shadow-[0_0_15px_rgba(0,30,84,0.5)] border border-[#00ECBE]/20 relative overflow-hidden mb-2">
-                  {/* Header section with period and timer */}
-                  <div className="flex justify-between items-center p-3 border-b border-[#00ECBE]/10">
-                    <div className="flex items-center">
-                      <div className="text-[#00ECBE] mr-2">
-                        <BarChart3 size={16} />
-                      </div>
-                      <div>
-                        <div className="text-xs text-[#00ECBE]">Current Period</div>
-                        <div className="text-sm font-bold text-white">#{currentPrediction.periodNumber.slice(-6)}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="text-white text-sm flex items-center rounded-lg bg-[#001230] px-2 py-1 shadow-inner">
-                        <Clock size={14} className="text-[#00ECBE] mr-1" />
-                        <span className="font-bold">{Math.floor(currentPrediction.timeRemaining / 60)}:{(currentPrediction.timeRemaining % 60).toString().padStart(2, '0')}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <motion.h3 
+            className="text-center text-white text-xl font-semibold mb-5 flex sm:flex-row flex-col items-center justify-center"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center">
+              <Lock size={16} className="text-[#00ECBE] mr-2" />
+              <span>Blockchain Verified Prediction</span>
             </div>
-          )}
+            <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">#{currentPrediction.periodNumber}</span>
+          </motion.h3>
           
-          {!isMobile ? (
-            // Desktop version
-            <motion.div
+          <motion.div
             className="bg-gradient-to-br from-[#000d35] to-[#000720] rounded-xl p-6 shadow-[0_0_15px_rgba(0,30,84,0.5)] border border-[#00ECBE]/10 relative overflow-hidden"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -963,142 +930,6 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
               </motion.div>
             </div>
           </motion.div>
-          ) : (
-            // Mobile version with card-based design
-            <div className="flex flex-col items-center relative max-w-sm mx-auto">
-              {/* Container for the whole prediction section */}
-              <motion.div
-                className="w-full bg-gradient-to-br from-[#000d35] to-[#000720] rounded-xl shadow-[0_0_15px_rgba(0,30,84,0.5)] border border-[#00ECBE]/20 relative overflow-hidden"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, type: "spring", damping: 15 }}
-              >
-                {/* TRX Blockchain Prediction section */}
-                <div className="p-4 flex flex-col items-center">
-                  <div className="flex items-center mb-2">
-                    <Lock size={16} className="text-[#00ECBE] mr-1" />
-                    <span className="text-[#00ECBE] font-semibold text-sm">Blockchain Prediction</span>
-                  </div>
-                  <div className="text-xs text-white/80 mb-3">#{currentPrediction.periodNumber}</div>
-                  
-                  {/* Prediction number badge */}
-                  <div className="relative mb-4">
-                    <motion.div
-                      className="absolute -inset-1 bg-[#00ECBE]/20 rounded-full blur-sm"
-                      {...glowPulse}
-                    ></motion.div>
-                    <div className="relative">
-                      <div 
-                        className="w-20 h-20 relative"
-                        style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}
-                      >
-                        <div
-                          className="absolute inset-0 flex items-center justify-center"
-                          style={{ 
-                            backgroundColor: getColorCode(currentPrediction.color)
-                          }}
-                        >
-                          <span className="text-3xl font-bold text-white">{currentPrediction.prediction}</span>
-                        </div>
-                      </div>
-                      <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs py-1 px-2 rounded-full shadow-lg flex items-center">
-                        <Database size={10} className="mr-1" />
-                        TRX
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Prediction details */}
-                  <div className="w-full space-y-3 mb-4">
-                    {/* Color */}
-                    <div className="flex items-center justify-between bg-[#001230] rounded-lg p-3 border-l-4" style={{ borderColor: getColorCode(currentPrediction.color) }}>
-                      <div className="flex items-center">
-                        <Award size={16} className="text-[#00ECBE] mr-2" />
-                        <span className="text-[#00ECBE] text-sm">Color</span>
-                      </div>
-                      <div className="font-bold capitalize" style={{ color: getColorCode(currentPrediction.color) }}>
-                        {currentPrediction.color}
-                      </div>
-                    </div>
-                    
-                    {/* Big/Small */}
-                    <div className="flex items-center justify-between bg-[#001230] rounded-lg p-3 border-l-4" 
-                      style={{ 
-                        borderColor: currentPrediction.bigOrSmall === "BIG" ? "#FF4D4F" : "#52C41A"
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <TrendingUp size={16} className="text-[#00ECBE] mr-2" />
-                        <span className="text-[#00ECBE] text-sm">Big/Small</span>
-                      </div>
-                      <div className="font-bold" style={{ 
-                        color: currentPrediction.bigOrSmall === "BIG" ? "#FF4D4F" : "#52C41A" 
-                      }}>
-                        {currentPrediction.bigOrSmall}
-                      </div>
-                    </div>
-                    
-                    {/* Number */}
-                    <div className="flex items-center justify-between bg-[#001230] rounded-lg p-3 border-l-4 border-[#00ECBE]">
-                      <div className="flex items-center">
-                        <Zap size={16} className="text-[#00ECBE] mr-2" />
-                        <span className="text-[#00ECBE] text-sm">Number</span>
-                      </div>
-                      <div className="font-bold text-white">
-                        {currentPrediction.prediction}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* TRX Hash verification - compact version */}
-                  <div className="w-full bg-[#001230] rounded-lg p-3 mb-3 border border-[#00ECBE]/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center">
-                        <Hash size={14} className="text-[#00ECBE] mr-1" />
-                        <span className="text-[#00ECBE] text-xs">TRX Hash</span>
-                      </div>
-                      <div className="text-xs text-[#7dd3fc] font-mono">
-                        {displayHash}
-                      </div>
-                    </div>
-                    
-                    {/* Verification progress bar */}
-                    <div className="h-1 w-full bg-[#001845] rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-[#00ECBE] to-blue-500"
-                        {...blockchainAnimation}
-                      />
-                    </div>
-                    
-                    <div className="flex justify-end mt-1">
-                      <span className="text-xs text-green-400 flex items-center">
-                        <BadgeCheck size={10} className="mr-1" />
-                        Verified
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Blockchain statement */}
-                  <div className="flex items-center text-xs text-white/80 rounded-lg bg-[#001230]/50 p-2 w-full">
-                    <Brain className="text-[#00ECBE] mr-2 flex-shrink-0" size={14} />
-                    <span>Secure Blockchain Verification</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Investment button */}
-              <motion.button
-                className="mt-4 w-full py-3 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-bold text-sm shadow-lg flex items-center justify-center"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                EARN BIG WITH BLOCKCHAIN PREDICTION
-              </motion.button>
-            </div>
-          )}
         </div>
       )}
     </PredictionLayout>
