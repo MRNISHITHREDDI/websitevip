@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Import the attached assets
-import predictionImage from "@assets/Screenshot 2025-04-10 233433.png";
-import predictionHistoryImage from "@assets/Screenshot 2025-04-10 233417.png";
-import resultsHistoryImage from "@assets/Screenshot 2025-04-10 233454.png";
+// Import the SVG assets
+import { predictionSVG, predictionHistorySVG, resultsHistorySVG } from "@/assets/index";
 
 interface DemoVipPredictionModalProps {
   isOpen: boolean;
@@ -31,9 +29,9 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
   
   // Define all available tabs
   const tabs = [
-    { id: "current", label: isMobile ? "Current" : "Current Prediction", image: predictionImage },
-    { id: "history", label: isMobile ? "History" : "Prediction History", image: predictionHistoryImage },
-    { id: "results", label: isMobile ? "Results" : "Results History", image: resultsHistoryImage }
+    { id: "current", label: isMobile ? "Current" : "Current Prediction", svg: predictionSVG },
+    { id: "history", label: isMobile ? "History" : "Prediction History", svg: predictionHistorySVG },
+    { id: "results", label: isMobile ? "Results" : "Results History", svg: resultsHistorySVG }
   ];
   
   // Find current tab index
@@ -149,12 +147,11 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
                             initial={{ scale: 0.95 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.3 }}
-                            className="w-full max-w-[700px] rounded-lg overflow-hidden shadow-2xl"
+                            className="w-full max-w-[700px] rounded-lg overflow-hidden shadow-2xl border border-[#00ECBE]/20"
                           >
-                            <img 
-                              src={tab.image} 
-                              alt={tab.label}
-                              className="w-full h-auto object-cover border border-[#00ECBE]/20 rounded-lg"
+                            <div 
+                              dangerouslySetInnerHTML={{ __html: tab.svg }} 
+                              className="w-full h-auto"
                             />
                           </motion.div>
                         </motion.div>
