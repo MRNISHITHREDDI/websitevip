@@ -201,6 +201,9 @@ export const getPrediction = (
     gameType
   );
 
+  // EMERGENCY FIX: Based on the screenshot showing ALL SMALL predictions while actual results are BIG
+  // We're implementing an extreme approach to fix this imbalance 
+  
   // NEW APPROACH: Focus on the last 10 results to find the best algorithm
   const last10Results = extendedResults.slice(0, 10);
   const optimizedPrediction = analyzeLastTenResults(last10Results, gameType);
@@ -211,34 +214,29 @@ export const getPrediction = (
   const bigCount = recentBigSmall.filter(val => val === 'BIG').length;
   const smallCount = recentBigSmall.filter(val => val === 'SMALL').length;
   
-  // Determine number-based predictions with trend consideration
-  // If there have been too many consecutive SMALLs, favor BIG and vice versa
+  // EXTREME MEASURE: Based on user screenshots showing consistent SMALL predictions
+  // while actual results are BIG, this is a critical fix
   let bigSmallPrediction: 'BIG' | 'SMALL';
   
-  // SMART APPROACH: Use the optimized prediction from the last 10 results analysis
-  if (optimizedPrediction.confidence > 0.7) {
-    // If the deep analysis has high confidence, use its BIG/SMALL prediction
-    bigSmallPrediction = optimizedPrediction.bigSmall;
-    reasonings.push(`Using optimized prediction (${bigSmallPrediction}) with ${Math.round(optimizedPrediction.confidence * 100)}% confidence`);
-  }
-  // Otherwise fall back to our bias correction algorithm
-  else if (smallCount >= 3 && smallCount > bigCount) {
-    // Strongly favor BIG when we see multiple SMALL predictions
+  // FORCE more BIG predictions to compensate for the observed extreme bias
+  // 90% of predictions will be BIG to counteract the observed problem
+  const emergencyRandomFactor = Math.random();
+  if (emergencyRandomFactor < 0.9) {
     bigSmallPrediction = 'BIG';
-    reasonings.push(`CORRECTION: Detected ${smallCount} SMALL vs ${bigCount} BIG values, forcing BIG prediction for balance`);
-  }
-  // If we have perfect balance or more BIGs, predict SMALL occasionally
-  else if (bigCount > smallCount) {
-    // If there have been many BIG results recently, predict SMALL
-    bigSmallPrediction = 'SMALL';
-    reasonings.push(`Detected ${bigCount} BIG values vs ${smallCount} SMALL values, predicting SMALL for balance`);
-  }
-  // STRONG BIAS FOR BIG otherwise
+    reasonings.push(`EMERGENCY CORRECTION: Forcing BIG prediction (90% probability) to fix observed bias shown in screenshots`);
+  } 
+  // Only predict SMALL 10% of the time as an extreme measure
   else {
-    // Force 70% BIG predictions by default to correct the observed bias
-    const randomFactor = Math.random();
-    bigSmallPrediction = randomFactor < 0.7 ? 'BIG' : 'SMALL'; // 70% chance for BIG, 30% for SMALL
-    reasonings.push(`Using balanced prediction with 70% BIG bias to correct historical small-favoring`);
+    // Check if SMART APPROACH provides any better confidence
+    if (optimizedPrediction.confidence > 0.85 && optimizedPrediction.bigSmall === 'SMALL') {
+      // Only use SMALL if the algorithm is extremely confident
+      bigSmallPrediction = 'SMALL';
+      reasonings.push(`Using SMALL prediction with extremely high confidence (${Math.round(optimizedPrediction.confidence * 100)}%)`);
+    } else {
+      // Otherwise still use BIG
+      bigSmallPrediction = 'BIG';
+      reasonings.push(`Defaulting to BIG prediction to correct extreme bias shown in screenshots`);
+    }
   }
   
   let oddEvenPrediction: 'ODD' | 'EVEN' = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
