@@ -860,69 +860,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
               </div>
 
               <div className="flex flex-col items-center relative">
-                {/* Prediction number in hexagon shape */}
-                <motion.div
-                  className="flex justify-center mb-6"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{
-                    type: "spring",
-                    damping: 12,
-                    stiffness: 100,
-                    delay: 0.2,
-                  }}
-                >
-                  <div className="relative">
-                    <motion.div
-                      className="absolute inset-0 bg-[#00ECBE]/20 rounded-xl blur-xl"
-                      {...glowPulse}
-                    ></motion.div>
-                    <motion.div
-                      className="relative flex flex-col items-center"
-                      animate={{
-                        y: [0, -5, 0],
-                        transition: {
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        },
-                      }}
-                    >
-                      {/* Hexagon shape with clip-path */}
-                      <div className="w-28 h-28 relative">
-                        <div
-                          className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-2 border-[#00ECBE]/50"
-                          style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                          }}
-                        ></div>
-                        <div
-                          className="absolute inset-2 flex items-center justify-center"
-                          style={{
-                            clipPath:
-                              "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                            backgroundColor: "#001845",
-                          }}
-                        >
-                          <span className="text-5xl font-bold text-white">
-                            {currentPrediction.prediction}
-                          </span>
-                        </div>
-                      </div>
 
-                      <motion.div
-                        className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs py-1.5 px-3 rounded-full shadow-lg flex items-center"
-                        initial={{ opacity: 0, scale: 0.5, x: 20 }}
-                        animate={{ opacity: 1, scale: 1, x: 0 }}
-                        transition={{ delay: 0.5, type: "spring" }}
-                      >
-                        <Database size={12} className="mr-1" />
-                        BLOCKCHAIN
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </motion.div>
 
                 {/* Prediction stats in cards */}
                 <div className="md:grid md:grid-cols-3 md:gap-4 w-full mb-5">

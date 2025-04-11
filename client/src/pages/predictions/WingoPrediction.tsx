@@ -657,52 +657,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
 
               <div className="flex flex-col items-center relative">
                 {/* Prediction badge */}
-                <motion.div
-                  className="flex justify-center mb-6"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{
-                    type: "spring",
-                    damping: 12,
-                    stiffness: 100,
-                    delay: 0.2,
-                  }}
-                >
-                  <div className="relative">
-                    <motion.div
-                      className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 rounded-full blur-sm"
-                      variants={pulseVariants}
-                      animate="pulse"
-                    ></motion.div>
-                    <motion.div
-                      className="relative w-28 h-28 rounded-full border-4 border-[#00ECBE]/30 flex items-center justify-center bg-gradient-to-br from-[#000d35] to-[#001a52] shadow-[0_0_15px_rgba(0,236,190,0.2)]"
-                      animate={{
-                        rotateZ: [0, 5, 0, -5, 0],
-                        transition: {
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        },
-                      }}
-                    >
-                      <div
-                        className="w-20 h-20 rounded-full flex items-center justify-center text-5xl font-bold shadow-xl bg-[#001845] text-white"
-                      >
-                        {currentPrediction.prediction}
-                      </div>
-                    </motion.div>
 
-                    <motion.div
-                      className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-white font-bold text-xs py-1.5 px-3 rounded-full shadow-lg flex items-center"
-                      initial={{ opacity: 0, scale: 0.5, x: 20 }}
-                      animate={{ opacity: 1, scale: 1, x: 0 }}
-                      transition={{ delay: 0.5, type: "spring" }}
-                    >
-                      <BadgeCheck size={12} className="mr-1" />
-                      VERIFIED
-                    </motion.div>
-                  </div>
-                </motion.div>
 
                 {/* Prediction stats */}
                 <div className="md:grid md:grid-cols-3 md:gap-4 w-full mb-5">
