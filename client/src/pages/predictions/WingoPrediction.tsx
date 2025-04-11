@@ -656,8 +656,16 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
               </div>
 
               <div className="flex flex-col items-center relative">
-                {/* Prediction badge */}
-
+                {/* Verification badge centered */}
+                <motion.div
+                  className="mb-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-white font-bold text-sm py-1.5 px-4 rounded-full shadow-lg inline-flex items-center"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3, type: "spring" }}
+                >
+                  <BadgeCheck size={15} className="mr-1.5" />
+                  VERIFIED
+                </motion.div>
 
                 {/* Prediction stats */}
                 <div className="md:grid md:grid-cols-3 md:gap-4 w-full mb-5">
