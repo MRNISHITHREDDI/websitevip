@@ -184,59 +184,61 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
         {/* Desktop view or Mobile Prediction tab */}
         {(!isMobile || (isMobile && activeTab === 'prediction')) && (
           <>
-            {/* Current Period and Timer - Card Style for Mobile */}
-            <motion.div 
-              className={`${isMobile ? 'rounded-xl p-4' : 'rounded-2xl p-6'} bg-gradient-to-br from-[#001c54] to-[#000c33] mb-5 shadow-lg border border-[#00ECBE]/20`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, type: "spring", damping: 15 }}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <div className="w-12 h-12 border-4 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              ) : currentPrediction ? (
-                <>
-                  <div className={`flex ${isMobile ? 'flex-row' : 'flex-col sm:flex-row'} justify-between items-center mb-4 gap-3`}>
-                    <div className="text-center sm:text-left">
-                      <h2 className="text-[#00ECBE] font-medium mb-1 flex items-center justify-center sm:justify-start text-sm">
-                        <BarChart3 size={14} className="mr-1" />
-                        <span>Current Period</span>
-                      </h2>
-                      <p className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00ECBE]`}>
-                        {isMobile ? `#${currentPrediction.periodNumber.slice(-6)}` : currentPrediction.periodNumber}
-                      </p>
+            {/* Current Period and Timer - Desktop Only */}
+            {!isMobile ? (
+              <motion.div 
+                className="rounded-2xl p-6 bg-gradient-to-br from-[#001c54] to-[#000c33] mb-5 shadow-lg border border-[#00ECBE]/20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, type: "spring", damping: 15 }}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-32">
+                    <div className="w-12 h-12 border-4 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : currentPrediction ? (
+                  <>
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+                      <div className="text-center sm:text-left">
+                        <h2 className="text-[#00ECBE] font-medium mb-1 flex items-center justify-center sm:justify-start text-sm">
+                          <BarChart3 size={14} className="mr-1" />
+                          <span>Current Period</span>
+                        </h2>
+                        <p className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#00ECBE]">
+                          {currentPrediction.periodNumber}
+                        </p>
+                      </div>
+                      
+                      <motion.div 
+                        className="flex flex-col items-center rounded-lg bg-gradient-to-br from-[#001845] to-[#000925] p-3 min-w-[120px] shadow-inner border border-[#00ECBE]/10"
+                        animate={{ 
+                          boxShadow: timeRemaining < 10 ? 
+                            ['0 0 0 rgba(0,236,190,0.3)', '0 0 20px rgba(0,236,190,0.5)', '0 0 0 rgba(0,236,190,0.3)'] : 
+                            '0 0 0 rgba(0,236,190,0.3)',
+                          transition: {
+                            duration: 1,
+                            repeat: timeRemaining < 10 ? Infinity : 0
+                          }
+                        }}
+                      >
+                        <div className="flex items-center text-[#00ECBE] mb-1">
+                          <Clock size={16} className="mr-1" />
+                          <span className="font-medium text-xs">Remaining</span>
+                        </div>
+                        <p className={`text-2xl font-bold font-mono ${timeRemaining < 10 ? 'text-red-400' : 'text-white'}`}>
+                          {formatTime(timeRemaining)}
+                        </p>
+                      </motion.div>
                     </div>
                     
-                    <motion.div 
-                      className={`flex flex-col items-center rounded-lg bg-gradient-to-br from-[#001845] to-[#000925] ${isMobile ? 'p-2 min-w-[100px]' : 'p-3 min-w-[120px]'} shadow-inner border border-[#00ECBE]/10`}
-                      animate={{ 
-                        boxShadow: timeRemaining < 10 ? 
-                          ['0 0 0 rgba(0,236,190,0.3)', '0 0 20px rgba(0,236,190,0.5)', '0 0 0 rgba(0,236,190,0.3)'] : 
-                          '0 0 0 rgba(0,236,190,0.3)',
-                        transition: {
-                          duration: 1,
-                          repeat: timeRemaining < 10 ? Infinity : 0
-                        }
-                      }}
-                    >
-                      <div className="flex items-center text-[#00ECBE] mb-1">
-                        <Clock size={isMobile ? 14 : 16} className="mr-1" />
-                        <span className="font-medium text-xs">Remaining</span>
-                      </div>
-                      <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold font-mono ${timeRemaining < 10 ? 'text-red-400' : 'text-white'}`}>
-                        {formatTime(timeRemaining)}
-                      </p>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Custom content area */}
-                  {children}
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-40 p-4">
-                  <p className="text-gray-400 mb-5 text-center">No active prediction period available</p>
-                  <motion.button 
+                    {/* Custom content area */}
+                    {children}
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 p-4">
+                    <p className="text-gray-400 mb-5 text-center">No active prediction period available</p>
+                    <motion.button
+                
                     onClick={handleRefresh}
                     className="bg-[#00ECBE] text-[#05012B] py-2 px-5 rounded-lg font-medium flex items-center text-sm"
                     whileHover={{ scale: 1.05, boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)" }}
