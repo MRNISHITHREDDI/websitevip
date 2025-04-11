@@ -3,9 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Import the SVG assets
-import { predictionSVG, predictionHistorySVG, resultsHistorySVG } from "@/assets/index";
-
 interface DemoVipPredictionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,9 +26,9 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
   
   // Define all available tabs
   const tabs = [
-    { id: "current", label: isMobile ? "Current" : "Current Prediction", svg: predictionSVG },
-    { id: "history", label: isMobile ? "History" : "Prediction History", svg: predictionHistorySVG },
-    { id: "results", label: isMobile ? "Results" : "Results History", svg: resultsHistorySVG }
+    { id: "current", label: isMobile ? "Current" : "Current Prediction", image: "/images/current-prediction.png" },
+    { id: "history", label: isMobile ? "History" : "Prediction History", image: "/images/prediction-history.png" },
+    { id: "results", label: isMobile ? "Results" : "Results History", image: "/images/results-history.png" }
   ];
   
   // Find current tab index
@@ -149,9 +146,10 @@ const DemoVipPredictionModal = ({ isOpen, onClose }: DemoVipPredictionModalProps
                             transition={{ duration: 0.3 }}
                             className="w-full max-w-[700px] rounded-lg overflow-hidden shadow-2xl border border-[#00ECBE]/20"
                           >
-                            <div 
-                              dangerouslySetInnerHTML={{ __html: tab.svg }} 
-                              className="w-full h-auto"
+                            <img 
+                              src={tab.image} 
+                              alt={tab.label}
+                              className="w-full h-auto object-cover"
                             />
                           </motion.div>
                         </motion.div>
