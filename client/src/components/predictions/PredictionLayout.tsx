@@ -165,7 +165,7 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                 </div>
                 
                 <motion.div 
-                  className="flex flex-col items-center sm:rounded-xl rounded-md bg-gradient-to-br from-[#001845] to-[#000925] p-3 shadow-inner border border-[#00ECBE]/10 min-w-[120px] sm:w-auto w-full"
+                  className="flex sm:flex-col flex-row items-center justify-between sm:rounded-xl rounded-md bg-gradient-to-br from-[#001845] to-[#000925] p-4 sm:p-3 shadow-inner border border-[#00ECBE]/10 min-w-[120px] sm:w-auto w-full"
                   animate={{ 
                     boxShadow: timeRemaining < 10 ? 
                       ['0 0 0 rgba(0,236,190,0.3)', '0 0 20px rgba(0,236,190,0.5)', '0 0 0 rgba(0,236,190,0.3)'] : 
@@ -176,11 +176,11 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                     }
                   }}
                 >
-                  <div className="flex items-center text-[#00ECBE] mb-1">
+                  <div className="flex items-center text-[#00ECBE] sm:mb-1 mb-0">
                     <Clock size={16} className="mr-1" />
                     <span className="font-medium text-sm">Remaining</span>
                   </div>
-                  <p className={`text-2xl font-bold font-mono ${timeRemaining < 10 ? 'text-red-400' : 'text-white'}`}>
+                  <p className={`text-2xl font-bold font-mono ${timeRemaining < 10 ? 'text-red-400' : 'text-white'} ml-2 sm:ml-0`}>
                     {formatTime(timeRemaining)}
                   </p>
                 </motion.div>
