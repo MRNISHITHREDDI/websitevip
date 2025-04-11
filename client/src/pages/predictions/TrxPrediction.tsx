@@ -20,7 +20,7 @@ import {
   Database,
   Hash,
 } from "lucide-react";
-import { getPrediction } from "@/lib/prediction-algorithm";
+import { getPrediction as getPatternPrediction } from "@/lib/prediction-algorithm";
 import SEO from "@/components/SEO";
 import AccountVerificationModal from "@/components/AccountVerificationModal";
 
@@ -327,7 +327,7 @@ const fetchTrxData = async (timeOption: string) => {
     // We're using our new pattern-following algorithm that follows trends until they break
     // This algorithm analyzes the last 10 results and predicts based on pattern continuation
     // It follows winning streaks until they break, then switches the prediction
-    const advancedPrediction = getPrediction(
+    const advancedPrediction = getPatternPrediction(
       results,
       "trx",
       timeOption,
