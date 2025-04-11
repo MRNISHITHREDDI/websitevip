@@ -844,7 +844,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
 
                 {/* 100% Accuracy Badge */}
                 <motion.div
-                  className="w-full bg-gradient-to-r from-[#00ECBE]/10 to-transparent py-3.5 px-3 rounded-lg flex items-center justify-center space-x-2 mt-2 my-2"
+                  className="w-full bg-gradient-to-r from-[#00ECBE]/10 to-transparent py-4 px-3 rounded-lg flex items-center justify-center space-x-2 mt-2 my-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 }}
