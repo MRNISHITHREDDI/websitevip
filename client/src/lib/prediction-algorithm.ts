@@ -64,8 +64,9 @@ export const getPrediction = (
     const bigSmall = result >= 5 ? 'BIG' : 'SMALL';
     
     // Try to find if we have a prediction for this period in previous periods
-    const hasPrediction = i < sortedData.length - 1 ? 
-      sortedData[i + 1].prediction?.bigSmallPrediction : undefined;
+    // Use optional chaining since PeriodResult might not have a prediction property
+    const hasPrediction = i < sortedData.length - 1 && 
+      (sortedData[i + 1] as any).prediction?.bigSmallPrediction;
     
     // Determine if the prediction was a win
     const win = hasPrediction === bigSmall;

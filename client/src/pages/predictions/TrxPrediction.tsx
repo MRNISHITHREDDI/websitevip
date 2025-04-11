@@ -20,7 +20,7 @@ import {
   Database,
   Hash,
 } from "lucide-react";
-import { getAdvancedPrediction } from "@/lib/fixed-prediction-algorithm";
+import { getPrediction } from "@/lib/prediction-algorithm";
 import SEO from "@/components/SEO";
 import AccountVerificationModal from "@/components/AccountVerificationModal";
 
@@ -324,10 +324,10 @@ const fetchTrxData = async (timeOption: string) => {
       },
     );
 
-    // For prediction, we'll use our advanced VIP algorithm with 99%+ accuracy
-    // We use the full history of results for the advanced pattern analysis
-    // This advanced algorithm works on both WinGo and TRX Hash games
-    const advancedPrediction = getAdvancedPrediction(
+    // We're using our new pattern-following algorithm that follows trends until they break
+    // This algorithm analyzes the last 10 results and predicts based on pattern continuation
+    // It follows winning streaks until they break, then switches the prediction
+    const advancedPrediction = getPrediction(
       results,
       "trx",
       timeOption,
