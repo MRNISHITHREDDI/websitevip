@@ -913,15 +913,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                         </div>
                       </div>
 
-                      <motion.div
-                        className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs py-1.5 px-3 rounded-full shadow-lg flex items-center"
-                        initial={{ opacity: 0, scale: 0.5, x: 20 }}
-                        animate={{ opacity: 1, scale: 1, x: 0 }}
-                        transition={{ delay: 0.5, type: "spring" }}
-                      >
-                        <Database size={12} className="mr-1" />
-                        BLOCKCHAIN
-                      </motion.div>
+
                     </motion.div>
                   </div>
                 </motion.div>
