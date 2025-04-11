@@ -296,7 +296,7 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                       </div>
                     ) : previousPredictions.length > 0 ? (
                       <div className={`${isMobile ? 'p-3' : 'p-4'}`}>
-                        <div className={`max-h-[${isMobile ? '300px' : '350px'}] overflow-auto`}>
+                        <div className="max-h-[300px] overflow-auto">
                           {isMobile ? (
                             // Card view for mobile
                             <div className="grid grid-cols-1 gap-3">
@@ -463,110 +463,140 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                   </motion.div>
                 )}
               </motion.div>
-          
-          <AnimatePresence mode="wait">
-            {showHistory && (
-              <motion.div
-                key="history-content-fixed"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
-              >
-                {isLoading ? (
-                  <div className="flex justify-center items-center p-6">
-                    <div className="w-8 h-8 border-4 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                ) : periodResults.length > 0 ? (
-                  <div className="p-4">
-                    <div className="max-h-[350px] overflow-auto">
-                      <table className="w-full border-collapse text-sm">
-                        <thead>
-                          <tr className="text-[#00ECBE]/70 border-b border-[#00ECBE]/10">
-                            <th className="py-2 font-medium text-center w-1/4">
-                              <span className="hidden sm:inline">Period</span>
-                              <span className="sm:hidden">Period#</span>
-                            </th>
-                            <th className="py-2 font-medium text-center w-1/4">Result</th>
-                            <th className="py-2 font-medium text-center w-1/4">Color</th>
-                            <th className="py-2 font-medium text-center w-1/4">Big/Small</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {periodResults.map((period, index) => (
-                            <motion.tr 
-                              key={period.id} 
-                              className="hover:bg-[#001845]/50"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.05, duration: 0.2 }}
-                            >
-                              <td className="py-3 text-center">
-                                <span className="hidden sm:inline truncate inline-block max-w-[100px]">
-                                  {period.periodNumber}
-                                </span>
-                                <span className="sm:hidden">
-                                  #{period.periodNumber.slice(-3)}
-                                </span>
-                              </td>
-                              <td className="py-3 text-center">
-                                <div className="flex justify-center">
-                                  <span 
-                                    className="inline-flex items-center justify-center w-7 h-7 rounded-full text-white"
-                                    style={{ backgroundColor: getColorCode(period.color) }}
+              
+              <AnimatePresence mode="wait">
+                {(isMobile || showHistory) && (
+                  <motion.div
+                    key="history-content-fixed"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    {isLoading ? (
+                      <div className="flex justify-center items-center p-6">
+                        <div className="w-8 h-8 border-4 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    ) : periodResults.length > 0 ? (
+                      <div className={`${isMobile ? 'p-3' : 'p-4'}`}>
+                        <div className="max-h-[300px] overflow-auto">
+                          {isMobile ? (
+                            // Card view for mobile
+                            <div className="grid grid-cols-1 gap-3">
+                              {periodResults.map((period, index) => {
+                                const colorName = period.color;
+                                const isBig = period.result >= 5;
+                                
+                                return (
+                                  <motion.div 
+                                    key={period.id}
+                                    className={`p-3 rounded-lg bg-[#001230] border-l-4`}
+                                    style={{ borderLeftColor: getColorCode(colorName) }}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05, duration: 0.2 }}
                                   >
-                                    {period.result}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="py-3 text-center">
-                                <div className="flex justify-center">
-                                  <span 
-                                    className="inline-block w-7 h-7 rounded-full border border-white/10"
-                                    style={{ backgroundColor: getColorCode(period.color) }}
-                                  ></span>
-                                </div>
-                              </td>
-                              <td className="py-3 text-center">
-                                <span className={`font-medium ${period.bigOrSmall === 'BIG' ? 'text-red-400' : 'text-green-400'}`}>
-                                  {period.bigOrSmall}
-                                </span>
-                              </td>
-                            </motion.tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center p-8 text-gray-400">
-                    <div className="text-center">
-                      <p className="mb-2">No results to display</p>
-                      <button 
-                        onClick={handleRefresh}
-                        className="text-[#00ECBE] hover:text-white text-sm underline"
-                      >
-                        Refresh data
-                      </button>
-                    </div>
-                  </div>
+                                    <div className="flex justify-between items-center">
+                                      <div className="text-xs text-gray-400 mb-1">Period #{period.periodNumber.slice(-4)}</div>
+                                      <div className="flex items-center">
+                                        <span 
+                                          className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs text-white mr-2"
+                                          style={{ backgroundColor: getColorCode(colorName) }}
+                                        >
+                                          {period.result}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center space-x-2 mt-2">
+                                      <span className="text-xs capitalize px-2 py-0.5 rounded-full" 
+                                            style={{ 
+                                              backgroundColor: `${getColorCode(colorName)}33`,
+                                              color: getColorCode(colorName)
+                                            }}>
+                                        {colorName}
+                                      </span>
+                                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                        isBig ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+                                      }`}>
+                                        {isBig ? 'BIG' : 'SMALL'}
+                                      </span>
+                                    </div>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            // Table view for desktop
+                            <table className="w-full border-collapse text-sm">
+                              <thead>
+                                <tr className="text-[#00ECBE]/70 border-b border-[#00ECBE]/10">
+                                  <th className="py-2 font-medium text-center w-1/4">
+                                    <span className="hidden sm:inline">Period</span>
+                                    <span className="sm:hidden">Period#</span>
+                                  </th>
+                                  <th className="py-2 font-medium text-center w-1/4">Result</th>
+                                  <th className="py-2 font-medium text-center w-1/4">Color</th>
+                                  <th className="py-2 font-medium text-center w-1/4">Big/Small</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {periodResults.map((period, index) => (
+                                  <motion.tr 
+                                    key={period.id} 
+                                    className="hover:bg-[#001845]/50"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.05, duration: 0.2 }}
+                                  >
+                                    <td className="py-3 text-center">
+                                      <span className="hidden sm:inline truncate inline-block max-w-[100px]">
+                                        {period.periodNumber}
+                                      </span>
+                                      <span className="sm:hidden">
+                                        #{period.periodNumber.slice(-3)}
+                                      </span>
+                                    </td>
+                                    <td className="py-3 text-center">
+                                      <div className="flex justify-center">
+                                        <span 
+                                          className="inline-flex items-center justify-center w-7 h-7 rounded-full text-white"
+                                          style={{ backgroundColor: getColorCode(period.color) }}
+                                        >
+                                          {period.result}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td className="py-3 text-center">
+                                      <span className="capitalize" style={{ color: getColorCode(period.color) }}>
+                                        {period.color}
+                                      </span>
+                                    </td>
+                                    <td className="py-3 text-center">
+                                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                        period.result >= 5 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+                                      }`}>
+                                        {period.result >= 5 ? 'BIG' : 'SMALL'}
+                                      </span>
+                                    </td>
+                                  </motion.tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex justify-center items-center p-8 text-gray-400">
+                        <p>No results history available yet</p>
+                      </div>
+                    )}
+                  </motion.div>
                 )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-        
-        {/* Footer with copyright */}
-        <motion.div
-          className="mt-8 text-center text-xs text-gray-500"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <p>© 2025 JALWA VIP. All VIP predictions are provided for educational purposes only.</p>
-          <p className="mt-1">Not financial advice. Contact @Blackdoom1 on Telegram for support.</p>
-        </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </>
+        )}
       </main>
     </div>
   );
@@ -581,9 +611,9 @@ const getColorCode = (color: string): string => {
       return '#52C41A';
     // If violet is ever received, we'll convert it to green for display
     case 'violet':
-      return '#52C41A'; // Same as green
+      return '#7C3AED'; // Now properly displaying violet
     default:
-      return '#52C41A'; // Default to green instead of gray
+      return '#1890FF'; // Default to blue
   }
 };
 
