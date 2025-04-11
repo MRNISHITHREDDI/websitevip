@@ -631,7 +631,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
         {/* Win Go specific prediction display */}
         {currentPrediction && (
           <div className="mt-4">
-            <motion.h3
+            <div
               className="text-center text-white text-xl font-semibold mb-5 flex sm:flex-row flex-col items-center justify-center"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -644,7 +644,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
               <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">
                 #{currentPrediction.periodNumber}
               </span>
-            </motion.h3>
+            </div>
 
             <motion.div
               className="bg-gradient-to-br from-[#000d35] to-[#000720] rounded-xl p-6 shadow-[0_0_15px_rgba(0,30,84,0.5)] border border-[#00ECBE]/10 relative overflow-hidden"
