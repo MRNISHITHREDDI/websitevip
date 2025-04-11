@@ -201,6 +201,11 @@ export const getPrediction = (
     gameType
   );
 
+  // NEW APPROACH: Focus on the last 10 results to find the best algorithm
+  const last10Results = extendedResults.slice(0, 10);
+  const optimizedPrediction = analyzeLastTenResults(last10Results, gameType);
+  reasonings.push(`Last 10 results deep analysis: ${optimizedPrediction.reason}`);
+  
   // Analyze recent trends for BIG/SMALL pattern - Looking at more history now
   const recentBigSmall = extendedResults.slice(0, 12).map(num => num >= 5 ? 'BIG' : 'SMALL');
   const bigCount = recentBigSmall.filter(val => val === 'BIG').length;
@@ -210,11 +215,14 @@ export const getPrediction = (
   // If there have been too many consecutive SMALLs, favor BIG and vice versa
   let bigSmallPrediction: 'BIG' | 'SMALL';
   
-  // IMMEDIATELY CORRECT THE BIAS - If the screenshot shows all SMALL predictions, force more BIG predictions
-  // AGGRESSIVE CORRECTION: Force more BIG predictions when smallCount is high
-  
-  // If smallCount is significantly higher than bigCount, strongly favor BIG
-  if (smallCount >= 3 && smallCount > bigCount) {
+  // SMART APPROACH: Use the optimized prediction from the last 10 results analysis
+  if (optimizedPrediction.confidence > 0.7) {
+    // If the deep analysis has high confidence, use its BIG/SMALL prediction
+    bigSmallPrediction = optimizedPrediction.bigSmall;
+    reasonings.push(`Using optimized prediction (${bigSmallPrediction}) with ${Math.round(optimizedPrediction.confidence * 100)}% confidence`);
+  }
+  // Otherwise fall back to our bias correction algorithm
+  else if (smallCount >= 3 && smallCount > bigCount) {
     // Strongly favor BIG when we see multiple SMALL predictions
     bigSmallPrediction = 'BIG';
     reasonings.push(`CORRECTION: Detected ${smallCount} SMALL vs ${bigCount} BIG values, forcing BIG prediction for balance`);
@@ -740,6 +748,180 @@ function getOppositeColor(color: string): string {
     return 'red';
   }
   return color.toLowerCase() === 'red' ? 'green' : 'red';
+}
+
+// NEW FUNCTION: In-depth analysis of the last 10 results for optimal prediction
+function analyzeLastTenResults(results: number[], gameType: 'wingo' | 'trx'): {
+  number: number;
+  bigSmall: 'BIG' | 'SMALL';
+  reason: string;
+  confidence: number;
+} {
+  // Check if we have enough data
+  if (results.length < 5) {
+    return {
+      number: 7,
+      bigSmall: 'BIG',
+      reason: 'Insufficient data for deep analysis',
+      confidence: 0.5
+    };
+  }
+
+  // Convert results to BIG/SMALL representation
+  const bigSmallSequence = results.map(num => num >= 5 ? 'BIG' : 'SMALL');
+  
+  // Check for alternating pattern (BIG, SMALL, BIG, SMALL...)
+  let alternatingCount = 0;
+  for (let i = 0; i < bigSmallSequence.length - 1; i++) {
+    if (bigSmallSequence[i] !== bigSmallSequence[i+1]) {
+      alternatingCount++;
+    }
+  }
+  
+  const alternatingRatio = alternatingCount / (bigSmallSequence.length - 1);
+  
+  // If strong alternating pattern, predict opposite of last result
+  if (alternatingRatio > 0.7) {
+    const lastResult = bigSmallSequence[0];
+    const prediction = lastResult === 'BIG' ? 'SMALL' : 'BIG';
+    return {
+      number: prediction === 'BIG' ? 7 : 2, // Representative numbers for BIG/SMALL
+      bigSmall: prediction,
+      reason: `Strong alternating pattern detected (${Math.round(alternatingRatio * 100)}% alternation)`,
+      confidence: 0.85
+    };
+  }
+  
+  // Check for streak patterns
+  let streakLength = 1;
+  let currentValue = bigSmallSequence[0];
+  
+  for (let i = 1; i < bigSmallSequence.length; i++) {
+    if (bigSmallSequence[i] === currentValue) {
+      streakLength++;
+    } else {
+      break;
+    }
+  }
+  
+  // If we have a streak of 3 or more, predict a change
+  if (streakLength >= 3) {
+    const prediction = currentValue === 'BIG' ? 'SMALL' : 'BIG';
+    return {
+      number: prediction === 'BIG' ? 8 : 3, // Representative numbers for BIG/SMALL
+      bigSmall: prediction,
+      reason: `${streakLength}-result streak of ${currentValue} detected, predicting change`,
+      confidence: Math.min(0.6 + (streakLength * 0.05), 0.9) // Confidence increases with streak length
+    };
+  }
+  
+  // Check the overall balance
+  const bigCount = bigSmallSequence.filter(val => val === 'BIG').length;
+  const smallCount = bigSmallSequence.filter(val => val === 'SMALL').length;
+  
+  // If significant imbalance, predict the underrepresented outcome
+  if (bigCount > smallCount * 1.5) {
+    return {
+      number: 3,
+      bigSmall: 'SMALL',
+      reason: `Imbalance detected: ${bigCount} BIG vs ${smallCount} SMALL results`,
+      confidence: 0.75
+    };
+  } else if (smallCount > bigCount * 1.5) {
+    return {
+      number: 7,
+      bigSmall: 'BIG',
+      reason: `Imbalance detected: ${smallCount} SMALL vs ${bigCount} BIG results`,
+      confidence: 0.75
+    };
+  }
+  
+  // Check for repeating patterns
+  // Look for patterns of length 2-3 that repeat
+  for (let patternLength = 2; patternLength <= 3; patternLength++) {
+    if (bigSmallSequence.length < patternLength * 2) continue;
+    
+    const pattern = bigSmallSequence.slice(0, patternLength);
+    const nextSet = bigSmallSequence.slice(patternLength, patternLength * 2);
+    
+    let matches = true;
+    for (let i = 0; i < patternLength; i++) {
+      if (pattern[i] !== nextSet[i]) {
+        matches = false;
+        break;
+      }
+    }
+    
+    if (matches) {
+      // Pattern repeats! The next value will be the same as what follows this pattern
+      const nextIndex = bigSmallSequence.length % patternLength;
+      const prediction = pattern[nextIndex];
+      return {
+        number: prediction === 'BIG' ? 7 : 2,
+        bigSmall: prediction,
+        reason: `Repeating pattern of length ${patternLength} detected`,
+        confidence: 0.8
+      };
+    }
+  }
+  
+  // If no clear pattern, use mathematical/statistical approach
+  // Look for Fibonacci-like sequences in the numerical data
+  const differences: number[] = [];
+  for (let i = 0; i < results.length - 1; i++) {
+    differences.push(Math.abs(results[i] - results[i+1]));
+  }
+  
+  // Check if differences follow Fibonacci pattern (each number is approximately sum of previous two)
+  let fibonacciLike = true;
+  for (let i = 2; i < differences.length; i++) {
+    const expectedSum = differences[i-1] + differences[i-2];
+    const actualValue = differences[i];
+    const margin = Math.max(1, expectedSum * 0.3); // Allow 30% margin of error
+    
+    if (Math.abs(expectedSum - actualValue) > margin) {
+      fibonacciLike = false;
+      break;
+    }
+  }
+  
+  if (fibonacciLike && differences.length >= 3) {
+    // If Fibonacci-like, predict the next value in the sequence
+    const lastNum = results[0];
+    const lastDiff1 = differences[0];
+    const lastDiff2 = differences[1];
+    const predictedChange = lastDiff1 + lastDiff2;
+    
+    // Decide if the next number should be bigger or smaller
+    // Based on pattern of increases/decreases
+    let increasing = true;
+    if (results.length >= 3) {
+      // Check if the sequence is generally increasing or decreasing
+      increasing = results[0] >= results[1];
+    }
+    
+    let predictedValue: number;
+    if (increasing) {
+      predictedValue = (lastNum + predictedChange) % 10; // Keep in range 0-9
+    } else {
+      predictedValue = (lastNum - predictedChange + 10) % 10; // Keep in range 0-9
+    }
+    
+    return {
+      number: predictedValue,
+      bigSmall: predictedValue >= 5 ? 'BIG' : 'SMALL',
+      reason: 'Fibonacci-like pattern detected in result differences',
+      confidence: 0.76
+    };
+  }
+  
+  // Fallback: adaptive weighted prediction based on distribution
+  return {
+    number: smallCount > bigCount ? 7 : 3, // Favor the less common outcome
+    bigSmall: smallCount > bigCount ? 'BIG' : 'SMALL', // Favor the less common outcome
+    reason: 'Adaptive prediction based on result distribution',
+    confidence: 0.6
+  };
 }
 
 // Basic color streak analysis - simpler version
