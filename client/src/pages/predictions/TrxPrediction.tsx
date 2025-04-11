@@ -970,7 +970,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                     </div>
                     
                     <motion.div
-                      className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-3 shadow-lg border border-[#00ECBE]/10 mt-3"
+                      className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-3 shadow-lg border border-[#00ECBE]/10 mt-3 mb-1"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
@@ -1061,7 +1061,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
 
                 {/* TRX Hash verification display */}
                 <motion.div
-                  className="w-full bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 mt-2 border border-[#00ECBE]/10 shadow-lg"
+                  className="w-full bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 mt-2 mb-1 border border-[#00ECBE]/10 shadow-lg"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
@@ -1123,7 +1123,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
 
                 {/* 100% Accuracy Badge */}
                 <motion.div
-                  className="w-full bg-gradient-to-r from-[#00ECBE]/10 to-transparent py-4 px-3 rounded-lg flex items-center justify-center space-x-2 mt-2 my-2"
+                  className="w-full bg-gradient-to-r from-[#00ECBE]/10 to-transparent py-4 px-3 rounded-lg flex items-center justify-center space-x-2 mt-0"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 }}
