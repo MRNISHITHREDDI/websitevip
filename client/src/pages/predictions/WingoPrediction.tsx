@@ -720,14 +720,14 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <div className="flex items-center mb-1">
+                        <div className="flex items-center justify-center mb-1">
                           <Award size={16} className="text-[#00ECBE] mr-1.5" />
                           <p className="text-sm text-[#00ECBE] font-medium">
                             Color
                           </p>
                         </div>
                         <p
-                          className="text-lg font-bold capitalize"
+                          className="text-lg font-bold capitalize text-center"
                           style={{ color: getColorCode(currentPrediction.color) }}
                         >
                           {currentPrediction.color}
@@ -740,13 +740,13 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <div className="flex items-center mb-1">
+                        <div className="flex items-center justify-center mb-1">
                           <Zap size={16} className="text-[#00ECBE] mr-1.5" />
                           <p className="text-sm text-[#00ECBE] font-medium">
                             Number
                           </p>
                         </div>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-lg font-bold text-white text-center">
                           {currentPrediction.prediction}
                         </p>
                       </motion.div>
@@ -765,7 +765,7 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                         </p>
                       </div>
                       <p
-                        className={`text-lg font-bold ${currentPrediction.bigOrSmall === "BIG" ? "text-red-400" : "text-green-400"}`}
+                        className={`text-lg font-bold text-center ${currentPrediction.bigOrSmall === "BIG" ? "text-red-400" : "text-green-400"}`}
                       >
                         {currentPrediction.bigOrSmall}
                       </p>
