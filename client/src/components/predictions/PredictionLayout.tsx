@@ -238,18 +238,43 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                   <div className="flex flex-col items-center justify-center h-40 p-4">
                     <p className="text-gray-400 mb-5 text-center">No active prediction period available</p>
                     <motion.button
-                
-                    onClick={handleRefresh}
-                    className="bg-[#00ECBE] text-[#05012B] py-2 px-5 rounded-lg font-medium flex items-center text-sm"
-                    whileHover={{ scale: 1.05, boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)" }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <RefreshCw size={16} className="mr-2" />
-                    Refresh Data
-                  </motion.button>
-                </div>
-              )}
-            </motion.div>
+                      onClick={handleRefresh}
+                      className="bg-[#00ECBE] text-[#05012B] py-2 px-5 rounded-lg font-medium flex items-center text-sm"
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 15px 0 rgba(0, 236, 190, 0.5)" }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <RefreshCw size={16} className="mr-2" />
+                      Refresh Data
+                    </motion.button>
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              // For Mobile view, we don't show the period header, just render the content directly
+              <>
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-32">
+                    <div className="w-10 h-10 border-3 border-[#00ECBE] border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : currentPrediction ? (
+                  // Just render the child content without the period header
+                  <>{children}</>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-32 p-4">
+                    <p className="text-gray-400 mb-3 text-center text-sm">No active prediction period</p>
+                    <motion.button
+                      onClick={handleRefresh}
+                      className="bg-[#00ECBE] text-[#05012B] py-1.5 px-4 rounded-lg font-medium flex items-center text-xs"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <RefreshCw size={14} className="mr-1.5" />
+                      Refresh
+                    </motion.button>
+                  </div>
+                )}
+              </>
+            )}
           </>
         )}
         
