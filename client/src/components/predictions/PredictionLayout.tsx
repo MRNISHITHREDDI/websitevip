@@ -165,7 +165,7 @@ const PredictionLayout: React.FC<PredictionLayoutProps> = ({
                 </div>
                 
                 <motion.div 
-                  className="flex flex-col items-center rounded-xl bg-gradient-to-br from-[#001845] to-[#000925] p-3 shadow-inner border border-[#00ECBE]/10 min-w-[120px]"
+                  className="flex flex-col items-center sm:rounded-xl rounded-md bg-gradient-to-br from-[#001845] to-[#000925] p-3 shadow-inner border border-[#00ECBE]/10 min-w-[120px] sm:w-auto w-full"
                   animate={{ 
                     boxShadow: timeRemaining < 10 ? 
                       ['0 0 0 rgba(0,236,190,0.3)', '0 0 20px rgba(0,236,190,0.5)', '0 0 0 rgba(0,236,190,0.3)'] : 
