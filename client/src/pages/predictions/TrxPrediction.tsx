@@ -826,9 +826,6 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                 <Lock size={16} className="text-[#00ECBE] mr-2" />
                 <span>Blockchain Verified Prediction</span>
               </div>
-              <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">
-                #{currentPrediction.periodNumber}
-              </span>
             </motion.h3>
 
             <motion.div
@@ -930,9 +927,71 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                 </motion.div>
 
                 {/* Prediction stats in cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-5">
+                <div className="md:grid md:grid-cols-3 md:gap-4 w-full mb-5">
+                  {/* For mobile: side-by-side layout with larger text */}
+                  <div className="block md:hidden mb-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div
+                        className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-3 shadow-lg border border-[#00ECBE]/10"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <div className="flex items-center mb-1">
+                          <Award size={16} className="text-[#00ECBE] mr-1.5" />
+                          <p className="text-sm text-[#00ECBE] font-medium">
+                            Color
+                          </p>
+                        </div>
+                        <p
+                          className="text-lg font-bold capitalize"
+                          style={{ color: getColorCode(currentPrediction.color) }}
+                        >
+                          {currentPrediction.color}
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-3 shadow-lg border border-[#00ECBE]/10"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <div className="flex items-center mb-1">
+                          <Zap size={16} className="text-[#00ECBE] mr-1.5" />
+                          <p className="text-sm text-[#00ECBE] font-medium">
+                            Number
+                          </p>
+                        </div>
+                        <p className="text-lg font-bold text-white">
+                          {currentPrediction.prediction}
+                        </p>
+                      </motion.div>
+                    </div>
+                    
+                    <motion.div
+                      className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-3 shadow-lg border border-[#00ECBE]/10 mt-3"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <div className="flex items-center justify-center mb-1">
+                        <TrendingUp size={16} className="text-[#00ECBE] mr-1.5" />
+                        <p className="text-sm text-[#00ECBE] font-medium">
+                          Big/Small
+                        </p>
+                      </div>
+                      <p
+                        className={`text-lg font-bold ${currentPrediction.bigOrSmall === "BIG" ? "text-red-400" : "text-green-400"}`}
+                      >
+                        {currentPrediction.bigOrSmall}
+                      </p>
+                    </motion.div>
+                  </div>
+                  
+                  {/* For desktop: original 3-column layout */}
                   <motion.div
-                    className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
+                    className="hidden md:block bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
@@ -956,7 +1015,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                   </motion.div>
 
                   <motion.div
-                    className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
+                    className="hidden md:block bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
@@ -979,7 +1038,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                   </motion.div>
 
                   <motion.div
-                    className="bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
+                    className="hidden md:block bg-gradient-to-br from-[#001230] to-[#000925] rounded-xl p-4 text-center shadow-lg border border-[#00ECBE]/10"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}

@@ -641,9 +641,6 @@ const WingoPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                 <Lock size={16} className="text-[#00ECBE] mr-2" />
                 <span>VIP Prediction</span>
               </div>
-              <span className="text-[#00ECBE] sm:ml-1 mt-1 sm:mt-0">
-                #{currentPrediction.periodNumber}
-              </span>
             </motion.h3>
 
             <motion.div
