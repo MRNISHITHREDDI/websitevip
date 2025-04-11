@@ -201,8 +201,8 @@ export const getPrediction = (
     gameType
   );
 
-  // Analyze recent trends for BIG/SMALL pattern
-  const recentBigSmall = extendedResults.slice(0, 8).map(num => num >= 5 ? 'BIG' : 'SMALL');
+  // Analyze recent trends for BIG/SMALL pattern - Looking at more history now
+  const recentBigSmall = extendedResults.slice(0, 12).map(num => num >= 5 ? 'BIG' : 'SMALL');
   const bigCount = recentBigSmall.filter(val => val === 'BIG').length;
   const smallCount = recentBigSmall.filter(val => val === 'SMALL').length;
   
@@ -210,23 +210,27 @@ export const getPrediction = (
   // If there have been too many consecutive SMALLs, favor BIG and vice versa
   let bigSmallPrediction: 'BIG' | 'SMALL';
   
-  // Follow the opposite trend of what's happening recently (enhanced accuracy)
-  if (bigCount >= 5 && bigCount > smallCount * 1.5) {
+  // IMMEDIATELY CORRECT THE BIAS - If the screenshot shows all SMALL predictions, force more BIG predictions
+  // AGGRESSIVE CORRECTION: Force more BIG predictions when smallCount is high
+  
+  // If smallCount is significantly higher than bigCount, strongly favor BIG
+  if (smallCount >= 3 && smallCount > bigCount) {
+    // Strongly favor BIG when we see multiple SMALL predictions
+    bigSmallPrediction = 'BIG';
+    reasonings.push(`CORRECTION: Detected ${smallCount} SMALL vs ${bigCount} BIG values, forcing BIG prediction for balance`);
+  }
+  // If we have perfect balance or more BIGs, predict SMALL occasionally
+  else if (bigCount > smallCount) {
     // If there have been many BIG results recently, predict SMALL
     bigSmallPrediction = 'SMALL';
-    reasonings.push(`Detected ${bigCount} BIG values in recent results, predicting SMALL for balance`);
-  } else if (smallCount >= 5 && smallCount > bigCount * 1.5) {
-    // If there have been many SMALL results recently, predict BIG
-    bigSmallPrediction = 'BIG';
-    reasonings.push(`Detected ${smallCount} SMALL values in recent results, predicting BIG for balance`);
-  } else {
-    // Otherwise use standard calculation but ensure better distribution
+    reasonings.push(`Detected ${bigCount} BIG values vs ${smallCount} SMALL values, predicting SMALL for balance`);
+  }
+  // STRONG BIAS FOR BIG otherwise
+  else {
+    // Force 70% BIG predictions by default to correct the observed bias
     const randomFactor = Math.random();
-    if (finalPrediction.number >= 5) {
-      bigSmallPrediction = randomFactor < 0.1 ? 'SMALL' : 'BIG'; // 90% chance to follow rule, 10% to break
-    } else {
-      bigSmallPrediction = randomFactor < 0.1 ? 'BIG' : 'SMALL'; // 90% chance to follow rule, 10% to break
-    }
+    bigSmallPrediction = randomFactor < 0.7 ? 'BIG' : 'SMALL'; // 70% chance for BIG, 30% for SMALL
+    reasonings.push(`Using balanced prediction with 70% BIG bias to correct historical small-favoring`);
   }
   
   let oddEvenPrediction: 'ODD' | 'EVEN' = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
@@ -265,17 +269,20 @@ export const getPrediction = (
       if (getColorForNumber(i, gameType) === colorPrediction) {
         // Update the final prediction number
         finalPrediction.number = i;
-        // Update big/small and odd/even to match, but also consider the trend analysis
-        // This is important to maintain consistency with our trend-based predictions
-        const randomBalance = Math.random();
-        if (finalPrediction.number >= 5) {
-          // Even when the number is high (5-9), we sometimes predict SMALL to maintain balance
-          // This prevents the algorithm from being biased toward always predicting SMALL
-          bigSmallPrediction = randomBalance < 0.15 ? 'SMALL' : 'BIG'; // 85% chance to follow rule
-        } else {
-          // Even when the number is low (0-4), we sometimes predict BIG to maintain balance
-          bigSmallPrediction = randomBalance < 0.15 ? 'BIG' : 'SMALL'; // 85% chance to follow rule
+        // AGGRESSIVE CORRECTION: Keep the BIG/SMALL prediction consistent with our biased trend analysis
+        // Instead of relying on the number value, force a bias towards BIG to correct the observed issues
+        
+        // Look at current bigSmallPrediction and check if we need to strengthen it
+        if (bigSmallPrediction === 'SMALL') {
+          // If we were already predicting SMALL, we need to occasionally force BIG to correct the bias
+          // Force BIG predictions 40% of the time to combat the observed imbalance
+          const forceBalancedPrediction = Math.random() < 0.4;
+          if (forceBalancedPrediction) {
+            bigSmallPrediction = 'BIG';
+            reasonings.push('CORRECTION: Forcing BIG prediction to balance observed prediction bias');
+          }
         }
+        // If prediction is already BIG, keep it BIG to maintain our correction bias
         oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
         break;
       }
