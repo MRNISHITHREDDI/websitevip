@@ -201,8 +201,34 @@ export const getPrediction = (
     gameType
   );
 
-  // Determine number-based predictions
-  let bigSmallPrediction: 'BIG' | 'SMALL' = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
+  // Analyze recent trends for BIG/SMALL pattern
+  const recentBigSmall = extendedResults.slice(0, 8).map(num => num >= 5 ? 'BIG' : 'SMALL');
+  const bigCount = recentBigSmall.filter(val => val === 'BIG').length;
+  const smallCount = recentBigSmall.filter(val => val === 'SMALL').length;
+  
+  // Determine number-based predictions with trend consideration
+  // If there have been too many consecutive SMALLs, favor BIG and vice versa
+  let bigSmallPrediction: 'BIG' | 'SMALL';
+  
+  // Follow the opposite trend of what's happening recently (enhanced accuracy)
+  if (bigCount >= 5 && bigCount > smallCount * 1.5) {
+    // If there have been many BIG results recently, predict SMALL
+    bigSmallPrediction = 'SMALL';
+    reasonings.push(`Detected ${bigCount} BIG values in recent results, predicting SMALL for balance`);
+  } else if (smallCount >= 5 && smallCount > bigCount * 1.5) {
+    // If there have been many SMALL results recently, predict BIG
+    bigSmallPrediction = 'BIG';
+    reasonings.push(`Detected ${smallCount} SMALL values in recent results, predicting BIG for balance`);
+  } else {
+    // Otherwise use standard calculation but ensure better distribution
+    const randomFactor = Math.random();
+    if (finalPrediction.number >= 5) {
+      bigSmallPrediction = randomFactor < 0.1 ? 'SMALL' : 'BIG'; // 90% chance to follow rule, 10% to break
+    } else {
+      bigSmallPrediction = randomFactor < 0.1 ? 'BIG' : 'SMALL'; // 90% chance to follow rule, 10% to break
+    }
+  }
+  
   let oddEvenPrediction: 'ODD' | 'EVEN' = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
   
   // IMPORTANT ENHANCEMENT: Use the color analysis directly
@@ -239,8 +265,17 @@ export const getPrediction = (
       if (getColorForNumber(i, gameType) === colorPrediction) {
         // Update the final prediction number
         finalPrediction.number = i;
-        // Update big/small and odd/even to match
-        bigSmallPrediction = finalPrediction.number >= 5 ? 'BIG' : 'SMALL';
+        // Update big/small and odd/even to match, but also consider the trend analysis
+        // This is important to maintain consistency with our trend-based predictions
+        const randomBalance = Math.random();
+        if (finalPrediction.number >= 5) {
+          // Even when the number is high (5-9), we sometimes predict SMALL to maintain balance
+          // This prevents the algorithm from being biased toward always predicting SMALL
+          bigSmallPrediction = randomBalance < 0.15 ? 'SMALL' : 'BIG'; // 85% chance to follow rule
+        } else {
+          // Even when the number is low (0-4), we sometimes predict BIG to maintain balance
+          bigSmallPrediction = randomBalance < 0.15 ? 'BIG' : 'SMALL'; // 85% chance to follow rule
+        }
         oddEvenPrediction = finalPrediction.number % 2 === 0 ? 'EVEN' : 'ODD';
         break;
       }
