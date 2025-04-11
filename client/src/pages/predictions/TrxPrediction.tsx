@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import PredictionLayout from '@/components/predictions/PredictionLayout';
 import { PredictionPageProps, PeriodResult, PredictionData, trxColorMap, getBigOrSmall, getOddOrEven, getTrxResultColor } from './types';
-import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash } from 'lucide-react';
+import { TrendingUp, BadgeCheck, Zap, Award, Lock, Database, Hash, Clock, BarChart3, Brain } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { getAdvancedPrediction } from '@/lib/fixed-prediction-algorithm';
 import SEO from '@/components/SEO';
 import AccountVerificationModal from '@/components/AccountVerificationModal';
@@ -459,6 +460,7 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
   const [periodResults, setPeriodResults] = useState<PeriodResult[]>([]);
   const [currentPrediction, setCurrentPrediction] = useState<PredictionData | null>(null);
   const [previousPredictions, setPreviousPredictions] = useState<PredictionData[]>([]);
+  const isMobile = useIsMobile();
   
   // Account verification modal state
   const [showVerificationModal, setShowVerificationModal] = useState<boolean>(false);
