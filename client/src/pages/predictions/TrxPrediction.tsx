@@ -1121,6 +1121,19 @@ const TrxPrediction: React.FC<PredictionPageProps> = ({ timeOption }) => {
                   </div>
                 </motion.div>
 
+                {/* 100% Accuracy Badge */}
+                <motion.div
+                  className="w-full bg-gradient-to-r from-[#00ECBE]/10 to-transparent py-3.5 px-3 rounded-lg flex items-center justify-center space-x-2 mt-2 my-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <BadgeCheck size={16} className="text-[#00ECBE]" />
+                  <span className="text-sm font-medium text-white">
+                    100% Accurate Prediction Based on Mathematical Algorithms
+                  </span>
+                </motion.div>
+
                 {/* Money earning badge */}
                 <motion.div
                   className="mt-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-[#05012B] font-bold py-1.5 px-4 rounded-full shadow-lg inline-flex items-center"
